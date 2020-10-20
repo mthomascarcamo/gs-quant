@@ -18,44 +18,45 @@ from enum import Enum
 from typing import Tuple
 
 from gs_quant.base import EnumBase
-from gs_quant.target.backtests import Backtest as __Backtest, BacktestResult
-
+from gs_quant.target.backtests import Backtest as __Backtest
+from gs_quant.target.backtests import BacktestResult
 
 # TODO add these in Studio as a standalone JSON, so they will be generated
 
+
 class QuantityType(EnumBase, Enum):
-    Notional = 'notional'
-    Quantity = 'quantity'
-    Vega = 'vega'
-    Gamma = 'gamma'
+    Notional = "notional"
+    Quantity = "quantity"
+    Vega = "vega"
+    Gamma = "gamma"
 
 
 class TradeInMethod(EnumBase, Enum):
-    FixedRoll = 'fixedRoll'
+    FixedRoll = "fixedRoll"
 
 
 class FlowVolBacktestMeasure(EnumBase, Enum):
-    ALL_MEASURES = "ALL MEASURES",
-    PNL_SPOT = "PNL_spot",
-    PNL_VOL = "PNL_vol",
-    PNL_CARRY = "PNL_carry",
-    PNL_DELTA = "PNL_delta",
-    PNL_GAMMA = "PNL_gamma",
-    PNL_HIGHER_ORDER_SPOT = "PNL_higher_order_spot",
-    PNL_HIGHER_ORDER_VOL = "PNL_higher_order_vol",
-    PNL_THETA = "PNL_theta",
-    TOTAL = "Total",
-    TRANSACTION_COSTS = "transaction_costs",
-    PNL_UNEXPLAINED = "PNL_unexplained",
-    PNL_VEGA = "PNL_vega",
-    PNL = "PNL",
-    DELTA = "delta",
-    GAMMA = "gamma",
-    VEGA = "vega",
+    ALL_MEASURES = ("ALL MEASURES",)
+    PNL_SPOT = ("PNL_spot",)
+    PNL_VOL = ("PNL_vol",)
+    PNL_CARRY = ("PNL_carry",)
+    PNL_DELTA = ("PNL_delta",)
+    PNL_GAMMA = ("PNL_gamma",)
+    PNL_HIGHER_ORDER_SPOT = ("PNL_higher_order_spot",)
+    PNL_HIGHER_ORDER_VOL = ("PNL_higher_order_vol",)
+    PNL_THETA = ("PNL_theta",)
+    TOTAL = ("Total",)
+    TRANSACTION_COSTS = ("transaction_costs",)
+    PNL_UNEXPLAINED = ("PNL_unexplained",)
+    PNL_VEGA = ("PNL_vega",)
+    PNL = ("PNL",)
+    DELTA = ("delta",)
+    GAMMA = ("gamma",)
+    VEGA = ("vega",)
 
 
 class Backtest(__Backtest):
-
     def get_results(self) -> Tuple[BacktestResult, ...]:
         from gs_quant.api.gs.backtests import GsBacktestApi
+
         return GsBacktestApi.get_results(backtest_id=self.id)

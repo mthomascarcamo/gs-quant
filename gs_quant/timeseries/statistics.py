@@ -16,15 +16,16 @@
 # a 1-line description. Type annotations should be provided for parameters.
 
 import datetime
+
 import numpy
 import scipy.stats.mstats as stats
+import statsmodels.api as sm
 from scipy.stats import percentileofscore
 from statsmodels.regression.rolling import RollingOLS
-from .algebra import *
-import statsmodels.api as sm
-from ..models.epidemiology import SIR, SEIR, EpidemicModel
-from ..data import DataContext
 
+from ..data import DataContext
+from ..models.epidemiology import SEIR, SIR, EpidemicModel
+from .algebra import *
 
 """
 Stats library is for basic arithmetic and statistical operations on timeseries.
@@ -41,7 +42,7 @@ def _concat_series(series: List[pd.Series]):
         if s.min() != s.max():
             curves.append(s)
         else:
-            constants[f'temp{k}'] = s.min()
+            constants[f"temp{k}"] = s.min()
             k += 1
     return pd.concat(curves, axis=1).assign(**constants)
 
@@ -245,7 +246,7 @@ def mean(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Wind
     if isinstance(w.w, pd.DateOffset):
         values = [np.nanmean(x.loc[(x.index > idx - w.w) & (x.index <= idx)]) for idx in x.index]
     else:
-        values = [np.nanmean(x.iloc[max(idx - w.w + 1, 0): idx + 1]) for idx in range(0, len(x))]
+        values = [np.nanmean(x.iloc[max(idx - w.w + 1, 0) : idx + 1]) for idx in range(0, len(x))]
     return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
 
 
@@ -666,7 +667,11 @@ def zscores(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Se
             return pd.Series([0.0], index=x.index, dtype=np.dtype(float))
 
         clean_series = x.dropna()
-        zscore_series = pd.Series(stats.zscore(clean_series, ddof=1), clean_series.index, dtype=np.dtype(float))
+        zscore_series = pd.Series(
+            stats.zscore(clean_series, ddof=1),
+            clean_series.index,
+            dtype=np.dtype(float),
+        )
         return interpolate(zscore_series, x, Interpolate.NAN)
     if not isinstance(w.w, int):
         w = normalize_window(x, w)
@@ -824,20 +829,20 @@ def percentiles(x: pd.Series, y: pd.Series = None, w: Union[Window, int, str] = 
         y = x.copy()
 
     if isinstance(w.r, int) and w.r > len(y):
-        raise ValueError('Ramp value must be less than the length of the series y.')
+        raise ValueError("Ramp value must be less than the length of the series y.")
 
     if isinstance(w.w, int) and w.w > len(x):
         return pd.Series()
 
     res = pd.Series(dtype=np.dtype(float))
     for idx, val in y.iteritems():
-        sample = x.loc[(x.index > idx - w.w) & (x.index <= idx)] if isinstance(w.w, pd.DateOffset) else x[:idx][-w.w:]
-        res.loc[idx] = percentileofscore(sample, val, kind='mean')
+        sample = x.loc[(x.index > idx - w.w) & (x.index <= idx)] if isinstance(w.w, pd.DateOffset) else x[:idx][-w.w :]
+        res.loc[idx] = percentileofscore(sample, val, kind="mean")
 
     if isinstance(w.r, pd.DateOffset):
-        return res.loc[res.index[0] + w.r:]
+        return res.loc[res.index[0] + w.r :]
     else:
-        return res[w.r:]
+        return res[w.r :]
 
 
 @plot_function
@@ -865,7 +870,7 @@ def percentile(x: pd.Series, n: float, w: Union[Window, int, str] = None) -> Uni
 
     """
     if not 0 <= n <= 100:
-        raise MqValueError('percentile must be in range [0, 100]')
+        raise MqValueError("percentile must be in range [0, 100]")
     x = x.dropna()
     if x.size < 1:
         return x
@@ -878,7 +883,7 @@ def percentile(x: pd.Series, n: float, w: Union[Window, int, str] = None) -> Uni
         try:
             values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].quantile(n) for idx in x.index]
         except TypeError:
-            raise MqTypeError(f'cannot use relative dates with index {x.index}')
+            raise MqTypeError(f"cannot use relative dates with index {x.index}")
         res = pd.Series(values, index=x.index, dtype=np.dtype(float))
     else:
         res = x.rolling(w.w, 0).quantile(n)
@@ -910,14 +915,19 @@ class LinearRegression:
 
     """
 
-    def __init__(self, X: Union[pd.Series, List[pd.Series]], y: pd.Series, fit_intercept: bool = True):
+    def __init__(
+        self,
+        X: Union[pd.Series, List[pd.Series]],
+        y: pd.Series,
+        fit_intercept: bool = True,
+    ):
         df = pd.concat(X, axis=1) if isinstance(X, list) else X.to_frame()
         df = sm.add_constant(df) if fit_intercept else df
         df.columns = range(len(df.columns)) if fit_intercept else range(1, len(df.columns) + 1)
 
         df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]  # filter out nan and inf
         y = y[~y.isin([np.nan, np.inf, -np.inf])]
-        df_aligned, y_aligned = df.align(y, 'inner', axis=0)  # align series
+        df_aligned, y_aligned = df.align(y, "inner", axis=0)  # align series
 
         self._index_scope = range(0, len(df.columns)) if fit_intercept else range(1, len(df.columns) + 1)
         self._res = sm.OLS(y_aligned, df_aligned).fit()
@@ -1001,17 +1011,23 @@ class RollingLinearRegression:
 
     """
 
-    def __init__(self, X: Union[pd.Series, List[pd.Series]], y: pd.Series, w: int, fit_intercept: bool = True):
+    def __init__(
+        self,
+        X: Union[pd.Series, List[pd.Series]],
+        y: pd.Series,
+        w: int,
+        fit_intercept: bool = True,
+    ):
         df = pd.concat(X, axis=1) if isinstance(X, list) else X.to_frame()
         df = sm.add_constant(df) if fit_intercept else df
         df.columns = range(len(df.columns)) if fit_intercept else range(1, len(df.columns) + 1)
 
         if w <= len(df.columns):
-            raise MqValueError('Window length must be larger than the number of explanatory variables')
+            raise MqValueError("Window length must be larger than the number of explanatory variables")
 
         df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]  # filter out nan and inf
         y = y[~y.isin([np.nan, np.inf, -np.inf])]
-        df_aligned, y_aligned = df.align(y, 'inner', axis=0)  # align series
+        df_aligned, y_aligned = df.align(y, "inner", axis=0)  # align series
 
         self._X = df_aligned.copy()
         self._res = RollingOLS(y_aligned, df_aligned, w).fit()
@@ -1092,10 +1108,18 @@ class SIRModel:
     compartment once calibrated
 
     """
-    def __init__(self, beta: float = None, gamma: float = None, s: Union[pd.Series, float] = None,
-                 i: Union[pd.Series, float] = None, r: Union[pd.Series, float] = None,
-                 n: Union[pd.Series, float] = None, fit: bool = True,
-                 fit_period: int = None):
+
+    def __init__(
+        self,
+        beta: float = None,
+        gamma: float = None,
+        s: Union[pd.Series, float] = None,
+        i: Union[pd.Series, float] = None,
+        r: Union[pd.Series, float] = None,
+        n: Union[pd.Series, float] = None,
+        fit: bool = True,
+        fit_period: int = None,
+    ):
         n = n.dropna()[0] if isinstance(n, pd.Series) else n
         n = 100 if n is None else n
         fit = False if s is None and i is None and r is None else fit
@@ -1127,14 +1151,28 @@ class SIRModel:
         beta_init = self.beta_init if self.beta_init is not None else 0.9
         gamma_init = self.gamma_init if self.gamma_init is not None else 0.01
 
-        parameters, initial_conditions = SIR.get_parameters(self.s[0], self.i[0], self.r[0], n, beta=beta_init,
-                                                            gamma=gamma_init, beta_fixed=self.beta_fixed,
-                                                            gamma_fixed=self.gamma_fixed, S0_fixed=True, I0_fixed=True,
-                                                            R0_fixed=True)
+        parameters, initial_conditions = SIR.get_parameters(
+            self.s[0],
+            self.i[0],
+            self.r[0],
+            n,
+            beta=beta_init,
+            gamma=gamma_init,
+            beta_fixed=self.beta_fixed,
+            gamma_fixed=self.gamma_fixed,
+            S0_fixed=True,
+            I0_fixed=True,
+            R0_fixed=True,
+        )
         self.parameters = parameters
 
-        self._model = EpidemicModel(SIR, parameters=parameters, data=data, initial_conditions=initial_conditions,
-                                    fit_period=self.fit_period)
+        self._model = EpidemicModel(
+            SIR,
+            parameters=parameters,
+            data=data,
+            initial_conditions=initial_conditions,
+            fit_period=self.fit_period,
+        )
         if self.fit:
             self._model.fit(verbose=False)
 
@@ -1155,8 +1193,8 @@ class SIRModel:
         :return: initial susceptible individuals
         """
         if self.fit:
-            return self._model.fitted_parameters['S0']
-        return self.parameters['S0'].value
+            return self._model.fitted_parameters["S0"]
+        return self.parameters["S0"].value
 
     @plot_method
     def i0(self) -> float:
@@ -1166,8 +1204,8 @@ class SIRModel:
         :return: initial infectious individuals
         """
         if self.fit:
-            return self._model.fitted_parameters['I0']
-        return self.parameters['I0'].value
+            return self._model.fitted_parameters["I0"]
+        return self.parameters["I0"].value
 
     @plot_method
     def r0(self) -> float:
@@ -1177,8 +1215,8 @@ class SIRModel:
         :return: initial recovered individuals
         """
         if self.fit:
-            return self._model.fitted_parameters['R0']
-        return self.parameters['R0'].value
+            return self._model.fitted_parameters["R0"]
+        return self.parameters["R0"].value
 
     @plot_method
     def beta(self) -> float:
@@ -1188,8 +1226,8 @@ class SIRModel:
         :return: beta
         """
         if self.fit:
-            return self._model.fitted_parameters['beta']
-        return self.parameters['beta'].value
+            return self._model.fitted_parameters["beta"]
+        return self.parameters["beta"].value
 
     @plot_method
     def gamma(self) -> float:
@@ -1199,8 +1237,8 @@ class SIRModel:
         :return: beta
         """
         if self.fit:
-            return self._model.fitted_parameters['gamma']
-        return self.parameters['gamma'].value
+            return self._model.fitted_parameters["gamma"]
+        return self.parameters["gamma"].value
 
     @plot_method
     def predict_s(self) -> pd.Series:
@@ -1271,10 +1309,20 @@ class SEIRModel(SIRModel):
     predict the populations of each compartment once calibrated.
 
     """
-    def __init__(self, beta: float = None, gamma: float = None, sigma: float = None, s: Union[pd.Series, float] = None,
-                 e: Union[pd.Series, float] = None, i: Union[pd.Series, float] = None,
-                 r: Union[pd.Series, float] = None, n: Union[pd.Series, float] = None,
-                 fit: bool = True, fit_period: int = None):
+
+    def __init__(
+        self,
+        beta: float = None,
+        gamma: float = None,
+        sigma: float = None,
+        s: Union[pd.Series, float] = None,
+        e: Union[pd.Series, float] = None,
+        i: Union[pd.Series, float] = None,
+        r: Union[pd.Series, float] = None,
+        n: Union[pd.Series, float] = None,
+        fit: bool = True,
+        fit_period: int = None,
+    ):
         n = n.dropna()[0] if isinstance(n, pd.Series) else n
         n = 100 if n is None else n
         fit = False if all(state is None for state in (s, e, i, r)) else fit
@@ -1311,24 +1359,45 @@ class SEIRModel(SIRModel):
         gamma_init = self.gamma_init if self.gamma_init is not None else 0.01
         sigma_init = self.sigma_init if self.sigma_init is not None else 0.2
 
-        parameters, initial_conditions = SEIR.get_parameters(self.s[0], self.e[0], self.i[0], self.r[0], n,
-                                                             beta=beta_init, gamma=gamma_init, sigma=sigma_init,
-                                                             beta_fixed=self.beta_fixed,
-                                                             gamma_fixed=self.gamma_fixed,
-                                                             sigma_fixed=self.sigma_fixed,
-                                                             S0_fixed=True, I0_fixed=True,
-                                                             R0_fixed=True, E0_fixed=True, S0_max=5e6, I0_max=5e6,
-                                                             E0_max=10e6, R0_max=10e6)
+        parameters, initial_conditions = SEIR.get_parameters(
+            self.s[0],
+            self.e[0],
+            self.i[0],
+            self.r[0],
+            n,
+            beta=beta_init,
+            gamma=gamma_init,
+            sigma=sigma_init,
+            beta_fixed=self.beta_fixed,
+            gamma_fixed=self.gamma_fixed,
+            sigma_fixed=self.sigma_fixed,
+            S0_fixed=True,
+            I0_fixed=True,
+            R0_fixed=True,
+            E0_fixed=True,
+            S0_max=5e6,
+            I0_max=5e6,
+            E0_max=10e6,
+            R0_max=10e6,
+        )
         self.parameters = parameters
 
-        self._model = EpidemicModel(SEIR, parameters=parameters, data=data, initial_conditions=initial_conditions,
-                                    fit_period=self.fit_period)
+        self._model = EpidemicModel(
+            SEIR,
+            parameters=parameters,
+            data=data,
+            initial_conditions=initial_conditions,
+            fit_period=self.fit_period,
+        )
         if self.fit:
             self._model.fit(verbose=False)
 
         t = np.arange((end_date - start_date).days + 1)
-        predict = self._model.solve(t, (self.s0(), self.e0(), self.i0(), self.r0()),
-                                    (self.beta(), self.gamma(), self.sigma(), n))
+        predict = self._model.solve(
+            t,
+            (self.s0(), self.e0(), self.i0(), self.r0()),
+            (self.beta(), self.gamma(), self.sigma(), n),
+        )
 
         predict_dates = pd.date_range(start_date, end_date)
 
@@ -1345,8 +1414,8 @@ class SEIRModel(SIRModel):
         :return: initial exposed individuals
         """
         if self.fit:
-            return self._model.fitted_parameters['E0']
-        return self.parameters['E0'].value
+            return self._model.fitted_parameters["E0"]
+        return self.parameters["E0"].value
 
     @plot_method
     def beta(self) -> float:
@@ -1356,8 +1425,8 @@ class SEIRModel(SIRModel):
         :return: beta
         """
         if self.fit:
-            return self._model.fitted_parameters['beta']
-        return self.parameters['beta'].value
+            return self._model.fitted_parameters["beta"]
+        return self.parameters["beta"].value
 
     @plot_method
     def gamma(self) -> float:
@@ -1367,8 +1436,8 @@ class SEIRModel(SIRModel):
         :return: gamma
         """
         if self.fit:
-            return self._model.fitted_parameters['gamma']
-        return self.parameters['gamma'].value
+            return self._model.fitted_parameters["gamma"]
+        return self.parameters["gamma"].value
 
     @plot_method
     def sigma(self) -> float:
@@ -1378,8 +1447,8 @@ class SEIRModel(SIRModel):
         :return: sigma
         """
         if self.fit:
-            return self._model.fitted_parameters['sigma']
-        return self.parameters['sigma'].value
+            return self._model.fitted_parameters["sigma"]
+        return self.parameters["sigma"].value
 
     @plot_method
     def predict_e(self) -> pd.Series:

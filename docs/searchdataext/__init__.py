@@ -1,9 +1,10 @@
 import json
 import os
-import sphinx.search
 from pathlib import Path
 
+import sphinx.search
 from docutils import nodes
+
 
 def setup(app):
     print("Adding searchdataext output")

@@ -18,9 +18,10 @@
 
 import math
 
+from gs_quant.errors import MqTypeError
+
 from .datetime import *
 from .helper import plot_function
-from gs_quant.errors import MqTypeError
 
 """
 Algebra library contains basic numerical and algebraic operations, including addition, division, multiplication,
@@ -29,17 +30,20 @@ division and other functions on timeseries
 
 
 class FilterOperator(Enum):
-    LESS = 'less_than'
-    GREATER = 'greater_than'
-    L_EQUALS = 'l_equals'
-    G_EQUALS = 'g_equals'
-    EQUALS = 'equals'
-    N_EQUALS = 'not_equals'
+    LESS = "less_than"
+    GREATER = "greater_than"
+    L_EQUALS = "l_equals"
+    G_EQUALS = "g_equals"
+    EQUALS = "equals"
+    N_EQUALS = "not_equals"
 
 
 @plot_function
-def add(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def add(
+    x: Union[pd.Series, Real],
+    y: Union[pd.Series, Real],
+    method: Interpolate = Interpolate.STEP,
+) -> Union[pd.Series, Real]:
     """
     Add two series or scalars
 
@@ -96,8 +100,11 @@ def add(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolat
 
 
 @plot_function
-def subtract(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def subtract(
+    x: Union[pd.Series, Real],
+    y: Union[pd.Series, Real],
+    method: Interpolate = Interpolate.STEP,
+) -> Union[pd.Series, Real]:
     """
     Add two series or scalars
 
@@ -156,8 +163,11 @@ def subtract(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Inter
 
 
 @plot_function
-def multiply(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def multiply(
+    x: Union[pd.Series, Real],
+    y: Union[pd.Series, Real],
+    method: Interpolate = Interpolate.STEP,
+) -> Union[pd.Series, Real]:
     """
     Multiply two series or scalars
 
@@ -214,8 +224,11 @@ def multiply(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Inter
 
 
 @plot_function
-def divide(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def divide(
+    x: Union[pd.Series, Real],
+    y: Union[pd.Series, Real],
+    method: Interpolate = Interpolate.STEP,
+) -> Union[pd.Series, Real]:
     """
     Divide two series or scalars
 
@@ -272,8 +285,11 @@ def divide(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpo
 
 
 @plot_function
-def floordiv(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def floordiv(
+    x: Union[pd.Series, Real],
+    y: Union[pd.Series, Real],
+    method: Interpolate = Interpolate.STEP,
+) -> Union[pd.Series, Real]:
     """
     Floor divide two series or scalars
 
@@ -551,7 +567,11 @@ def ceil(x: pd.Series, value: float = 0) -> pd.Series:
 
 
 @plot_function
-def filter_(x: pd.Series, operator: Optional[FilterOperator] = None, value: Optional[Real] = None) -> pd.Series:
+def filter_(
+    x: pd.Series,
+    operator: Optional[FilterOperator] = None,
+    value: Optional[Real] = None,
+) -> pd.Series:
     """
     Removes values where comparison with the operator and value combination results in true, defaults to removing
     missing values from the series
@@ -586,9 +606,9 @@ def filter_(x: pd.Series, operator: Optional[FilterOperator] = None, value: Opti
     """
 
     if value is None and operator is None:
-        x = x.dropna(axis=0, how='any')
+        x = x.dropna(axis=0, how="any")
     elif value is None:
-        raise MqValueError('No value is specified for the operator')
+        raise MqValueError("No value is specified for the operator")
     else:
         if operator == FilterOperator.EQUALS:
             remove = x == value
@@ -605,7 +625,7 @@ def filter_(x: pd.Series, operator: Optional[FilterOperator] = None, value: Opti
         else:
             if not isinstance(operator, str):
                 operator = str(operator)
-            raise MqValueError('Unexpected operator: ' + operator)
+            raise MqValueError("Unexpected operator: " + operator)
         x = x.drop(x[remove].index)
     return x
 
@@ -640,7 +660,7 @@ def smooth_spikes(x: pd.Series, threshold: float) -> pd.Series:
         return pd.Series()
 
     result = x.copy()
-    multiplier = (1 + threshold)
+    multiplier = 1 + threshold
     current, next_ = x.iloc[0:2]
     for i in range(1, len(x) - 1):
         previous = current
@@ -669,20 +689,20 @@ def repeat(x: pd.Series, n: int = 1) -> pd.Series:
     Fill missing values with last seen value e.g. to combine daily with weekly or monthly data.
     """
     if not 0 < n < 367:
-        raise MqValueError('n must be between 0 and 367')
-    index = pd.date_range(freq=f'{n}D', start=x.index[0], end=x.index[-1])
-    return x.reindex(index, method='ffill')
+        raise MqValueError("n must be between 0 and 367")
+    index = pd.date_range(freq=f"{n}D", start=x.index[0], end=x.index[-1])
+    return x.reindex(index, method="ffill")
 
 
 def _sum_boolean_series(*series):
     if not 2 <= len(series) <= 100:
-        raise MqValueError('expected between 2 and 100 arguments')
+        raise MqValueError("expected between 2 and 100 arguments")
 
     for s in series:
         if not isinstance(s, pd.Series):
-            raise MqTypeError('all arguments must be series')
+            raise MqTypeError("all arguments must be series")
         if not all(map(lambda a: a in (0, 1), s.values)):
-            raise MqValueError(f'cannot perform operation on series with value(s) other than 1 and 0: {s.values}')
+            raise MqValueError(f"cannot perform operation on series with value(s) other than 1 and 0: {s.values}")
 
     current = series[0].add(series[1], fill_value=0)
     for s in series[2:]:
@@ -723,7 +743,7 @@ def not_(series: pd.Series) -> pd.Series:
     :return: result series (of numeric type, with booleans represented as 1s and 0s)
     """
     if not all(map(lambda a: a in (0, 1), series.values)):
-        raise MqValueError(f'cannot negate series with value(s) other than 1 and 0: {series.values}')
+        raise MqValueError(f"cannot negate series with value(s) other than 1 and 0: {series.values}")
     return series.replace([0, 1], [1, 0])
 
 
@@ -746,7 +766,7 @@ def if_(flags: pd.Series, x: Union[pd.Series, float], y: Union[pd.Series, float]
         elif isinstance(s, pd.Series):
             return flags.align(s)
         else:
-            raise MqTypeError('expected a number or series')
+            raise MqTypeError("expected a number or series")
 
     x_flags, x = ensure_series(x)
     y_flags, y = ensure_series(y)

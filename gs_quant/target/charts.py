@@ -14,90 +14,91 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
-from typing import Tuple, Union
 from enum import Enum
+from typing import Tuple, Union
+
 from gs_quant.base import Base, EnumBase, InstrumentBase, camel_case_translate, get_enum_value
+from gs_quant.target.common import *
 
 
-class ChartFill(EnumBase, Enum):    
-    
+class ChartFill(EnumBase, Enum):
+
     """Chart Fill Type"""
 
-    _None = 'None'
-    Solid = 'Solid'
-    Gradient = 'Gradient'
-    
+    _None = "None"
+    Solid = "Solid"
+    Gradient = "Gradient"
+
     def __repr__(self):
         return self.value
 
 
-class ChartLineDrawType(EnumBase, Enum):    
-    
+class ChartLineDrawType(EnumBase, Enum):
+
     """Line Draw Type"""
 
-    Area = 'Area'
-    Bars = 'Bars'
-    Candlesticks = 'Candlesticks'
-    Lines = 'Lines'
-    StepAfter = 'StepAfter'
-    StepBefore = 'StepBefore'
-    StepLinear = 'StepLinear'
-    Volumes = 'Volumes'
-    
+    Area = "Area"
+    Bars = "Bars"
+    Candlesticks = "Candlesticks"
+    Lines = "Lines"
+    StepAfter = "StepAfter"
+    StepBefore = "StepBefore"
+    StepLinear = "StepLinear"
+    Volumes = "Volumes"
+
     def __repr__(self):
         return self.value
 
 
-class ChartLineType(EnumBase, Enum):    
-    
+class ChartLineType(EnumBase, Enum):
+
     """Line Type"""
 
-    Solid = 'Solid'
-    Knotted = 'Knotted'
-    Dashed = 'Dashed'
-    
+    Solid = "Solid"
+    Knotted = "Knotted"
+    Dashed = "Dashed"
+
     def __repr__(self):
         return self.value
 
 
-class ChartRegressionStrokeType(EnumBase, Enum):    
-    
+class ChartRegressionStrokeType(EnumBase, Enum):
+
     """Chart Regression Stroke Type"""
 
-    Line = 'Line'
-    Dash = 'Dash'
-    
+    Line = "Line"
+    Dash = "Dash"
+
     def __repr__(self):
         return self.value
 
 
-class ChartRegressionType(EnumBase, Enum):    
-    
+class ChartRegressionType(EnumBase, Enum):
+
     """Chart Regression Type"""
 
-    Linear = 'Linear'
-    Exponential = 'Exponential'
-    PlotData = 'PlotData'
-    
+    Linear = "Linear"
+    Exponential = "Exponential"
+    PlotData = "PlotData"
+
     def __repr__(self):
         return self.value
 
 
-class ChartType(EnumBase, Enum):    
-    
+class ChartType(EnumBase, Enum):
+
     """Chart Type"""
 
-    line = 'line'
-    scatter = 'scatter'
-    
+    line = "line"
+    scatter = "scatter"
+
     def __repr__(self):
         return self.value
 
 
 class ChartProperties(Base):
-        
+
     """An object which chart properties"""
 
     @camel_case_translate
@@ -109,8 +110,8 @@ class ChartProperties(Base):
         y_label: str = None,
         color: str = None,
         shape: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.x = x
         self.x_label = x_label
@@ -126,8 +127,8 @@ class ChartProperties(Base):
 
     @x.setter
     def x(self, value: str):
-        self._property_changed('x')
-        self.__x = value        
+        self._property_changed("x")
+        self.__x = value
 
     @property
     def x_label(self) -> str:
@@ -135,8 +136,8 @@ class ChartProperties(Base):
 
     @x_label.setter
     def x_label(self, value: str):
-        self._property_changed('x_label')
-        self.__x_label = value        
+        self._property_changed("x_label")
+        self.__x_label = value
 
     @property
     def y(self) -> str:
@@ -144,8 +145,8 @@ class ChartProperties(Base):
 
     @y.setter
     def y(self, value: str):
-        self._property_changed('y')
-        self.__y = value        
+        self._property_changed("y")
+        self.__y = value
 
     @property
     def y_label(self) -> str:
@@ -153,8 +154,8 @@ class ChartProperties(Base):
 
     @y_label.setter
     def y_label(self, value: str):
-        self._property_changed('y_label')
-        self.__y_label = value        
+        self._property_changed("y_label")
+        self.__y_label = value
 
     @property
     def color(self) -> str:
@@ -162,8 +163,8 @@ class ChartProperties(Base):
 
     @color.setter
     def color(self, value: str):
-        self._property_changed('color')
-        self.__color = value        
+        self._property_changed("color")
+        self.__color = value
 
     @property
     def shape(self) -> str:
@@ -171,21 +172,16 @@ class ChartProperties(Base):
 
     @shape.setter
     def shape(self, value: str):
-        self._property_changed('shape')
-        self.__shape = value        
+        self._property_changed("shape")
+        self.__shape = value
 
 
 class ChartShare(Base):
-        
+
     """Share With View Entitlement Object only for Chart"""
 
     @camel_case_translate
-    def __init__(
-        self,
-        guids: Tuple[str, ...] = None,
-        version: int = None,
-        name: str = None
-    ):        
+    def __init__(self, guids: Tuple[str, ...] = None, version: int = None, name: str = None):
         super().__init__()
         self.guids = guids
         self.version = version
@@ -198,8 +194,8 @@ class ChartShare(Base):
 
     @guids.setter
     def guids(self, value: Tuple[str, ...]):
-        self._property_changed('guids')
-        self.__guids = value        
+        self._property_changed("guids")
+        self.__guids = value
 
     @property
     def version(self) -> int:
@@ -208,22 +204,16 @@ class ChartShare(Base):
 
     @version.setter
     def version(self, value: int):
-        self._property_changed('version')
-        self.__version = value        
+        self._property_changed("version")
+        self.__version = value
 
 
 class ChartTime(Base):
-        
+
     """An object which contains all the time settings."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        start: str = None,
-        end: str = None,
-        timezone: str = None,
-        name: str = None
-    ):        
+    def __init__(self, start: str = None, end: str = None, timezone: str = None, name: str = None):
         super().__init__()
         self.start = start
         self.end = end
@@ -237,8 +227,8 @@ class ChartTime(Base):
 
     @start.setter
     def start(self, value: str):
-        self._property_changed('start')
-        self.__start = value        
+        self._property_changed("start")
+        self.__start = value
 
     @property
     def end(self) -> str:
@@ -247,8 +237,8 @@ class ChartTime(Base):
 
     @end.setter
     def end(self, value: str):
-        self._property_changed('end')
-        self.__end = value        
+        self._property_changed("end")
+        self.__end = value
 
     @property
     def timezone(self) -> str:
@@ -257,12 +247,12 @@ class ChartTime(Base):
 
     @timezone.setter
     def timezone(self, value: str):
-        self._property_changed('timezone')
-        self.__timezone = value        
+        self._property_changed("timezone")
+        self.__timezone = value
 
 
 class XAxisSettings(Base):
-        
+
     """An object which contains all the settings for the X axis"""
 
     @camel_case_translate
@@ -271,8 +261,8 @@ class XAxisSettings(Base):
         auto_fit_range_to_data: bool = None,
         show_grid_lines: bool = None,
         x_axis_date_format: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.auto_fit_range_to_data = auto_fit_range_to_data
         self.show_grid_lines = show_grid_lines
@@ -285,8 +275,8 @@ class XAxisSettings(Base):
 
     @auto_fit_range_to_data.setter
     def auto_fit_range_to_data(self, value: bool):
-        self._property_changed('auto_fit_range_to_data')
-        self.__auto_fit_range_to_data = value        
+        self._property_changed("auto_fit_range_to_data")
+        self.__auto_fit_range_to_data = value
 
     @property
     def show_grid_lines(self) -> bool:
@@ -294,8 +284,8 @@ class XAxisSettings(Base):
 
     @show_grid_lines.setter
     def show_grid_lines(self, value: bool):
-        self._property_changed('show_grid_lines')
-        self.__show_grid_lines = value        
+        self._property_changed("show_grid_lines")
+        self.__show_grid_lines = value
 
     @property
     def x_axis_date_format(self) -> str:
@@ -303,12 +293,12 @@ class XAxisSettings(Base):
 
     @x_axis_date_format.setter
     def x_axis_date_format(self, value: str):
-        self._property_changed('x_axis_date_format')
-        self.__x_axis_date_format = value        
+        self._property_changed("x_axis_date_format")
+        self.__x_axis_date_format = value
 
 
 class YAxisSettings(Base):
-        
+
     """An object which contains all the settings for a Y axis."""
 
     @camel_case_translate
@@ -321,8 +311,8 @@ class YAxisSettings(Base):
         max_: int = None,
         min_: int = None,
         show_grid_lines: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.decimal_precision = decimal_precision
         self.__id = id_
@@ -340,8 +330,8 @@ class YAxisSettings(Base):
 
     @decimal_precision.setter
     def decimal_precision(self, value: int):
-        self._property_changed('decimal_precision')
-        self.__decimal_precision = value        
+        self._property_changed("decimal_precision")
+        self.__decimal_precision = value
 
     @property
     def id(self) -> str:
@@ -350,8 +340,8 @@ class YAxisSettings(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def label(self) -> str:
@@ -360,8 +350,8 @@ class YAxisSettings(Base):
 
     @label.setter
     def label(self, value: str):
-        self._property_changed('label')
-        self.__label = value        
+        self._property_changed("label")
+        self.__label = value
 
     @property
     def label_format(self) -> str:
@@ -370,8 +360,8 @@ class YAxisSettings(Base):
 
     @label_format.setter
     def label_format(self, value: str):
-        self._property_changed('label_format')
-        self.__label_format = value        
+        self._property_changed("label_format")
+        self.__label_format = value
 
     @property
     def max(self) -> int:
@@ -380,8 +370,8 @@ class YAxisSettings(Base):
 
     @max.setter
     def max(self, value: int):
-        self._property_changed('max')
-        self.__max = value        
+        self._property_changed("max")
+        self.__max = value
 
     @property
     def min(self) -> int:
@@ -390,8 +380,8 @@ class YAxisSettings(Base):
 
     @min.setter
     def min(self, value: int):
-        self._property_changed('min')
-        self.__min = value        
+        self._property_changed("min")
+        self.__min = value
 
     @property
     def show_grid_lines(self) -> bool:
@@ -400,12 +390,12 @@ class YAxisSettings(Base):
 
     @show_grid_lines.setter
     def show_grid_lines(self, value: bool):
-        self._property_changed('show_grid_lines')
-        self.__show_grid_lines = value        
+        self._property_changed("show_grid_lines")
+        self.__show_grid_lines = value
 
 
 class ChartExpression(Base):
-        
+
     """An object which represent the single chart expression row"""
 
     @camel_case_translate
@@ -429,8 +419,8 @@ class ChartExpression(Base):
         line_width: float = None,
         x_label: str = None,
         y_label: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.axis = axis
         self.color = color
@@ -458,8 +448,8 @@ class ChartExpression(Base):
 
     @axis.setter
     def axis(self, value: str):
-        self._property_changed('axis')
-        self.__axis = value        
+        self._property_changed("axis")
+        self.__axis = value
 
     @property
     def color(self) -> str:
@@ -467,8 +457,8 @@ class ChartExpression(Base):
 
     @color.setter
     def color(self, value: str):
-        self._property_changed('color')
-        self.__color = value        
+        self._property_changed("color")
+        self.__color = value
 
     @property
     def delete_gap(self) -> bool:
@@ -476,8 +466,8 @@ class ChartExpression(Base):
 
     @delete_gap.setter
     def delete_gap(self, value: bool):
-        self._property_changed('delete_gap')
-        self.__delete_gap = value        
+        self._property_changed("delete_gap")
+        self.__delete_gap = value
 
     @property
     def delete_weekends(self) -> bool:
@@ -485,8 +475,8 @@ class ChartExpression(Base):
 
     @delete_weekends.setter
     def delete_weekends(self, value: bool):
-        self._property_changed('delete_weekends')
-        self.__delete_weekends = value        
+        self._property_changed("delete_weekends")
+        self.__delete_weekends = value
 
     @property
     def digits(self) -> float:
@@ -495,8 +485,8 @@ class ChartExpression(Base):
 
     @digits.setter
     def digits(self, value: float):
-        self._property_changed('digits')
-        self.__digits = value        
+        self._property_changed("digits")
+        self.__digits = value
 
     @property
     def disable(self) -> bool:
@@ -504,8 +494,8 @@ class ChartExpression(Base):
 
     @disable.setter
     def disable(self, value: bool):
-        self._property_changed('disable')
-        self.__disable = value        
+        self._property_changed("disable")
+        self.__disable = value
 
     @property
     def fill(self) -> Union[ChartFill, str]:
@@ -514,8 +504,8 @@ class ChartExpression(Base):
 
     @fill.setter
     def fill(self, value: Union[ChartFill, str]):
-        self._property_changed('fill')
-        self.__fill = get_enum_value(ChartFill, value)        
+        self._property_changed("fill")
+        self.__fill = get_enum_value(ChartFill, value)
 
     @property
     def has_x_grid(self) -> bool:
@@ -523,8 +513,8 @@ class ChartExpression(Base):
 
     @has_x_grid.setter
     def has_x_grid(self, value: bool):
-        self._property_changed('has_x_grid')
-        self.__has_x_grid = value        
+        self._property_changed("has_x_grid")
+        self.__has_x_grid = value
 
     @property
     def has_y_grid(self) -> bool:
@@ -532,8 +522,8 @@ class ChartExpression(Base):
 
     @has_y_grid.setter
     def has_y_grid(self, value: bool):
-        self._property_changed('has_y_grid')
-        self.__has_y_grid = value        
+        self._property_changed("has_y_grid")
+        self.__has_y_grid = value
 
     @property
     def show_statistics(self) -> bool:
@@ -541,8 +531,8 @@ class ChartExpression(Base):
 
     @show_statistics.setter
     def show_statistics(self, value: bool):
-        self._property_changed('show_statistics')
-        self.__show_statistics = value        
+        self._property_changed("show_statistics")
+        self.__show_statistics = value
 
     @property
     def hide(self) -> bool:
@@ -550,8 +540,8 @@ class ChartExpression(Base):
 
     @hide.setter
     def hide(self, value: bool):
-        self._property_changed('hide')
-        self.__hide = value        
+        self._property_changed("hide")
+        self.__hide = value
 
     @property
     def label(self) -> str:
@@ -559,8 +549,8 @@ class ChartExpression(Base):
 
     @label.setter
     def label(self, value: str):
-        self._property_changed('label')
-        self.__label = value        
+        self._property_changed("label")
+        self.__label = value
 
     @property
     def line_type(self) -> Union[ChartLineType, str]:
@@ -569,8 +559,8 @@ class ChartExpression(Base):
 
     @line_type.setter
     def line_type(self, value: Union[ChartLineType, str]):
-        self._property_changed('line_type')
-        self.__line_type = get_enum_value(ChartLineType, value)        
+        self._property_changed("line_type")
+        self.__line_type = get_enum_value(ChartLineType, value)
 
     @property
     def line_draw_type(self) -> Union[ChartLineDrawType, str]:
@@ -579,8 +569,8 @@ class ChartExpression(Base):
 
     @line_draw_type.setter
     def line_draw_type(self, value: Union[ChartLineDrawType, str]):
-        self._property_changed('line_draw_type')
-        self.__line_draw_type = get_enum_value(ChartLineDrawType, value)        
+        self._property_changed("line_draw_type")
+        self.__line_draw_type = get_enum_value(ChartLineDrawType, value)
 
     @property
     def line_transparency(self) -> float:
@@ -589,8 +579,8 @@ class ChartExpression(Base):
 
     @line_transparency.setter
     def line_transparency(self, value: float):
-        self._property_changed('line_transparency')
-        self.__line_transparency = value        
+        self._property_changed("line_transparency")
+        self.__line_transparency = value
 
     @property
     def line_width(self) -> float:
@@ -599,8 +589,8 @@ class ChartExpression(Base):
 
     @line_width.setter
     def line_width(self, value: float):
-        self._property_changed('line_width')
-        self.__line_width = value        
+        self._property_changed("line_width")
+        self.__line_width = value
 
     @property
     def x_label(self) -> str:
@@ -608,8 +598,8 @@ class ChartExpression(Base):
 
     @x_label.setter
     def x_label(self, value: str):
-        self._property_changed('x_label')
-        self.__x_label = value        
+        self._property_changed("x_label")
+        self.__x_label = value
 
     @property
     def y_label(self) -> str:
@@ -617,12 +607,12 @@ class ChartExpression(Base):
 
     @y_label.setter
     def y_label(self, value: str):
-        self._property_changed('y_label')
-        self.__y_label = value        
+        self._property_changed("y_label")
+        self.__y_label = value
 
 
 class ChartRegression(Base):
-        
+
     """An object which chart regression"""
 
     @camel_case_translate
@@ -634,8 +624,8 @@ class ChartRegression(Base):
         stroke_color: str = None,
         stroke_type: Union[ChartRegressionStrokeType, str] = None,
         stroke_width: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.__type = get_enum_value(ChartRegressionType, type_)
         self.line_data_index = line_data_index
@@ -652,19 +642,19 @@ class ChartRegression(Base):
 
     @type.setter
     def type(self, value: Union[ChartRegressionType, str]):
-        self._property_changed('type')
-        self.__type = get_enum_value(ChartRegressionType, value)        
+        self._property_changed("type")
+        self.__type = get_enum_value(ChartRegressionType, value)
 
     @property
     def line_data_index(self) -> int:
         """If Regression type is PlotData Type, line data index is required and it is the
-           index of the data that return from the plot runner"""
+        index of the data that return from the plot runner"""
         return self.__line_data_index
 
     @line_data_index.setter
     def line_data_index(self, value: int):
-        self._property_changed('line_data_index')
-        self.__line_data_index = value        
+        self._property_changed("line_data_index")
+        self.__line_data_index = value
 
     @property
     def is_visible(self) -> bool:
@@ -673,8 +663,8 @@ class ChartRegression(Base):
 
     @is_visible.setter
     def is_visible(self, value: bool):
-        self._property_changed('is_visible')
-        self.__is_visible = value        
+        self._property_changed("is_visible")
+        self.__is_visible = value
 
     @property
     def stroke_color(self) -> str:
@@ -682,8 +672,8 @@ class ChartRegression(Base):
 
     @stroke_color.setter
     def stroke_color(self, value: str):
-        self._property_changed('stroke_color')
-        self.__stroke_color = value        
+        self._property_changed("stroke_color")
+        self.__stroke_color = value
 
     @property
     def stroke_type(self) -> Union[ChartRegressionStrokeType, str]:
@@ -692,8 +682,8 @@ class ChartRegression(Base):
 
     @stroke_type.setter
     def stroke_type(self, value: Union[ChartRegressionStrokeType, str]):
-        self._property_changed('stroke_type')
-        self.__stroke_type = get_enum_value(ChartRegressionStrokeType, value)        
+        self._property_changed("stroke_type")
+        self.__stroke_type = get_enum_value(ChartRegressionStrokeType, value)
 
     @property
     def stroke_width(self) -> float:
@@ -702,12 +692,12 @@ class ChartRegression(Base):
 
     @stroke_width.setter
     def stroke_width(self, value: float):
-        self._property_changed('stroke_width')
-        self.__stroke_width = value        
+        self._property_changed("stroke_width")
+        self.__stroke_width = value
 
 
 class Chart(Base):
-        
+
     """Object representation of a Chart"""
 
     @camel_case_translate
@@ -743,8 +733,8 @@ class Chart(Base):
         draft_view_id: str = None,
         time_settings: ChartTime = None,
         x_axis_settings: XAxisSettings = None,
-        y_axes_settings: Tuple[YAxisSettings, ...] = None
-    ):        
+        y_axes_settings: Tuple[YAxisSettings, ...] = None,
+    ):
         super().__init__()
         self.__id = id_
         self.owner_id = owner_id
@@ -785,8 +775,8 @@ class Chart(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def owner_id(self) -> str:
@@ -795,8 +785,8 @@ class Chart(Base):
 
     @owner_id.setter
     def owner_id(self, value: str):
-        self._property_changed('owner_id')
-        self.__owner_id = value        
+        self._property_changed("owner_id")
+        self.__owner_id = value
 
     @property
     def created_by_id(self) -> str:
@@ -805,8 +795,8 @@ class Chart(Base):
 
     @created_by_id.setter
     def created_by_id(self, value: str):
-        self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self._property_changed("created_by_id")
+        self.__created_by_id = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -815,8 +805,8 @@ class Chart(Base):
 
     @created_time.setter
     def created_time(self, value: datetime.datetime):
-        self._property_changed('created_time')
-        self.__created_time = value        
+        self._property_changed("created_time")
+        self.__created_time = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -825,8 +815,8 @@ class Chart(Base):
 
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
-        self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self._property_changed("last_updated_by_id")
+        self.__last_updated_by_id = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -835,8 +825,8 @@ class Chart(Base):
 
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
-        self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self._property_changed("last_updated_time")
+        self.__last_updated_time = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -845,8 +835,8 @@ class Chart(Base):
 
     @entitlements.setter
     def entitlements(self, value: Entitlements):
-        self._property_changed('entitlements')
-        self.__entitlements = value        
+        self._property_changed("entitlements")
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -855,8 +845,8 @@ class Chart(Base):
 
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
-        self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self._property_changed("entitlement_exclusions")
+        self.__entitlement_exclusions = value
 
     @property
     def name(self) -> str:
@@ -865,8 +855,8 @@ class Chart(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def folder_name(self) -> str:
@@ -875,8 +865,8 @@ class Chart(Base):
 
     @folder_name.setter
     def folder_name(self, value: str):
-        self._property_changed('folder_name')
-        self.__folder_name = value        
+        self._property_changed("folder_name")
+        self.__folder_name = value
 
     @property
     def description(self) -> str:
@@ -885,8 +875,8 @@ class Chart(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def expressions(self) -> Tuple[ChartExpression, ...]:
@@ -895,8 +885,8 @@ class Chart(Base):
 
     @expressions.setter
     def expressions(self, value: Tuple[ChartExpression, ...]):
-        self._property_changed('expressions')
-        self.__expressions = value        
+        self._property_changed("expressions")
+        self.__expressions = value
 
     @property
     def chart_type(self) -> Union[ChartType, str]:
@@ -904,8 +894,8 @@ class Chart(Base):
 
     @chart_type.setter
     def chart_type(self, value: Union[ChartType, str]):
-        self._property_changed('chart_type')
-        self.__chart_type = get_enum_value(ChartType, value)        
+        self._property_changed("chart_type")
+        self.__chart_type = get_enum_value(ChartType, value)
 
     @property
     def chart_properties(self) -> Tuple[ChartProperties, ...]:
@@ -914,8 +904,8 @@ class Chart(Base):
 
     @chart_properties.setter
     def chart_properties(self, value: Tuple[ChartProperties, ...]):
-        self._property_changed('chart_properties')
-        self.__chart_properties = value        
+        self._property_changed("chart_properties")
+        self.__chart_properties = value
 
     @property
     def regression_properties(self) -> Tuple[ChartRegression, ...]:
@@ -924,8 +914,8 @@ class Chart(Base):
 
     @regression_properties.setter
     def regression_properties(self, value: Tuple[ChartRegression, ...]):
-        self._property_changed('regression_properties')
-        self.__regression_properties = value        
+        self._property_changed("regression_properties")
+        self.__regression_properties = value
 
     @property
     def interval(self) -> str:
@@ -934,8 +924,8 @@ class Chart(Base):
 
     @interval.setter
     def interval(self, value: str):
-        self._property_changed('interval')
-        self.__interval = value        
+        self._property_changed("interval")
+        self.__interval = value
 
     @property
     def relative_start_date(self) -> str:
@@ -943,8 +933,8 @@ class Chart(Base):
 
     @relative_start_date.setter
     def relative_start_date(self, value: str):
-        self._property_changed('relative_start_date')
-        self.__relative_start_date = value        
+        self._property_changed("relative_start_date")
+        self.__relative_start_date = value
 
     @property
     def relative_end_date(self) -> str:
@@ -952,8 +942,8 @@ class Chart(Base):
 
     @relative_end_date.setter
     def relative_end_date(self, value: str):
-        self._property_changed('relative_end_date')
-        self.__relative_end_date = value        
+        self._property_changed("relative_end_date")
+        self.__relative_end_date = value
 
     @property
     def start_date(self) -> datetime.date:
@@ -961,8 +951,8 @@ class Chart(Base):
 
     @start_date.setter
     def start_date(self, value: datetime.date):
-        self._property_changed('start_date')
-        self.__start_date = value        
+        self._property_changed("start_date")
+        self.__start_date = value
 
     @property
     def end_date(self) -> datetime.date:
@@ -970,8 +960,8 @@ class Chart(Base):
 
     @end_date.setter
     def end_date(self, value: datetime.date):
-        self._property_changed('end_date')
-        self.__end_date = value        
+        self._property_changed("end_date")
+        self.__end_date = value
 
     @property
     def start_time(self) -> datetime.datetime:
@@ -979,8 +969,8 @@ class Chart(Base):
 
     @start_time.setter
     def start_time(self, value: datetime.datetime):
-        self._property_changed('start_time')
-        self.__start_time = value        
+        self._property_changed("start_time")
+        self.__start_time = value
 
     @property
     def end_time(self) -> datetime.datetime:
@@ -988,30 +978,30 @@ class Chart(Base):
 
     @end_time.setter
     def end_time(self, value: datetime.datetime):
-        self._property_changed('end_time')
-        self.__end_time = value        
+        self._property_changed("end_time")
+        self.__end_time = value
 
     @property
     def tags(self) -> Tuple[str, ...]:
         """Metadata associated with the object. Provide an array of strings which will be
-           indexed for search and locating related objects"""
+        indexed for search and locating related objects"""
         return self.__tags
 
     @tags.setter
     def tags(self, value: Tuple[str, ...]):
-        self._property_changed('tags')
-        self.__tags = value        
+        self._property_changed("tags")
+        self.__tags = value
 
     @property
     def auto_tags(self) -> Tuple[str, ...]:
         """Metadata associated with the object. Provide an array of strings which will be
-           indexed for search and locating related objects"""
+        indexed for search and locating related objects"""
         return self.__auto_tags
 
     @auto_tags.setter
     def auto_tags(self, value: Tuple[str, ...]):
-        self._property_changed('auto_tags')
-        self.__auto_tags = value        
+        self._property_changed("auto_tags")
+        self.__auto_tags = value
 
     @property
     def show_statistics(self) -> bool:
@@ -1020,8 +1010,8 @@ class Chart(Base):
 
     @show_statistics.setter
     def show_statistics(self, value: bool):
-        self._property_changed('show_statistics')
-        self.__show_statistics = value        
+        self._property_changed("show_statistics")
+        self.__show_statistics = value
 
     @property
     def copy_from_id(self) -> str:
@@ -1030,8 +1020,8 @@ class Chart(Base):
 
     @copy_from_id.setter
     def copy_from_id(self, value: str):
-        self._property_changed('copy_from_id')
-        self.__copy_from_id = value        
+        self._property_changed("copy_from_id")
+        self.__copy_from_id = value
 
     @property
     def version(self) -> int:
@@ -1040,8 +1030,8 @@ class Chart(Base):
 
     @version.setter
     def version(self, value: int):
-        self._property_changed('version')
-        self.__version = value        
+        self._property_changed("version")
+        self.__version = value
 
     @property
     def draft_view_id(self) -> str:
@@ -1050,8 +1040,8 @@ class Chart(Base):
 
     @draft_view_id.setter
     def draft_view_id(self, value: str):
-        self._property_changed('draft_view_id')
-        self.__draft_view_id = value        
+        self._property_changed("draft_view_id")
+        self.__draft_view_id = value
 
     @property
     def time_settings(self) -> ChartTime:
@@ -1060,8 +1050,8 @@ class Chart(Base):
 
     @time_settings.setter
     def time_settings(self, value: ChartTime):
-        self._property_changed('time_settings')
-        self.__time_settings = value        
+        self._property_changed("time_settings")
+        self.__time_settings = value
 
     @property
     def x_axis_settings(self) -> XAxisSettings:
@@ -1070,8 +1060,8 @@ class Chart(Base):
 
     @x_axis_settings.setter
     def x_axis_settings(self, value: XAxisSettings):
-        self._property_changed('x_axis_settings')
-        self.__x_axis_settings = value        
+        self._property_changed("x_axis_settings")
+        self.__x_axis_settings = value
 
     @property
     def y_axes_settings(self) -> Tuple[YAxisSettings, ...]:
@@ -1080,5 +1070,5 @@ class Chart(Base):
 
     @y_axes_settings.setter
     def y_axes_settings(self, value: Tuple[YAxisSettings, ...]):
-        self._property_changed('y_axes_settings')
-        self.__y_axes_settings = value        
+        self._property_changed("y_axes_settings")
+        self.__y_axes_settings = value

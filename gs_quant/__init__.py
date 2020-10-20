@@ -17,7 +17,7 @@ under the License.
 from ._version import get_versions
 
 name = "gs_quant"
-__version__ = get_versions()['version']
+__version__ = get_versions()["version"]
 del get_versions
 
 version = __version__
@@ -25,6 +25,7 @@ version = __version__
 # Set up PyXll, if available
 try:
     from .xl_interface.instrument_generation import install_hook
+
     install_hook()
 except ModuleNotFoundError:
     pass
@@ -32,9 +33,11 @@ except ModuleNotFoundError:
 # Jupyter needs nest_asyncio to avoid event loop issues
 try:
     from IPython import get_ipython
+
     ipython = get_ipython()
-    if ipython and 'IPKernelApp' in get_ipython().config:
+    if ipython and "IPKernelApp" in get_ipython().config:
         import nest_asyncio
+
         nest_asyncio.apply()
 except ImportError:
     pass

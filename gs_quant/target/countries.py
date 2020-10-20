@@ -14,14 +14,15 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
 from typing import Tuple, Union
+
 from gs_quant.base import Base, InstrumentBase, camel_case_translate, get_enum_value
+from gs_quant.target.common import *
 
 
 class CountryXref(Base):
-        
+
     """Historical references used for a country."""
 
     @camel_case_translate
@@ -31,8 +32,8 @@ class CountryXref(Base):
         alpha3: str,
         country_code: str,
         bbid: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.alpha2 = alpha2
         self.alpha3 = alpha3
@@ -47,8 +48,8 @@ class CountryXref(Base):
 
     @alpha2.setter
     def alpha2(self, value: str):
-        self._property_changed('alpha2')
-        self.__alpha2 = value        
+        self._property_changed("alpha2")
+        self.__alpha2 = value
 
     @property
     def alpha3(self) -> str:
@@ -57,8 +58,8 @@ class CountryXref(Base):
 
     @alpha3.setter
     def alpha3(self, value: str):
-        self._property_changed('alpha3')
-        self.__alpha3 = value        
+        self._property_changed("alpha3")
+        self.__alpha3 = value
 
     @property
     def bbid(self) -> str:
@@ -67,8 +68,8 @@ class CountryXref(Base):
 
     @bbid.setter
     def bbid(self, value: str):
-        self._property_changed('bbid')
-        self.__bbid = value        
+        self._property_changed("bbid")
+        self.__bbid = value
 
     @property
     def country_code(self) -> str:
@@ -77,12 +78,12 @@ class CountryXref(Base):
 
     @country_code.setter
     def country_code(self, value: str):
-        self._property_changed('country_code')
-        self.__country_code = value        
+        self._property_changed("country_code")
+        self.__country_code = value
 
 
 class Subdivision(Base):
-        
+
     """A marquee subdivision (or state) object"""
 
     @camel_case_translate
@@ -96,8 +97,8 @@ class Subdivision(Base):
         created_by_id: str = None,
         last_updated_by_id: str = None,
         owner_id: str = None,
-        entitlements: Entitlements = None
-    ):        
+        entitlements: Entitlements = None,
+    ):
         super().__init__()
         self.__id = id_
         self.country_id = country_id
@@ -116,8 +117,8 @@ class Subdivision(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def country_id(self) -> str:
@@ -126,8 +127,8 @@ class Subdivision(Base):
 
     @country_id.setter
     def country_id(self, value: str):
-        self._property_changed('country_id')
-        self.__country_id = value        
+        self._property_changed("country_id")
+        self.__country_id = value
 
     @property
     def name(self) -> str:
@@ -136,8 +137,8 @@ class Subdivision(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -146,8 +147,8 @@ class Subdivision(Base):
 
     @created_time.setter
     def created_time(self, value: datetime.datetime):
-        self._property_changed('created_time')
-        self.__created_time = value        
+        self._property_changed("created_time")
+        self.__created_time = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -156,8 +157,8 @@ class Subdivision(Base):
 
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
-        self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self._property_changed("last_updated_time")
+        self.__last_updated_time = value
 
     @property
     def created_by_id(self) -> str:
@@ -166,8 +167,8 @@ class Subdivision(Base):
 
     @created_by_id.setter
     def created_by_id(self, value: str):
-        self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self._property_changed("created_by_id")
+        self.__created_by_id = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -176,8 +177,8 @@ class Subdivision(Base):
 
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
-        self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self._property_changed("last_updated_by_id")
+        self.__last_updated_by_id = value
 
     @property
     def owner_id(self) -> str:
@@ -185,8 +186,8 @@ class Subdivision(Base):
 
     @owner_id.setter
     def owner_id(self, value: str):
-        self._property_changed('owner_id')
-        self.__owner_id = value        
+        self._property_changed("owner_id")
+        self.__owner_id = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -195,12 +196,12 @@ class Subdivision(Base):
 
     @entitlements.setter
     def entitlements(self, value: Entitlements):
-        self._property_changed('entitlements')
-        self.__entitlements = value        
+        self._property_changed("entitlements")
+        self.__entitlements = value
 
 
 class Country(Base):
-        
+
     """A marquee country object"""
 
     @camel_case_translate
@@ -218,8 +219,8 @@ class Country(Base):
         created_by_id: str = None,
         last_updated_by_id: str = None,
         owner_id: str = None,
-        entitlements: Entitlements = None
-    ):        
+        entitlements: Entitlements = None,
+    ):
         super().__init__()
         self.__id = id_
         self.name = name
@@ -242,8 +243,8 @@ class Country(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def name(self) -> str:
@@ -252,8 +253,8 @@ class Country(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -262,8 +263,8 @@ class Country(Base):
 
     @created_time.setter
     def created_time(self, value: datetime.datetime):
-        self._property_changed('created_time')
-        self.__created_time = value        
+        self._property_changed("created_time")
+        self.__created_time = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -272,8 +273,8 @@ class Country(Base):
 
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
-        self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self._property_changed("last_updated_time")
+        self.__last_updated_time = value
 
     @property
     def created_by_id(self) -> str:
@@ -282,8 +283,8 @@ class Country(Base):
 
     @created_by_id.setter
     def created_by_id(self, value: str):
-        self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self._property_changed("created_by_id")
+        self.__created_by_id = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -292,8 +293,8 @@ class Country(Base):
 
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
-        self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self._property_changed("last_updated_by_id")
+        self.__last_updated_by_id = value
 
     @property
     def owner_id(self) -> str:
@@ -301,8 +302,8 @@ class Country(Base):
 
     @owner_id.setter
     def owner_id(self, value: str):
-        self._property_changed('owner_id')
-        self.__owner_id = value        
+        self._property_changed("owner_id")
+        self.__owner_id = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -311,8 +312,8 @@ class Country(Base):
 
     @entitlements.setter
     def entitlements(self, value: Entitlements):
-        self._property_changed('entitlements')
-        self.__entitlements = value        
+        self._property_changed("entitlements")
+        self.__entitlements = value
 
     @property
     def region(self) -> str:
@@ -321,8 +322,8 @@ class Country(Base):
 
     @region.setter
     def region(self, value: str):
-        self._property_changed('region')
-        self.__region = value        
+        self._property_changed("region")
+        self.__region = value
 
     @property
     def sub_region(self) -> str:
@@ -331,8 +332,8 @@ class Country(Base):
 
     @sub_region.setter
     def sub_region(self, value: str):
-        self._property_changed('sub_region')
-        self.__sub_region = value        
+        self._property_changed("sub_region")
+        self.__sub_region = value
 
     @property
     def region_code(self) -> str:
@@ -341,8 +342,8 @@ class Country(Base):
 
     @region_code.setter
     def region_code(self, value: str):
-        self._property_changed('region_code')
-        self.__region_code = value        
+        self._property_changed("region_code")
+        self.__region_code = value
 
     @property
     def sub_region_code(self) -> str:
@@ -351,8 +352,8 @@ class Country(Base):
 
     @sub_region_code.setter
     def sub_region_code(self, value: str):
-        self._property_changed('sub_region_code')
-        self.__sub_region_code = value        
+        self._property_changed("sub_region_code")
+        self.__sub_region_code = value
 
     @property
     def xref(self) -> CountryXref:
@@ -361,5 +362,5 @@ class Country(Base):
 
     @xref.setter
     def xref(self, value: CountryXref):
-        self._property_changed('xref')
-        self.__xref = value        
+        self._property_changed("xref")
+        self.__xref = value

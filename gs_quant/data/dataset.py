@@ -15,7 +15,7 @@ under the License.
 """
 import datetime as dt
 from enum import Enum
-from typing import Iterable, Optional, Union, List
+from typing import Iterable, List, Optional, Union
 
 import pandas as pd
 
@@ -31,30 +31,30 @@ class Dataset:
         pass
 
     class GS(Vendor):
-        HOLIDAY = 'HOLIDAY'
-        EDRVOL_PERCENT_INTRADAY = 'EDRVOL_PERCENT_INTRADAY'
-        EDRVOL_PERCENT_STANDARD = 'EDRVOL_PERCENT_STANDARD'
-        MA_RANK = 'MA_RANK'
-        EDRVS_INDEX_SHORT = 'EDRVS_INDEX_SHORT'
-        EDRVS_INDEX_LONG = 'EDRVS_INDEX_LONG'
+        HOLIDAY = "HOLIDAY"
+        EDRVOL_PERCENT_INTRADAY = "EDRVOL_PERCENT_INTRADAY"
+        EDRVOL_PERCENT_STANDARD = "EDRVOL_PERCENT_STANDARD"
+        MA_RANK = "MA_RANK"
+        EDRVS_INDEX_SHORT = "EDRVS_INDEX_SHORT"
+        EDRVS_INDEX_LONG = "EDRVS_INDEX_LONG"
 
         # Baskets
-        CBGSSI = 'CBGSSI'
-        CB = 'CB'
+        CBGSSI = "CBGSSI"
+        CB = "CB"
 
         # STS
-        STSLEVELS = 'STSLEVELS'
+        STSLEVELS = "STSLEVELS"
 
         # Test Datasets
-        WEATHER = 'WEATHER'
+        WEATHER = "WEATHER"
 
     class TR(Vendor):
-        TREOD = 'TREOD'
-        TR = 'TR'
-        TR_FXSPOT = 'TR_FXSPOT'
+        TREOD = "TREOD"
+        TR = "TR"
+        TR_FXSPOT = "TR_FXSPOT"
 
     class FRED(Vendor):
-        GDP = 'GDP'
+        GDP = "GDP"
 
     def __init__(self, dataset_id: Union[str, Vendor], provider: DataApi = None):
         """
@@ -82,17 +82,18 @@ class Dataset:
     @property
     def provider(self):
         from gs_quant.api.gs.data import GsDataApi
+
         return self.__provider or GsDataApi
 
     def get_data(
-            self,
-            start: Optional[Union[dt.date, dt.datetime]] = None,
-            end: Optional[Union[dt.date, dt.datetime]] = None,
-            as_of: Optional[dt.datetime] = None,
-            since: Optional[dt.datetime] = None,
-            fields: Optional[Iterable[Union[str, Fields]]] = None,
-            asset_id_type: str = None,
-            **kwargs
+        self,
+        start: Optional[Union[dt.date, dt.datetime]] = None,
+        end: Optional[Union[dt.date, dt.datetime]] = None,
+        as_of: Optional[dt.datetime] = None,
+        since: Optional[dt.datetime] = None,
+        fields: Optional[Iterable[Union[str, Fields]]] = None,
+        asset_id_type: str = None,
+        **kwargs
     ) -> pd.DataFrame:
         """
         Get data for the given range and parameters
@@ -116,26 +117,19 @@ class Dataset:
 
         field_names = None if fields is None else list(map(lambda f: f if isinstance(f, str) else f.value, fields))
 
-        query = self.provider.build_query(
-            start=start,
-            end=end,
-            as_of=as_of,
-            since=since,
-            fields=field_names,
-            **kwargs
-        )
+        query = self.provider.build_query(start=start, end=end, as_of=as_of, since=since, fields=field_names, **kwargs)
         data = self.provider.query_data(query, self.id, asset_id_type=asset_id_type)
 
         return self.provider.construct_dataframe_with_types(self.id, data)
 
     def get_data_series(
-            self,
-            field: Union[str, Fields],
-            start: Optional[Union[dt.date, dt.datetime]] = None,
-            end: Optional[Union[dt.date, dt.datetime]] = None,
-            as_of: Optional[dt.datetime] = None,
-            since: Optional[dt.datetime] = None,
-            **kwargs
+        self,
+        field: Union[str, Fields],
+        start: Optional[Union[dt.date, dt.datetime]] = None,
+        end: Optional[Union[dt.date, dt.datetime]] = None,
+        as_of: Optional[dt.datetime] = None,
+        since: Optional[dt.datetime] = None,
+        **kwargs
     ) -> pd.Series:
         """
         Get a time series of data for a field of a dataset
@@ -161,17 +155,12 @@ class Dataset:
         field_value = field if isinstance(field, str) else field.value
 
         query = self.provider.build_query(
-            start=start,
-            end=end,
-            as_of=as_of,
-            since=since,
-            fields=(field_value,),
-            **kwargs
+            start=start, end=end, as_of=as_of, since=since, fields=(field_value,), **kwargs
         )
 
         symbol_dimensions = self.provider.symbol_dimensions(self.id)
         if len(symbol_dimensions) != 1:
-            raise MqValueError('get_data_series only valid for symbol_dimensions of length 1')
+            raise MqValueError("get_data_series only valid for symbol_dimensions of length 1")
 
         symbol_dimension = symbol_dimensions[0]
         data = self.provider.query_data(query, self.id)
@@ -182,18 +171,18 @@ class Dataset:
         if isinstance(self.provider, GsDataApi):
             gb = df.groupby(symbol_dimension)
             if len(gb.groups) > 1:
-                raise MqValueError('Not a series for a single {}'.format(symbol_dimension))
+                raise MqValueError("Not a series for a single {}".format(symbol_dimension))
 
         if df.empty:
             return pd.Series()
         return pd.Series(index=df.index, data=df.loc[:, field_value].values)
 
     def get_data_last(
-            self,
-            as_of: Optional[Union[dt.date, dt.datetime]],
-            start: Optional[Union[dt.date, dt.datetime]] = None,
-            fields: Optional[Iterable[str]] = None,
-            **kwargs
+        self,
+        as_of: Optional[Union[dt.date, dt.datetime]],
+        start: Optional[Union[dt.date, dt.datetime]] = None,
+        fields: Optional[Iterable[str]] = None,
+        **kwargs
     ) -> pd.DataFrame:
         """
         Get the last point for this DataSet, at or before as_of
@@ -212,25 +201,14 @@ class Dataset:
         >>> weather = Dataset('WEATHER')
         >>> last = weather.get_data_last(dt.datetime.now())
         """
-        query = self.provider.build_query(
-            start=start,
-            end=as_of,
-            fields=fields,
-            format='JSON',
-            **kwargs
-        )
+        query = self.provider.build_query(start=start, end=as_of, fields=fields, format="JSON", **kwargs)
         query.format = None  # "last" endpoint does not support MessagePack
 
         data = self.provider.last_data(query, self.id)
         return self.provider.construct_dataframe_with_types(self.id, data)
 
     def get_coverage(
-            self,
-            limit: int = None,
-            offset: int = None,
-            fields: List[str] = None,
-            include_history: bool = False,
-            **kwargs
+        self, limit: int = None, offset: int = None, fields: List[str] = None, include_history: bool = False, **kwargs
     ) -> pd.DataFrame:
         """
         Get the assets covered by this DataSet
@@ -249,12 +227,7 @@ class Dataset:
         >>> cities = weather.get_coverage()
         """
         coverage = self.provider.get_coverage(
-            self.id,
-            limit=limit,
-            offset=offset,
-            fields=fields,
-            include_history=include_history,
-            **kwargs
+            self.id, limit=limit, offset=offset, fields=fields, include_history=include_history, **kwargs
         )
 
         return pd.DataFrame(coverage)

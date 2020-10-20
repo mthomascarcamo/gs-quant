@@ -14,16 +14,17 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.data import Dataset, DataCoordinate, DataMeasure, DataDimension
 import pytest
+
+from gs_quant.data import DataCoordinate, DataDimension, DataMeasure, Dataset
 
 
 def test_immutability():
 
     dimensions = {
-        DataDimension.TENOR: '1m',
-        DataDimension.STRIKE_REFERENCE: 'Delta',
-        DataDimension.RELATIVE_STRIKE: 50
+        DataDimension.TENOR: "1m",
+        DataDimension.STRIKE_REFERENCE: "Delta",
+        DataDimension.RELATIVE_STRIKE: 50,
     }
 
     coord1 = DataCoordinate(Dataset.GS.EDRVOL_PERCENT_STANDARD, DataMeasure.IMPLIED_VOLATILITY, dimensions)
@@ -33,15 +34,15 @@ def test_immutability():
     assert coord1 == coord2
 
     with pytest.raises(AttributeError):
-        coord1.dataset_id = 'test'
+        coord1.dataset_id = "test"
 
     with pytest.raises(AttributeError):
         coord1.dimensions = {}
 
     with pytest.raises(AttributeError):
-        coord1.measure = 'test'
+        coord1.measure = "test"
 
-    dimensions[DataDimension.TENOR] = '2m'
+    dimensions[DataDimension.TENOR] = "2m"
 
     coord3 = DataCoordinate(Dataset.GS.EDRVOL_PERCENT_STANDARD, DataMeasure.IMPLIED_VOLATILITY, dimensions)
 

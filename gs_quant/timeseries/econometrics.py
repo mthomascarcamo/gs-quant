@@ -14,21 +14,24 @@
 # Chart Service will attempt to make public functions (not prefixed with _) from this module available. Such functions
 # should be fully documented: docstrings should describe parameters and the return value, and provide a 1-line
 # description. Type annotations should be provided for parameters.
-from .statistics import *
-from ..errors import *
 import itertools
 from dataclasses import dataclass
-from typing import Union, Tuple
+from typing import Tuple, Union
+
 import numpy as np
 import pandas as pd
-from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.tools.eval_measures import mse
+from statsmodels.tsa.arima_model import ARIMA
+
 from gs_quant.api.gs.data import GsDataApi
 from gs_quant.data import DataContext
 from gs_quant.datetime.date import DayCountConvention
 from gs_quant.markets.securities import Asset
 from gs_quant.target.common import Currency
 from gs_quant.timeseries.datetime import align
+
+from ..errors import *
+from .statistics import *
 
 """
 Econometrics timeseries library is for standard economic and time series analytics operations, including returns,
@@ -46,13 +49,13 @@ class AnnualizationFactor(IntEnum):
 
 
 class SharpeAssets(Enum):
-    USD = 'MAP35DA6K5B1YXGX'
-    AUD = 'MAFRZWJ790MQY0EW'
-    CHF = 'MAS0NN4ZX7NYXB36'
-    EUR = 'MA95W0N1214395N8'
-    GBP = 'MA41ZEFTWR8Q7HBM'
-    JPY = 'MA8GXV3SJ0TXH1JV'
-    SEK = 'MAGNZZY0GJ4TATNG'
+    USD = "MAP35DA6K5B1YXGX"
+    AUD = "MAFRZWJ790MQY0EW"
+    CHF = "MAS0NN4ZX7NYXB36"
+    EUR = "MA95W0N1214395N8"
+    GBP = "MA41ZEFTWR8Q7HBM"
+    JPY = "MA8GXV3SJ0TXH1JV"
+    SEK = "MAGNZZY0GJ4TATNG"
 
 
 def excess_returns_pure(price_series: pd.Series, spot_curve: pd.Series) -> pd.Series:
@@ -65,8 +68,12 @@ def excess_returns_pure(price_series: pd.Series, spot_curve: pd.Series) -> pd.Se
     return pd.Series(e_returns, index=curve.index)
 
 
-def excess_returns(price_series: pd.Series, benchmark_or_rate: Union[Asset, Currency, float], *,
-                   day_count_convention=DayCountConvention.ACTUAL_360) -> pd.Series:
+def excess_returns(
+    price_series: pd.Series,
+    benchmark_or_rate: Union[Asset, Currency, float],
+    *,
+    day_count_convention=DayCountConvention.ACTUAL_360,
+) -> pd.Series:
     if isinstance(benchmark_or_rate, float):
         er = [price_series.iloc[0]]
         for j in range(1, len(price_series)):
@@ -86,31 +93,43 @@ def excess_returns(price_series: pd.Series, benchmark_or_rate: Union[Asset, Curr
         q = GsDataApi.build_market_data_query([marquee_id], QueryType.SPOT)
         df = GsDataApi.get_market_data(q)
     if df.empty:
-        raise MqValueError(f'could not retrieve risk-free rate {marquee_id}')
+        raise MqValueError(f"could not retrieve risk-free rate {marquee_id}")
 
-    return excess_returns_pure(price_series, df['spot'])
+    return excess_returns_pure(price_series, df["spot"])
 
 
 def _annualized_return(levels: pd.Series, rolling: int) -> pd.Series:
     starting = [0] * rolling
     starting.extend([a for a in range(1, len(levels) - rolling + 1)])
     points = list(
-        map(lambda d, v, i: pow(v / levels[i], 365.25 / (d - levels.index[i]).days) - 1, levels.index[1:],
-            levels.values[1:], starting[1:]))
+        map(
+            lambda d, v, i: pow(v / levels[i], 365.25 / (d - levels.index[i]).days) - 1,
+            levels.index[1:],
+            levels.values[1:],
+            starting[1:],
+        )
+    )
     points.insert(0, 0)
     return pd.Series(points, index=levels.index)
 
 
 def get_ratio_pure(er: pd.Series, w: Union[Window, int, str]) -> pd.Series:
-    w = normalize_window(er, w or None)  # continue to support 0 as an input for window
+    # continue to support 0 as an input for window
+    w = normalize_window(er, w or None)
     ann_return = _annualized_return(er, w.w)
     ann_vol = volatility(er, w.w).iloc[1:] if w.w < len(er) else volatility(er)
     result = ann_return / ann_vol * 100
     return apply_ramp(result, w)
 
 
-def _get_ratio(input_series: pd.Series, benchmark_or_rate: Union[Asset, float, str], w: Union[Window, int, str], *,
-               day_count_convention: DayCountConvention, curve_type: CurveType = CurveType.PRICES) -> pd.Series:
+def _get_ratio(
+    input_series: pd.Series,
+    benchmark_or_rate: Union[Asset, float, str],
+    w: Union[Window, int, str],
+    *,
+    day_count_convention: DayCountConvention,
+    curve_type: CurveType = CurveType.PRICES,
+) -> pd.Series:
     if curve_type == CurveType.PRICES:
         er = excess_returns(input_series, benchmark_or_rate, day_count_convention=day_count_convention)
     else:
@@ -153,12 +172,20 @@ def excess_returns_(price_series: pd.Series, currency: RiskFreeRateCurrency) -> 
 
     >>> er = excess_returns(generate_series(100), RiskFreeRateCurrency.USD)
     """
-    return excess_returns(price_series, Currency(currency.value), day_count_convention=DayCountConvention.ACTUAL_360)
+    return excess_returns(
+        price_series,
+        Currency(currency.value),
+        day_count_convention=DayCountConvention.ACTUAL_360,
+    )
 
 
 @plot_session_function
-def sharpe_ratio(series: pd.Series, currency: RiskFreeRateCurrency, w: Union[Window, int] = None,
-                 curve_type: CurveType = CurveType.PRICES) -> pd.Series:
+def sharpe_ratio(
+    series: pd.Series,
+    currency: RiskFreeRateCurrency,
+    w: Union[Window, int] = None,
+    curve_type: CurveType = CurveType.PRICES,
+) -> pd.Series:
     """
     Calculate Sharpe ratio
 
@@ -192,8 +219,13 @@ def sharpe_ratio(series: pd.Series, currency: RiskFreeRateCurrency, w: Union[Win
 
     :func:`volatility`
     """
-    return _get_ratio(series, Currency(currency.value), w, day_count_convention=DayCountConvention.ACTUAL_360,
-                      curve_type=curve_type)
+    return _get_ratio(
+        series,
+        Currency(currency.value),
+        w,
+        day_count_convention=DayCountConvention.ACTUAL_360,
+        curve_type=curve_type,
+    )
 
 
 @plot_function
@@ -265,7 +297,7 @@ def returns(series: pd.Series, obs: int = 1, type: Returns = Returns.SIMPLE) -> 
     elif type == Returns.ABSOLUTE:
         ret_series = series - series.shift(obs)
     else:
-        raise MqValueError('Unknown returns type (use simple / logarithmic / absolute)')
+        raise MqValueError("Unknown returns type (use simple / logarithmic / absolute)")
 
     return ret_series
 
@@ -338,7 +370,7 @@ def prices(series: pd.Series, initial: int = 1, type: Returns = Returns.SIMPLE) 
     elif type == Returns.ABSOLUTE:
         return sum_(series) + initial
     else:
-        raise MqValueError('Unknown returns type (use simple / Logarithmic / absolute)')
+        raise MqValueError("Unknown returns type (use simple / Logarithmic / absolute)")
 
 
 @plot_function
@@ -412,7 +444,7 @@ def _get_annualization_factor(x):
     for idx, value in x.iloc[1:].iteritems():
         d = (idx - prev_idx).days
         if d == 0:
-            raise MqValueError('multiple data points on same date')
+            raise MqValueError("multiple data points on same date")
         distances.append(d)
         prev_idx = idx
 
@@ -430,7 +462,7 @@ def _get_annualization_factor(x):
     elif 360 <= average_distance < 386:
         factor = AnnualizationFactor.ANNUALLY
     else:
-        raise MqValueError('Cannot infer annualization factor, average distance: ' + str(average_distance))
+        raise MqValueError("Cannot infer annualization factor, average distance: " + str(average_distance))
     return factor
 
 
@@ -479,8 +511,11 @@ def annualize(x: pd.Series) -> pd.Series:
 
 
 @plot_function
-def volatility(x: pd.Series, w: Union[Window, int, str] = Window(None, 0),
-               returns_type: Returns = Returns.SIMPLE) -> pd.Series:
+def volatility(
+    x: pd.Series,
+    w: Union[Window, int, str] = Window(None, 0),
+    returns_type: Returns = Returns.SIMPLE,
+) -> pd.Series:
     """
     Realized volatility of price series
 
@@ -543,8 +578,12 @@ def volatility(x: pd.Series, w: Union[Window, int, str] = Window(None, 0),
 
 
 @plot_function
-def correlation(x: pd.Series, y: pd.Series,
-                w: Union[Window, int, str] = Window(None, 0), type_: SeriesType = SeriesType.PRICES) -> pd.Series:
+def correlation(
+    x: pd.Series,
+    y: pd.Series,
+    w: Union[Window, int, str] = Window(None, 0),
+    type_: SeriesType = SeriesType.PRICES,
+) -> pd.Series:
     """
     Rolling correlation of two price series
 
@@ -606,8 +645,10 @@ def correlation(x: pd.Series, y: pd.Series,
     clean_ret2 = ret_2.dropna()
 
     if isinstance(w.w, pd.DateOffset):
-        values = [clean_ret1.loc[(clean_ret1.index > idx - w.w) & (clean_ret1.index <= idx)].corr(clean_ret2)
-                  for idx in clean_ret1.index]
+        values = [
+            clean_ret1.loc[(clean_ret1.index > idx - w.w) & (clean_ret1.index <= idx)].corr(clean_ret2)
+            for idx in clean_ret1.index
+        ]
         corr = pd.Series(values, index=clean_ret1.index)
     else:
         corr = clean_ret1.rolling(w.w, 0).corr(clean_ret2)
@@ -616,7 +657,12 @@ def correlation(x: pd.Series, y: pd.Series,
 
 
 @plot_function
-def beta(x: pd.Series, b: pd.Series, w: Union[Window, int, str] = Window(None, 0), prices: bool = True) -> pd.Series:
+def beta(
+    x: pd.Series,
+    b: pd.Series,
+    w: Union[Window, int, str] = Window(None, 0),
+    prices: bool = True,
+) -> pd.Series:
     """
     Rolling beta of price series and benchmark
 
@@ -671,15 +717,22 @@ def beta(x: pd.Series, b: pd.Series, w: Union[Window, int, str] = Window(None, 0
     ret_benchmark = returns(b) if prices else b
 
     if isinstance(w.w, pd.DateOffset):
-        result = pd.Series([ret_series.loc[(ret_series.index > idx - w.w) & (ret_series.index <= idx)].cov(
-            ret_benchmark.loc[(ret_benchmark.index > idx - w.w) & (ret_benchmark.index <= idx)]
-        ) / ret_benchmark.loc[(ret_benchmark.index > idx - w.w) & (ret_benchmark.index <= idx)].var()
-            for idx in ret_series.index], index=ret_series.index)
+        result = pd.Series(
+            [
+                ret_series.loc[(ret_series.index > idx - w.w) & (ret_series.index <= idx)].cov(
+                    ret_benchmark.loc[(ret_benchmark.index > idx - w.w) & (ret_benchmark.index <= idx)]
+                )
+                / ret_benchmark.loc[(ret_benchmark.index > idx - w.w) & (ret_benchmark.index <= idx)].var()
+                for idx in ret_series.index
+            ],
+            index=ret_series.index,
+        )
     else:
         cov = ret_series.rolling(w.w, 0).cov(ret_benchmark.rolling(w.w, 0))
         result = cov / ret_benchmark.rolling(w.w, 0).var()
 
-    # do not compute initial values as they may be extreme when sample size is small
+    # do not compute initial values as they may be extreme when sample size is
+    # small
 
     result[0:3] = np.nan
 
@@ -711,10 +764,14 @@ def max_drawdown(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> 
     """
     w = normalize_window(x, w)
     if isinstance(w.w, pd.DateOffset):
-        scores = pd.Series([x[idx] / x.loc[(x.index > idx - w.w) & (x.index <= idx)].max() - 1 for idx in x.index],
-                           index=x.index)
-        result = pd.Series([scores.loc[(scores.index > idx - w.w) & (scores.index <= idx)].min()
-                            for idx in scores.index], index=scores.index)
+        scores = pd.Series(
+            [x[idx] / x.loc[(x.index > idx - w.w) & (x.index <= idx)].max() - 1 for idx in x.index],
+            index=x.index,
+        )
+        result = pd.Series(
+            [scores.loc[(scores.index > idx - w.w) & (scores.index <= idx)].min() for idx in scores.index],
+            index=scores.index,
+        )
     else:
         rolling_max = x.rolling(w.w, 0).max()
         result = (x / rolling_max - 1).rolling(w.w, 0).min()
@@ -723,7 +780,7 @@ def max_drawdown(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> 
 
 @dataclass
 class ARIMABestParams:
-    freq: str = ''
+    freq: str = ""
     p: int = None
     d: int = None
     q: int = None
@@ -758,14 +815,23 @@ class Arima:
         self.best_params = {}
 
     @staticmethod
-    def _evaluate_arima_model(X: Union[pd.Series, pd.DataFrame], arima_order: Tuple[int, int, int],
-                              train_size: Union[float, int, None], freq: str) -> Tuple[float, dict]:
-        train_size = int(len(X) * 0.75) if train_size is None else int(len(X) * train_size) \
-            if isinstance(train_size, float) else train_size
+    def _evaluate_arima_model(
+        X: Union[pd.Series, pd.DataFrame],
+        arima_order: Tuple[int, int, int],
+        train_size: Union[float, int, None],
+        freq: str,
+    ) -> Tuple[float, dict]:
+        train_size = (
+            int(len(X) * 0.75)
+            if train_size is None
+            else int(len(X) * train_size)
+            if isinstance(train_size, float)
+            else train_size
+        )
         train, test = X[:train_size].astype(float), X[train_size:].astype(float)
 
         model = ARIMA(train, order=arima_order, freq=freq)
-        model_fit = model.fit(disp=False, method='css', trend='nc')
+        model_fit = model.fit(disp=False, method="css", trend="nc")
 
         # calculate test error
         yhat = model_fit.forecast(len(test))[0]
@@ -773,8 +839,15 @@ class Arima:
 
         return error, model_fit
 
-    def fit(self, X: Union[pd.Series, pd.DataFrame], train_size: Union[float, int, None] = None,
-            p_vals: list = (0, 1, 2), d_vals: list = (0, 1, 2), q_vals: list = (0, 1, 2), freq: str = None) -> 'arima':
+    def fit(
+        self,
+        X: Union[pd.Series, pd.DataFrame],
+        train_size: Union[float, int, None] = None,
+        p_vals: list = (0, 1, 2),
+        d_vals: list = (0, 1, 2),
+        q_vals: list = (0, 1, 2),
+        freq: str = None,
+    ) -> "arima":
         """
         Train a combination of ARIMA models. If pandas DataFrame, finds the
         best arima model parameters for each column. If pandas Series, finds
@@ -795,7 +868,7 @@ class Arima:
 
         for series_id in X.columns:
             series = X[series_id]
-            best_score = float('inf')
+            best_score = float("inf")
             best_order = None
             best_const = None
             best_ar_coef = None
@@ -807,17 +880,26 @@ class Arima:
                     if error < best_score:
                         best_score = error
                         best_order = order
-                        best_const = model_fit.params.to_dict().get('const', 0)
+                        best_const = model_fit.params.to_dict().get("const", 0)
                         best_ar_coef = model_fit.arparams
                         best_ma_coef = model_fit.maparams
                         best_resid = model_fit.resid
                 except Exception as e:
-                    print('   {}'.format(e))
+                    print("   {}".format(e))
                     continue
 
             p, d, q = best_order
-            self.best_params[series_id] = ARIMABestParams(freq, p, d, q, best_const, best_ar_coef, best_ma_coef,
-                                                          best_resid, series)
+            self.best_params[series_id] = ARIMABestParams(
+                freq,
+                p,
+                d,
+                q,
+                best_const,
+                best_ar_coef,
+                best_ma_coef,
+                best_resid,
+                series,
+            )
         return self
 
     def _difference(self, X: pd.Series, d: int):
@@ -843,7 +925,7 @@ class Arima:
         X_ma[:] = np.nan
 
         for x in range(p + d, len(X_ar)):
-            ma_component = resid[x - q: x].dot(ma_coef)
+            ma_component = resid[x - q : x].dot(ma_coef)
             prediction = X_ar[x] + ma_component
             residual = X_diff[x] - prediction
             resid[x] = residual

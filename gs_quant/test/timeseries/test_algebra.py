@@ -392,12 +392,7 @@ def test_ceil():
 
 
 def test_filter():
-    dates1 = [
-        date(2019, 1, 1),
-        date(2019, 1, 2),
-        date(2019, 1, 3),
-        date(2019, 1, 4)
-    ]
+    dates1 = [date(2019, 1, 1), date(2019, 1, 2), date(2019, 1, 3), date(2019, 1, 4)]
 
     all_pos = pd.Series([1.0, 1.0, 1.0, 1.0], index=dates1)
     with_null = pd.Series([1.0, np.nan, 1.0, 1.0], index=dates1)
@@ -412,15 +407,11 @@ def test_filter():
     assert_series_equal(result, expected, obj="zap: remove 0s when no 0s are in TS")
 
     result = filter_(with_null)
-    expected = pd.Series([1.0, 1.0, 1.0],
-                         index=[date(2019, 1, 1),
-                                date(2019, 1, 3), date(2019, 1, 4)])
+    expected = pd.Series([1.0, 1.0, 1.0], index=[date(2019, 1, 1), date(2019, 1, 3), date(2019, 1, 4)])
     assert_series_equal(result, expected, obj="zap: remove nulls in TS")
 
     result = filter_(zero_neg_pos, FilterOperator.EQUALS, 0)
-    expected = pd.Series([-1.0, 10.0, 1.0],
-                         index=[date(2019, 1, 1),
-                                date(2019, 1, 3), date(2019, 1, 4)])
+    expected = pd.Series([-1.0, 10.0, 1.0], index=[date(2019, 1, 1), date(2019, 1, 3), date(2019, 1, 4)])
     assert_series_equal(result, expected, obj="zap: remove 0s in TS")
 
     result = filter_(zero_neg_pos, FilterOperator.GREATER, 0)
@@ -454,7 +445,7 @@ def test_smooth_spikes():
     actual = smooth_spikes(s, 0.5)
     assert actual.empty
 
-    sparse_index = pd.to_datetime(['2020-01-01', '2020-01-02', '2020-01-04', '2020-01-07'])
+    sparse_index = pd.to_datetime(["2020-01-01", "2020-01-02", "2020-01-04", "2020-01-07"])
     s = pd.Series([8, 10.0, 8, 6.4], index=sparse_index)
     actual = smooth_spikes(s, 0.25)
     expected = pd.Series([10.0, 8], index=sparse_index[1:3])
@@ -472,15 +463,21 @@ def test_repeat():
     with pytest.raises(MqError):
         repeat(pd.Series, 367)
 
-    sparse_index = pd.to_datetime(['2020-01-01', '2020-01-02', '2020-01-04', '2020-01-07'])
+    sparse_index = pd.to_datetime(["2020-01-01", "2020-01-02", "2020-01-04", "2020-01-07"])
     s = pd.Series([1, 2, 3, 4], index=sparse_index)
 
     actual = repeat(s)
-    expected = pd.Series([1, 2, 2, 3, 3, 3, 4], index=pd.date_range(start='2020-01-01', end='2020-01-07', freq='D'))
+    expected = pd.Series(
+        [1, 2, 2, 3, 3, 3, 4],
+        index=pd.date_range(start="2020-01-01", end="2020-01-07", freq="D"),
+    )
     assert_series_equal(actual, expected)
 
     actual = repeat(s, 2)
-    expected = pd.Series([1, 2, 3, 4], index=pd.date_range(start='2020-01-01', end='2020-01-07', freq='2D'))
+    expected = pd.Series(
+        [1, 2, 3, 4],
+        index=pd.date_range(start="2020-01-01", end="2020-01-07", freq="2D"),
+    )
     assert_series_equal(actual, expected)
 
 
@@ -533,12 +530,15 @@ def test_if():
     with pytest.raises(MqError):
         if_(pd.Series([-1, 0]), 5, 6)
     with pytest.raises(MqError):
-        if_(pd.Series([1, 0]), 5, '6')
+        if_(pd.Series([1, 0]), 5, "6")
 
     flags = pd.Series([0, 1])
     truths = pd.Series([2, 2])
 
     assert_series_equal(if_(flags, 2, 3), pd.Series([3, 2]))
     assert_series_equal(if_(flags, truths, pd.Series([3, 3])), pd.Series([3, 2]))
-    assert_series_equal(if_(flags, truths, pd.Series([3], index=[100])),
-                        pd.Series([np.nan, 2]), check_dtype=False)
+    assert_series_equal(
+        if_(flags, truths, pd.Series([3], index=[100])),
+        pd.Series([np.nan, 2]),
+        check_dtype=False,
+    )

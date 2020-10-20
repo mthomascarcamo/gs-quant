@@ -15,21 +15,21 @@ under the License.
 """
 import logging
 from abc import ABCMeta
-from typing import Union, Optional
+from typing import Optional, Union
 
 from gs_quant.base import Priceable
-from gs_quant.markets import HistoricalPricingContext, MarketDataCoordinate, PricingContext, CloseMarket, OverlayMarket
-from gs_quant.risk import DataFrameWithInfo, DollarPrice, FloatWithInfo, Price, SeriesWithInfo, \
-    MarketData
-from gs_quant.risk.results import PricingFuture, PortfolioRiskResult, ErrorValue
+from gs_quant.markets import CloseMarket, HistoricalPricingContext, MarketDataCoordinate, OverlayMarket, PricingContext
+from gs_quant.risk import DataFrameWithInfo, DollarPrice, FloatWithInfo, MarketData, Price, SeriesWithInfo
+from gs_quant.risk.results import ErrorValue, PortfolioRiskResult, PricingFuture
 
 __asset_class_and_type_to_instrument = {}
 _logger = logging.getLogger(__name__)
 
 
 class PriceableImpl(Priceable, metaclass=ABCMeta):
-
-    def dollar_price(self) -> Union[FloatWithInfo, PortfolioRiskResult, PricingFuture, SeriesWithInfo]:
+    def dollar_price(
+        self,
+    ) -> Union[FloatWithInfo, PortfolioRiskResult, PricingFuture, SeriesWithInfo]:
         """
         Present value in USD
 
@@ -60,7 +60,9 @@ class PriceableImpl(Priceable, metaclass=ABCMeta):
         """
         return self.calc(DollarPrice)
 
-    def price(self) -> Union[FloatWithInfo, PortfolioRiskResult, PricingFuture, SeriesWithInfo]:
+    def price(
+        self,
+    ) -> Union[FloatWithInfo, PortfolioRiskResult, PricingFuture, SeriesWithInfo]:
         """
         Present value in local currency. Note that this is not yet supported on all instruments
 
@@ -87,8 +89,10 @@ class PriceableImpl(Priceable, metaclass=ABCMeta):
         >>> market = swap.market()
 
         """
-        def handle_result(result: Optional[Union[DataFrameWithInfo, ErrorValue, PricingFuture]]) ->\
-                [OverlayMarket, dict]:
+
+        def handle_result(
+            result: Optional[Union[DataFrameWithInfo, ErrorValue, PricingFuture]]
+        ) -> [OverlayMarket, dict]:
             properties = MarketDataCoordinate.properties()
             is_historical = isinstance(PricingContext.current, HistoricalPricingContext)
             location = PricingContext.current.market_data_location
@@ -98,18 +102,24 @@ class PriceableImpl(Priceable, metaclass=ABCMeta):
 
                 for _, row in result.iterrows():
                     coordinate_values = {p: row.get(p) for p in properties}
-                    if 'mkt_point' in coordinate_values:
-                        coordinate_values['mkt_point'] = tuple(coordinate_values['mkt_point'].split(';'))
-                    market_data[MarketDataCoordinate.from_dict(coordinate_values)] = row['value']
+                    if "mkt_point" in coordinate_values:
+                        coordinate_values["mkt_point"] = tuple(coordinate_values["mkt_point"].split(";"))
+                    market_data[MarketDataCoordinate.from_dict(coordinate_values)] = row["value"]
 
                 return market_data
 
             if is_historical:
-                return {date: OverlayMarket(
-                    base_market=CloseMarket(date=date, location=location),
-                    market_data=extract_market_data(result.loc[date])
-                ) for date in set(result.index)}
+                return {
+                    date: OverlayMarket(
+                        base_market=CloseMarket(date=date, location=location),
+                        market_data=extract_market_data(result.loc[date]),
+                    )
+                    for date in set(result.index)
+                }
             else:
-                return OverlayMarket(base_market=result.risk_key.market, market_data=extract_market_data(result))
+                return OverlayMarket(
+                    base_market=result.risk_key.market,
+                    market_data=extract_market_data(result),
+                )
 
         return self.calc(MarketData, fn=handle_result)

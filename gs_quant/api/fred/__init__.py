@@ -21,4 +21,4 @@ Portions copyright Maverick Lin. Licensed under Apache 2.0 license
 
 """
 
-__name__ = 'fred'
+__name__ = "fred"

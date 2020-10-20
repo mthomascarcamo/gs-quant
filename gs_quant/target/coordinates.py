@@ -14,33 +14,29 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
-from typing import Tuple, Union
 from enum import Enum
+from typing import Tuple, Union
+
 from gs_quant.base import Base, EnumBase, InstrumentBase, camel_case_translate, get_enum_value
+from gs_quant.target.common import *
 
 
-class MDAPIQueryField(EnumBase, Enum):    
-    
-    ask = 'ask'
-    bid = 'bid'
-    mid = 'mid'
-    expectedDataQuality = 'expectedDataQuality'
-    actualDataQuality = 'actualDataQuality'
-    
+class MDAPIQueryField(EnumBase, Enum):
+
+    ask = "ask"
+    bid = "bid"
+    mid = "mid"
+    expectedDataQuality = "expectedDataQuality"
+    actualDataQuality = "actualDataQuality"
+
     def __repr__(self):
         return self.value
 
 
 class MDAPIDataQueryResponse(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        data: Tuple[FieldValueMap, ...] = None,
-        name: str = None
-    ):        
+    def __init__(self, data: Tuple[FieldValueMap, ...] = None, name: str = None):
         super().__init__()
         self.data = data
         self.name = name
@@ -52,19 +48,18 @@ class MDAPIDataQueryResponse(Base):
 
     @data.setter
     def data(self, value: Tuple[FieldValueMap, ...]):
-        self._property_changed('data')
-        self.__data = value        
+        self._property_changed("data")
+        self.__data = value
 
 
 class MDAPIDataBatchResponse(Base):
-        
     @camel_case_translate
     def __init__(
         self,
         request_id: str = None,
         responses: Tuple[MDAPIDataQueryResponse, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.request_id = request_id
         self.responses = responses
@@ -77,8 +72,8 @@ class MDAPIDataBatchResponse(Base):
 
     @request_id.setter
     def request_id(self, value: str):
-        self._property_changed('request_id')
-        self.__request_id = value        
+        self._property_changed("request_id")
+        self.__request_id = value
 
     @property
     def responses(self) -> Tuple[MDAPIDataQueryResponse, ...]:
@@ -87,12 +82,11 @@ class MDAPIDataBatchResponse(Base):
 
     @responses.setter
     def responses(self, value: Tuple[MDAPIDataQueryResponse, ...]):
-        self._property_changed('responses')
-        self.__responses = value        
+        self._property_changed("responses")
+        self.__responses = value
 
 
 class MDAPIDataQuery(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -110,8 +104,8 @@ class MDAPIDataQuery(Base):
         real_time: bool = True,
         fields: Tuple[Union[MDAPIQueryField, str], ...] = None,
         time_filter: TimeFilter = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.__format = get_enum_value(Format, format_)
         self.market_data_coordinates = market_data_coordinates
@@ -136,8 +130,8 @@ class MDAPIDataQuery(Base):
 
     @format.setter
     def format(self, value: Union[Format, str]):
-        self._property_changed('format')
-        self.__format = get_enum_value(Format, value)        
+        self._property_changed("format")
+        self.__format = get_enum_value(Format, value)
 
     @property
     def market_data_coordinates(self) -> Tuple[MarketDataCoordinate, ...]:
@@ -146,8 +140,8 @@ class MDAPIDataQuery(Base):
 
     @market_data_coordinates.setter
     def market_data_coordinates(self, value: Tuple[MarketDataCoordinate, ...]):
-        self._property_changed('market_data_coordinates')
-        self.__market_data_coordinates = value        
+        self._property_changed("market_data_coordinates")
+        self.__market_data_coordinates = value
 
     @property
     def pricing_location(self) -> Union[PricingLocation, str]:
@@ -156,8 +150,8 @@ class MDAPIDataQuery(Base):
 
     @pricing_location.setter
     def pricing_location(self, value: Union[PricingLocation, str]):
-        self._property_changed('pricing_location')
-        self.__pricing_location = get_enum_value(PricingLocation, value)        
+        self._property_changed("pricing_location")
+        self.__pricing_location = get_enum_value(PricingLocation, value)
 
     @property
     def selector_function(self) -> str:
@@ -166,30 +160,30 @@ class MDAPIDataQuery(Base):
 
     @selector_function.setter
     def selector_function(self, value: str):
-        self._property_changed('selector_function')
-        self.__selector_function = value        
+        self._property_changed("selector_function")
+        self.__selector_function = value
 
     @property
     def samples(self) -> int:
         """Number of points to down sample the data, for example if 10, it will return at
-           most 10 sample data points evenly spaced over the time/date range"""
+        most 10 sample data points evenly spaced over the time/date range"""
         return self.__samples
 
     @samples.setter
     def samples(self, value: int):
-        self._property_changed('samples')
-        self.__samples = value        
+        self._property_changed("samples")
+        self.__samples = value
 
     @property
     def interval(self) -> str:
         """Interval to use when returning data. E.g. 1s, 1m, 1h, 1d. Only seconds(s),
-           minutes(m), hours(h) and days(d) are supported."""
+        minutes(m), hours(h) and days(d) are supported."""
         return self.__interval
 
     @interval.setter
     def interval(self, value: str):
-        self._property_changed('interval')
-        self.__interval = value        
+        self._property_changed("interval")
+        self.__interval = value
 
     @property
     def vendor(self) -> Union[MarketDataVendor, str]:
@@ -197,8 +191,8 @@ class MDAPIDataQuery(Base):
 
     @vendor.setter
     def vendor(self, value: Union[MarketDataVendor, str]):
-        self._property_changed('vendor')
-        self.__vendor = get_enum_value(MarketDataVendor, value)        
+        self._property_changed("vendor")
+        self.__vendor = get_enum_value(MarketDataVendor, value)
 
     @property
     def start_time(self) -> datetime.datetime:
@@ -207,8 +201,8 @@ class MDAPIDataQuery(Base):
 
     @start_time.setter
     def start_time(self, value: datetime.datetime):
-        self._property_changed('start_time')
-        self.__start_time = value        
+        self._property_changed("start_time")
+        self.__start_time = value
 
     @property
     def end_time(self) -> datetime.datetime:
@@ -217,8 +211,8 @@ class MDAPIDataQuery(Base):
 
     @end_time.setter
     def end_time(self, value: datetime.datetime):
-        self._property_changed('end_time')
-        self.__end_time = value        
+        self._property_changed("end_time")
+        self.__end_time = value
 
     @property
     def start_date(self) -> datetime.date:
@@ -227,8 +221,8 @@ class MDAPIDataQuery(Base):
 
     @start_date.setter
     def start_date(self, value: datetime.date):
-        self._property_changed('start_date')
-        self.__start_date = value        
+        self._property_changed("start_date")
+        self.__start_date = value
 
     @property
     def end_date(self) -> datetime.date:
@@ -237,8 +231,8 @@ class MDAPIDataQuery(Base):
 
     @end_date.setter
     def end_date(self, value: datetime.date):
-        self._property_changed('end_date')
-        self.__end_date = value        
+        self._property_changed("end_date")
+        self.__end_date = value
 
     @property
     def real_time(self) -> bool:
@@ -247,8 +241,8 @@ class MDAPIDataQuery(Base):
 
     @real_time.setter
     def real_time(self, value: bool):
-        self._property_changed('real_time')
-        self.__real_time = value        
+        self._property_changed("real_time")
+        self.__real_time = value
 
     @property
     def fields(self) -> Tuple[Union[MDAPIQueryField, str], ...]:
@@ -257,8 +251,8 @@ class MDAPIDataQuery(Base):
 
     @fields.setter
     def fields(self, value: Tuple[Union[MDAPIQueryField, str], ...]):
-        self._property_changed('fields')
-        self.__fields = value        
+        self._property_changed("fields")
+        self.__fields = value
 
     @property
     def time_filter(self) -> TimeFilter:
@@ -267,5 +261,5 @@ class MDAPIDataQuery(Base):
 
     @time_filter.setter
     def time_filter(self, value: TimeFilter):
-        self._property_changed('time_filter')
-        self.__time_filter = value        
+        self._property_changed("time_filter")
+        self.__time_filter = value

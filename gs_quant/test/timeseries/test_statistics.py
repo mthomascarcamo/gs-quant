@@ -18,15 +18,16 @@ from datetime import date
 import pytest
 from pandas.testing import assert_series_equal
 from scipy.integrate import odeint
+
 from gs_quant.timeseries import *
 
 
 def test_generate_series():
     x = generate_series(100)
 
-    assert (len(x) == 100)
-    assert (x.index[0] == datetime.date.today())
-    assert (x[0] == 100)
+    assert len(x) == 100
+    assert x.index[0] == datetime.date.today()
+    assert x[0] == 100
 
 
 def test_min():
@@ -53,7 +54,7 @@ def test_min():
     expected = pd.Series([3.0, 2.0, 2.0, 1.0, 1.0, 3.0], index=dates)
     assert_series_equal(result, expected, obj="Minimum window 2")
 
-    result = min_(x, Window('1w', 0))
+    result = min_(x, Window("1w", 0))
     expected = pd.Series([3.0, 2.0, 2.0, 1.0, 1.0, 1.0], index=dates)
     assert_series_equal(result, expected, obj="Minimum with window 1w")
 
@@ -95,7 +96,7 @@ def test_max():
     expected = pd.Series([3.0, 3.0, 3.0, 3.0, 3.0, 6.0], index=dates)
     assert_series_equal(result, expected, obj="Maximum window 2")
 
-    result = max_(x, Window('2d', 0))
+    result = max_(x, Window("2d", 0))
     expected = pd.Series([3.0, 3.0, 3.0, 3.0, 3.0, 6.0], index=dates)
     assert_series_equal(result, expected, obj="Maximum window 1w")
 
@@ -135,7 +136,7 @@ def test_range():
     expected = pd.Series([0.0, 1.0, 1.0, 2.0, 2.0, 3.0], index=dates)
     assert_series_equal(result, expected, obj="Range window 2")
 
-    result = range_(x, Window('1w', 0))
+    result = range_(x, Window("1w", 0))
     expected = pd.Series([0.0, 1.0, 1.0, 2.0, 2.0, 5.0], index=dates)
     assert_series_equal(result, expected, obj="Range window 1w")
 
@@ -164,7 +165,7 @@ def test_mean():
     expected = pd.Series([3.0, 2.5, 2.5, 2.0, 2.0, 4.5], index=dates)
     assert_series_equal(result, expected, obj="Mean window 2")
 
-    result = mean(x, Window('1w', 0))
+    result = mean(x, Window("1w", 0))
     expected = pd.Series([3.0, 2.5, 8 / 3, 2.25, 2.4, 3.0], index=dates)
     assert_series_equal(result, expected, obj="Mean window 1w")
 
@@ -198,7 +199,7 @@ def test_median():
     expected = pd.Series([3.0, 2.5, 2.5, 2.0, 2.0, 4.5], index=dates)
     assert_series_equal(result, expected, obj="Median window 2")
 
-    result = median(x, Window('1w', 0))
+    result = median(x, Window("1w", 0))
     expected = pd.Series([3.0, 2.5, 3.0, 2.5, 3.0, 3.0], index=dates)
     assert_series_equal(result, expected, obj="Median window 1w")
 
@@ -227,7 +228,7 @@ def test_mode():
     expected = pd.Series([3.0, 2.0, 2.0, 1.0, 1.0, 3.0], index=dates)
     assert_series_equal(result, expected, obj="mode window 2")
 
-    result = mode(x, Window('1w', 0))
+    result = mode(x, Window("1w", 0))
     expected = pd.Series([3.0, 2.0, 3.0, 3.0, 3.0, 3.0], index=dates)
     assert_series_equal(result, expected, obj="Mode window 1w")
 
@@ -252,7 +253,7 @@ def test_sum():
     expected = pd.Series([1.0, 3.0, 5.0, 7.0, 9.0, 11.0], index=dates)
     assert_series_equal(result, expected, obj="Summation")
 
-    result = sum_(x, Window('1w', 0))
+    result = sum_(x, Window("1w", 0))
     expected = pd.Series([1.0, 3.0, 6.0, 10.0, 15.0, 20.0], index=dates)
     assert_series_equal(result, expected, obj="Sum window 1w")
 
@@ -282,7 +283,7 @@ def test_product():
     expected = pd.Series([1.0, 2.0, 6.0, 12.0, 20.0, 30.0], index=dates)
     assert_series_equal(result, expected, obj="Product")
 
-    result = product(x, Window('1w', 0))
+    result = product(x, Window("1w", 0))
     expected = pd.Series([1.0, 2.0, 6.0, 24.0, 120.0, 720.0], index=dates)
     assert_series_equal(result, expected, obj="Product window 1w")
 
@@ -307,7 +308,7 @@ def test_std():
     expected = pd.Series([np.nan, 0.707106, 0.707106, 1.414214, 1.414214, 2.121320], index=dates)
     assert_series_equal(result, expected, obj="std window 2", check_less_precise=True)
 
-    result = std(x, Window('1w', 0))
+    result = std(x, Window("1w", 0))
     expected = pd.Series([np.nan, 0.707106, 0.577350, 0.957427, 0.894427, 1.870828], index=dates)
     assert_series_equal(result, expected, obj="std window 1w", check_less_precise=True)
 
@@ -317,8 +318,8 @@ def test_exponential_std():
         std = ts * 0
         for i in range(1, len(ts)):
             weights = (1 - alpha) * alpha ** np.arange(i, -1, -1)
-            weights[0] /= (1 - alpha)
-            x = ts.to_numpy()[:i + 1]
+            weights[0] /= 1 - alpha
+            x = ts.to_numpy()[: i + 1]
             ema = sum(weights * x) / sum(weights)
             debias_fact = sum(weights) ** 2 / (sum(weights) ** 2 - sum(weights ** 2))
             var = debias_fact * sum(weights * (x - ema) ** 2) / sum(weights)
@@ -366,7 +367,7 @@ def test_var():
     expected = pd.Series([np.nan, 0.5, 0.5, 2.0, 2.0, 4.5], index=dates)
     assert_series_equal(result, expected, obj="var window 2", check_less_precise=True)
 
-    result = var(x, Window('1w', 0))
+    result = var(x, Window("1w", 0))
     expected = pd.Series([np.nan, 0.500000, 0.333333, 0.916666, 0.800000, 3.500000], index=dates)
     assert_series_equal(result, expected, obj="var window 1w", check_less_precise=True)
 
@@ -392,7 +393,7 @@ def test_cov():
     expected = pd.Series([np.nan, 0.850000, 0.549999, 1.7000000, 1.900000, 4.200000], index=dates)
     assert_series_equal(result, expected, obj="cov window 2", check_less_precise=True)
 
-    result = cov(x, y, Window('1w', 0))
+    result = cov(x, y, Window("1w", 0))
     expected = pd.Series([np.nan, 0.850000, 0.466667, 0.950000, 0.825000, 3.375000], index=dates)
     assert_series_equal(result, expected, obj="cov window 1w", check_less_precise=True)
 
@@ -429,15 +430,15 @@ def test_zscores():
     assert_series_equal(result, expected, obj="z-score window 2", check_less_precise=True)
     assert_series_equal(zscores(x, Window(5, 5)), zscores(x, 5))
 
-    result = zscores(x, Window('1w', 0))
+    result = zscores(x, Window("1w", 0))
     expected = pd.Series([0.0, -0.707106, 0.577350, -1.305582, 0.670820, 1.603567], index=dates)
     assert_series_equal(result, expected, obj="z-score window 1w", check_less_precise=True)
 
-    result = zscores(x, '1w')
+    result = zscores(x, "1w")
     expected = pd.Series([1.603567], index=dates[-1:])
-    assert_series_equal(result, expected, obj='z-score window string 1w', check_less_precise=True)
+    assert_series_equal(result, expected, obj="z-score window string 1w", check_less_precise=True)
 
-    result = zscores(x, '1m')
+    result = zscores(x, "1m")
     expected = pd.Series()
     assert_series_equal(result, expected, obj="z-score window too large", check_less_precise=True)
 
@@ -456,13 +457,13 @@ def test_winsorize():
     b_upper = mu + sigma * limit * 1.001
     b_lower = mu - sigma * limit * 1.001
 
-    assert (True in r.ge(b_upper).values)
-    assert (True in r.le(b_lower).values)
+    assert True in r.ge(b_upper).values
+    assert True in r.le(b_lower).values
 
     wr = winsorize(r, limit)
 
-    assert (True not in wr.ge(b_upper).values)
-    assert (True not in wr.le(b_lower).values)
+    assert True not in wr.ge(b_upper).values
+    assert True not in wr.le(b_lower).values
 
     limit = 2.0
 
@@ -472,13 +473,13 @@ def test_winsorize():
     b_upper = mu + sigma * limit * 1.001
     b_lower = mu - sigma * limit * 1.001
 
-    assert (True in r.ge(b_upper).values)
-    assert (True in r.le(b_lower).values)
+    assert True in r.ge(b_upper).values
+    assert True in r.le(b_lower).values
 
     wr = winsorize(r, limit)
 
-    assert (True not in wr.ge(b_upper).values)
-    assert (True not in wr.le(b_lower).values)
+    assert True not in wr.ge(b_upper).values
+    assert True not in wr.le(b_lower).values
 
 
 def test_percentiles():
@@ -506,21 +507,31 @@ def test_percentiles():
     expected = pd.Series([100.0, 0.0, 50.0, 50.0, 100.0, 75.0], index=dates)
     assert_series_equal(result, expected, obj="percentiles with window 2 and ramp 0")
 
-    result = percentiles(x, y, Window('1w', 0))
+    result = percentiles(x, y, Window("1w", 0))
     expected = pd.Series([100.0, 0.0, 33.333333, 25.0, 100.0, 90.0], index=dates)
     assert_series_equal(result, expected, obj="percentiles with window 1w")
 
-    result = percentiles(x, y, Window('1w', '3d'))
+    result = percentiles(x, y, Window("1w", "3d"))
     expected = pd.Series([25.0, 100.0, 90.0], index=dates[3:])
     assert_series_equal(result, expected, obj="percentiles with window 1w and ramp 3d")
 
     result = percentiles(x)
     expected = pd.Series([50.0, 25.0, 66.667, 12.500, 70.0, 91.667], index=dates)
-    assert_series_equal(result, expected, obj="percentiles over historical values", check_less_precise=True)
+    assert_series_equal(
+        result,
+        expected,
+        obj="percentiles over historical values",
+        check_less_precise=True,
+    )
 
     result = percentiles(x, y)
     expected = pd.Series([100.0, 0.0, 33.333, 25.0, 100.0, 91.667], index=dates)
-    assert_series_equal(result, expected, obj="percentiles without window length", check_less_precise=True)
+    assert_series_equal(
+        result,
+        expected,
+        obj="percentiles without window length",
+        check_less_precise=True,
+    )
 
     with pytest.raises(ValueError):
         percentiles(x, pd.Series(), Window(6, 1))
@@ -546,21 +557,34 @@ def test_percentile():
 
 def test_percentile_str():
     today = datetime.datetime.now()
-    days = pd.date_range(today, periods=12, freq='D')
+    days = pd.date_range(today, periods=12, freq="D")
     start = pd.Series([29, 56, 82, 13, 35, 53, 25, 23, 21, 12, 15, 9], index=days)
-    actual = percentile(start, 2, '10d')
-    expected = pd.Series([12.18, 9.54], index=pd.date_range(today + datetime.timedelta(days=10), periods=2, freq='D'))
+    actual = percentile(start, 2, "10d")
+    expected = pd.Series(
+        [12.18, 9.54],
+        index=pd.date_range(today + datetime.timedelta(days=10), periods=2, freq="D"),
+    )
     assert_series_equal(actual, expected)
 
-    actual = percentile(start, 50, '1w')
+    actual = percentile(start, 50, "1w")
     expected = percentile(start, 50, 7)
     assert_series_equal(actual, expected)
 
 
 def test_regression():
-    x1 = pd.Series([0.0, 1.0, 4.0, 9.0, 16.0, 25.0, np.nan], index=pd.date_range('2019-1-1', periods=7), name='x1')
-    x2 = pd.Series([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], index=pd.date_range('2019-1-1', periods=8))
-    y = pd.Series([10.0, 14.0, 20.0, 28.0, 38.0, 50.0, 60.0], index=pd.date_range('2019-1-1', periods=7))
+    x1 = pd.Series(
+        [0.0, 1.0, 4.0, 9.0, 16.0, 25.0, np.nan],
+        index=pd.date_range("2019-1-1", periods=7),
+        name="x1",
+    )
+    x2 = pd.Series(
+        [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+        index=pd.date_range("2019-1-1", periods=8),
+    )
+    y = pd.Series(
+        [10.0, 14.0, 20.0, 28.0, 38.0, 50.0, 60.0],
+        index=pd.date_range("2019-1-1", periods=7),
+    )
 
     regression = LinearRegression([x1, x2], y, True)
 
@@ -570,12 +594,16 @@ def test_regression():
 
     np.testing.assert_almost_equal(regression.r_squared(), 1.0)
 
-    expected = pd.Series([10.0, 14.0, 20.0, 28.0, 38.0, 50.0], index=pd.date_range('2019-1-1', periods=6))
+    expected = pd.Series([10.0, 14.0, 20.0, 28.0, 38.0, 50.0], index=pd.date_range("2019-1-1", periods=6))
     assert_series_equal(regression.fitted_values(), expected)
 
     dates_predict = [date(2019, 2, 1), date(2019, 2, 2)]
-    predicted = regression.predict([pd.Series([2.0, 3.0], index=dates_predict),
-                                    pd.Series([6.0, 7.0], index=dates_predict)])
+    predicted = regression.predict(
+        [
+            pd.Series([2.0, 3.0], index=dates_predict),
+            pd.Series([6.0, 7.0], index=dates_predict),
+        ]
+    )
     expected = pd.Series([30.0, 34.0], index=dates_predict)
     assert_series_equal(predicted, expected)
 
@@ -583,31 +611,59 @@ def test_regression():
 
 
 def test_rolling_linear_regression():
-    x1 = pd.Series([0.0, 1.0, 4.0, 9.0, 16.0, 25.0, np.nan], index=pd.date_range('2019-1-1', periods=7), name='x1')
-    x2 = pd.Series([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], index=pd.date_range('2019-1-1', periods=8))
-    y = pd.Series([10.0, 14.0, 20.0, 28.0, 28.0, 40.0, 60.0], index=pd.date_range('2019-1-1', periods=7))
+    x1 = pd.Series(
+        [0.0, 1.0, 4.0, 9.0, 16.0, 25.0, np.nan],
+        index=pd.date_range("2019-1-1", periods=7),
+        name="x1",
+    )
+    x2 = pd.Series(
+        [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+        index=pd.date_range("2019-1-1", periods=8),
+    )
+    y = pd.Series(
+        [10.0, 14.0, 20.0, 28.0, 28.0, 40.0, 60.0],
+        index=pd.date_range("2019-1-1", periods=7),
+    )
 
     with pytest.raises(MqValueError):
         RollingLinearRegression([x1, x2], y, 3, True)
 
     regression = RollingLinearRegression([x1, x2], y, 4, True)
 
-    expected = pd.Series([np.nan, np.nan, np.nan, 10.0, 2.5, 19.0], index=pd.date_range('2019-1-1', periods=6))
+    expected = pd.Series(
+        [np.nan, np.nan, np.nan, 10.0, 2.5, 19.0],
+        index=pd.date_range("2019-1-1", periods=6),
+    )
     assert_series_equal(regression.coefficient(0), expected, check_names=False)
 
-    expected = pd.Series([np.nan, np.nan, np.nan, 1.0, -1.5, 1.0], index=pd.date_range('2019-1-1', periods=6))
+    expected = pd.Series(
+        [np.nan, np.nan, np.nan, 1.0, -1.5, 1.0],
+        index=pd.date_range("2019-1-1", periods=6),
+    )
     assert_series_equal(regression.coefficient(1), expected, check_names=False)
 
-    expected = pd.Series([np.nan, np.nan, np.nan, 3.0, 12.5, -1.0], index=pd.date_range('2019-1-1', periods=6))
+    expected = pd.Series(
+        [np.nan, np.nan, np.nan, 3.0, 12.5, -1.0],
+        index=pd.date_range("2019-1-1", periods=6),
+    )
     assert_series_equal(regression.coefficient(2), expected, check_names=False)
 
-    expected = pd.Series([np.nan, np.nan, np.nan, 1.0, 0.964029, 0.901961], index=pd.date_range('2019-1-1', periods=6))
+    expected = pd.Series(
+        [np.nan, np.nan, np.nan, 1.0, 0.964029, 0.901961],
+        index=pd.date_range("2019-1-1", periods=6),
+    )
     assert_series_equal(regression.r_squared(), expected, check_names=False)
 
-    expected = pd.Series([np.nan, np.nan, np.nan, 28.0, 28.5, 39.0], index=pd.date_range('2019-1-1', periods=6))
+    expected = pd.Series(
+        [np.nan, np.nan, np.nan, 28.0, 28.5, 39.0],
+        index=pd.date_range("2019-1-1", periods=6),
+    )
     assert_series_equal(regression.fitted_values(), expected, check_names=False, check_less_precise=True)
 
-    expected = pd.Series([np.nan, np.nan, np.nan, 0.0, 2.236068, 4.472136], index=pd.date_range('2019-1-1', periods=6))
+    expected = pd.Series(
+        [np.nan, np.nan, np.nan, 0.0, 2.236068, 4.472136],
+        index=pd.date_range("2019-1-1", periods=6),
+    )
     assert_series_equal(regression.standard_deviation_of_errors(), expected, check_names=False)
 
 

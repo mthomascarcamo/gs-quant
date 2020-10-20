@@ -14,61 +14,58 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
-from typing import Tuple, Union
 from enum import Enum
+from typing import Tuple, Union
+
 from gs_quant.base import Base, EnumBase, InstrumentBase, camel_case_translate, get_enum_value
+from gs_quant.target.common import *
 
 
-class IndicesCurrency(EnumBase, Enum):    
-    
+class IndicesCurrency(EnumBase, Enum):
+
     """Currencies supported for Indices"""
 
-    USD = 'USD'
-    EUR = 'EUR'
-    GBP = 'GBP'
-    CAD = 'CAD'
-    AUD = 'AUD'
-    CHF = 'CHF'
-    CNH = 'CNH'
-    CNY = 'CNY'
-    DKK = 'DKK'
-    HKD = 'HKD'
-    IDR = 'IDR'
-    ILS = 'ILS'
-    INR = 'INR'
-    JPY = 'JPY'
-    KRW = 'KRW'
-    MXN = 'MXN'
-    MYR = 'MYR'
-    NOK = 'NOK'
-    NZD = 'NZD'
-    PHP = 'PHP'
-    PLN = 'PLN'
-    RUB = 'RUB'
-    SEK = 'SEK'
-    SGD = 'SGD'
-    THB = 'THB'
-    TRY = 'TRY'
-    TWD = 'TWD'
-    ZAR = 'ZAR'
-    BRL = 'BRL'
-    
+    USD = "USD"
+    EUR = "EUR"
+    GBP = "GBP"
+    CAD = "CAD"
+    AUD = "AUD"
+    CHF = "CHF"
+    CNH = "CNH"
+    CNY = "CNY"
+    DKK = "DKK"
+    HKD = "HKD"
+    IDR = "IDR"
+    ILS = "ILS"
+    INR = "INR"
+    JPY = "JPY"
+    KRW = "KRW"
+    MXN = "MXN"
+    MYR = "MYR"
+    NOK = "NOK"
+    NZD = "NZD"
+    PHP = "PHP"
+    PLN = "PLN"
+    RUB = "RUB"
+    SEK = "SEK"
+    SGD = "SGD"
+    THB = "THB"
+    TRY = "TRY"
+    TWD = "TWD"
+    ZAR = "ZAR"
+    BRL = "BRL"
+
     def __repr__(self):
         return self.value
 
 
 class CustomBasketsRebalanceAction(Base):
-        
+
     """Comments for the rebalance action"""
 
     @camel_case_translate
-    def __init__(
-        self,
-        comment: str = None,
-        name: str = None
-    ):        
+    def __init__(self, comment: str = None, name: str = None):
         super().__init__()
         self.comment = comment
         self.name = name
@@ -80,14 +77,14 @@ class CustomBasketsRebalanceAction(Base):
 
     @comment.setter
     def comment(self, value: str):
-        self._property_changed('comment')
-        self.__comment = value        
+        self._property_changed("comment")
+        self.__comment = value
 
 
 class CustomBasketsResponse(Base):
-        
+
     """Response object for basket creation/edit/rebalance indicating the status of the
-       request"""
+    request"""
 
     @camel_case_translate
     def __init__(
@@ -95,8 +92,8 @@ class CustomBasketsResponse(Base):
         status: str = None,
         report_id: str = None,
         asset_id: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.status = status
         self.report_id = report_id
@@ -106,13 +103,13 @@ class CustomBasketsResponse(Base):
     @property
     def status(self) -> str:
         """Basket action request status. Status is done if basket is successfully
-           created/updated and report is triggered for downstream updates"""
+        created/updated and report is triggered for downstream updates"""
         return self.__status
 
     @status.setter
     def status(self, value: str):
-        self._property_changed('status')
-        self.__status = value        
+        self._property_changed("status")
+        self.__status = value
 
     @property
     def report_id(self) -> str:
@@ -121,8 +118,8 @@ class CustomBasketsResponse(Base):
 
     @report_id.setter
     def report_id(self, value: str):
-        self._property_changed('report_id')
-        self.__report_id = value        
+        self._property_changed("report_id")
+        self.__report_id = value
 
     @property
     def asset_id(self) -> str:
@@ -131,20 +128,19 @@ class CustomBasketsResponse(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
 
 class ISelectActionRequest(Base):
-        
     @camel_case_translate
     def __init__(
         self,
         action_comment: str,
         trader_attestations: Tuple[str, ...] = None,
         user_action: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.action_comment = action_comment
         self.trader_attestations = trader_attestations
@@ -158,8 +154,8 @@ class ISelectActionRequest(Base):
 
     @action_comment.setter
     def action_comment(self, value: str):
-        self._property_changed('action_comment')
-        self.__action_comment = value        
+        self._property_changed("action_comment")
+        self.__action_comment = value
 
     @property
     def trader_attestations(self) -> Tuple[str, ...]:
@@ -168,8 +164,8 @@ class ISelectActionRequest(Base):
 
     @trader_attestations.setter
     def trader_attestations(self, value: Tuple[str, ...]):
-        self._property_changed('trader_attestations')
-        self.__trader_attestations = value        
+        self._property_changed("trader_attestations")
+        self.__trader_attestations = value
 
     @property
     def user_action(self) -> str:
@@ -178,12 +174,11 @@ class ISelectActionRequest(Base):
 
     @user_action.setter
     def user_action(self, value: str):
-        self._property_changed('user_action')
-        self.__user_action = value        
+        self._property_changed("user_action")
+        self.__user_action = value
 
 
 class ISelectConstituentColumn(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -199,8 +194,8 @@ class ISelectConstituentColumn(Base):
         min_width: int = None,
         precision: int = None,
         sortable: int = None,
-        tooltip: str = None
-    ):        
+        tooltip: str = None,
+    ):
         super().__init__()
         self.aggregator_string = aggregator_string
         self.__class = class_
@@ -222,8 +217,8 @@ class ISelectConstituentColumn(Base):
 
     @aggregator_string.setter
     def aggregator_string(self, value: str):
-        self._property_changed('aggregator_string')
-        self.__aggregator_string = value        
+        self._property_changed("aggregator_string")
+        self.__aggregator_string = value
 
     @property
     def class_(self) -> str:
@@ -231,8 +226,8 @@ class ISelectConstituentColumn(Base):
 
     @class_.setter
     def class_(self, value: str):
-        self._property_changed('class_')
-        self.__class = value        
+        self._property_changed("class_")
+        self.__class = value
 
     @property
     def field(self) -> str:
@@ -240,8 +235,8 @@ class ISelectConstituentColumn(Base):
 
     @field.setter
     def field(self, value: str):
-        self._property_changed('field')
-        self.__field = value        
+        self._property_changed("field")
+        self.__field = value
 
     @property
     def filter(self) -> str:
@@ -249,8 +244,8 @@ class ISelectConstituentColumn(Base):
 
     @filter.setter
     def filter(self, value: str):
-        self._property_changed('filter')
-        self.__filter = value        
+        self._property_changed("filter")
+        self.__filter = value
 
     @property
     def formatter_string(self) -> str:
@@ -258,8 +253,8 @@ class ISelectConstituentColumn(Base):
 
     @formatter_string.setter
     def formatter_string(self, value: str):
-        self._property_changed('formatter_string')
-        self.__formatter_string = value        
+        self._property_changed("formatter_string")
+        self.__formatter_string = value
 
     @property
     def id(self) -> str:
@@ -267,8 +262,8 @@ class ISelectConstituentColumn(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def ID(self) -> int:
@@ -276,8 +271,8 @@ class ISelectConstituentColumn(Base):
 
     @ID.setter
     def ID(self, value: int):
-        self._property_changed('ID')
-        self.__ID = value        
+        self._property_changed("ID")
+        self.__ID = value
 
     @property
     def max_width(self) -> int:
@@ -285,8 +280,8 @@ class ISelectConstituentColumn(Base):
 
     @max_width.setter
     def max_width(self, value: int):
-        self._property_changed('max_width')
-        self.__max_width = value        
+        self._property_changed("max_width")
+        self.__max_width = value
 
     @property
     def min_width(self) -> int:
@@ -294,8 +289,8 @@ class ISelectConstituentColumn(Base):
 
     @min_width.setter
     def min_width(self, value: int):
-        self._property_changed('min_width')
-        self.__min_width = value        
+        self._property_changed("min_width")
+        self.__min_width = value
 
     @property
     def name(self) -> str:
@@ -303,8 +298,8 @@ class ISelectConstituentColumn(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def precision(self) -> int:
@@ -312,8 +307,8 @@ class ISelectConstituentColumn(Base):
 
     @precision.setter
     def precision(self, value: int):
-        self._property_changed('precision')
-        self.__precision = value        
+        self._property_changed("precision")
+        self.__precision = value
 
     @property
     def sortable(self) -> int:
@@ -321,8 +316,8 @@ class ISelectConstituentColumn(Base):
 
     @sortable.setter
     def sortable(self, value: int):
-        self._property_changed('sortable')
-        self.__sortable = value        
+        self._property_changed("sortable")
+        self.__sortable = value
 
     @property
     def tooltip(self) -> str:
@@ -330,18 +325,13 @@ class ISelectConstituentColumn(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
 
 class ISelectIndexParameter(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        name: str = None,
-        value: Union[float, str] = None
-    ):        
+    def __init__(self, name: str = None, value: Union[float, str] = None):
         super().__init__()
         self.name = name
         self.value = value
@@ -349,13 +339,13 @@ class ISelectIndexParameter(Base):
     @property
     def name(self) -> str:
         """Free text description of asset. Description provided will be indexed in the
-           search service for free text relevance match"""
+        search service for free text relevance match"""
         return self.__name
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def value(self) -> Union[float, str]:
@@ -363,18 +353,13 @@ class ISelectIndexParameter(Base):
 
     @value.setter
     def value(self, value: Union[float, str]):
-        self._property_changed('value')
-        self.__value = value        
+        self._property_changed("value")
+        self.__value = value
 
 
 class ISelectIndexParameters(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        name: str = None,
-        value: Union[float, str] = None
-    ):        
+    def __init__(self, name: str = None, value: Union[float, str] = None):
         super().__init__()
         self.name = name
         self.value = value
@@ -385,8 +370,8 @@ class ISelectIndexParameters(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def value(self) -> Union[float, str]:
@@ -394,20 +379,19 @@ class ISelectIndexParameters(Base):
 
     @value.setter
     def value(self, value: Union[float, str]):
-        self._property_changed('value')
-        self.__value = value        
+        self._property_changed("value")
+        self.__value = value
 
 
 class ISelectSeries(Base):
-        
     @camel_case_translate
     def __init__(
         self,
         data: tuple = None,
         identifier: str = None,
         identifier_type: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.data = data
         self.identifier = identifier
@@ -420,8 +404,8 @@ class ISelectSeries(Base):
 
     @data.setter
     def data(self, value: tuple):
-        self._property_changed('data')
-        self.__data = value        
+        self._property_changed("data")
+        self.__data = value
 
     @property
     def identifier(self) -> str:
@@ -429,8 +413,8 @@ class ISelectSeries(Base):
 
     @identifier.setter
     def identifier(self, value: str):
-        self._property_changed('identifier')
-        self.__identifier = value        
+        self._property_changed("identifier")
+        self.__identifier = value
 
     @property
     def identifier_type(self) -> str:
@@ -438,8 +422,8 @@ class ISelectSeries(Base):
 
     @identifier_type.setter
     def identifier_type(self, value: str):
-        self._property_changed('identifier_type')
-        self.__identifier_type = value        
+        self._property_changed("identifier_type")
+        self.__identifier_type = value
 
     @property
     def name(self) -> str:
@@ -447,12 +431,12 @@ class ISelectSeries(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
 
 class PositionPriceInput(Base):
-        
+
     """Information relating to each constituent"""
 
     @camel_case_translate
@@ -462,8 +446,8 @@ class PositionPriceInput(Base):
         quantity: float = None,
         weight: float = None,
         notional: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.asset_id = asset_id
         self.quantity = quantity
@@ -478,8 +462,8 @@ class PositionPriceInput(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
     @property
     def quantity(self) -> float:
@@ -488,8 +472,8 @@ class PositionPriceInput(Base):
 
     @quantity.setter
     def quantity(self, value: float):
-        self._property_changed('quantity')
-        self.__quantity = value        
+        self._property_changed("quantity")
+        self.__quantity = value
 
     @property
     def weight(self) -> float:
@@ -498,8 +482,8 @@ class PositionPriceInput(Base):
 
     @weight.setter
     def weight(self, value: float):
-        self._property_changed('weight')
-        self.__weight = value        
+        self._property_changed("weight")
+        self.__weight = value
 
     @property
     def notional(self) -> float:
@@ -508,15 +492,15 @@ class PositionPriceInput(Base):
 
     @notional.setter
     def notional(self, value: float):
-        self._property_changed('notional')
-        self.__notional = value        
+        self._property_changed("notional")
+        self.__notional = value
 
 
 class PublishParameters(Base):
-        
+
     """Publishing parameters to determine where and how to publish baskets, default all
-       to false. If not provided when rebalance/edit, selections during create
-       will be continued."""
+    to false. If not provided when rebalance/edit, selections during create
+    will be continued."""
 
     @camel_case_translate
     def __init__(
@@ -525,8 +509,8 @@ class PublishParameters(Base):
         publish_to_bloomberg: bool,
         include_price_history: bool,
         publish_to_factset: bool = False,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.include_price_history = include_price_history
         self.publish_to_bloomberg = publish_to_bloomberg
@@ -537,13 +521,13 @@ class PublishParameters(Base):
     @property
     def include_price_history(self) -> bool:
         """Include full price history when publishing to Bloomberg, default to false. Can
-           only be set to true when publishing to Bloomberg"""
+        only be set to true when publishing to Bloomberg"""
         return self.__include_price_history
 
     @include_price_history.setter
     def include_price_history(self, value: bool):
-        self._property_changed('include_price_history')
-        self.__include_price_history = value        
+        self._property_changed("include_price_history")
+        self.__include_price_history = value
 
     @property
     def publish_to_bloomberg(self) -> bool:
@@ -552,8 +536,8 @@ class PublishParameters(Base):
 
     @publish_to_bloomberg.setter
     def publish_to_bloomberg(self, value: bool):
-        self._property_changed('publish_to_bloomberg')
-        self.__publish_to_bloomberg = value        
+        self._property_changed("publish_to_bloomberg")
+        self.__publish_to_bloomberg = value
 
     @property
     def publish_to_reuters(self) -> bool:
@@ -562,8 +546,8 @@ class PublishParameters(Base):
 
     @publish_to_reuters.setter
     def publish_to_reuters(self, value: bool):
-        self._property_changed('publish_to_reuters')
-        self.__publish_to_reuters = value        
+        self._property_changed("publish_to_reuters")
+        self.__publish_to_reuters = value
 
     @property
     def publish_to_factset(self) -> bool:
@@ -572,12 +556,12 @@ class PublishParameters(Base):
 
     @publish_to_factset.setter
     def publish_to_factset(self, value: bool):
-        self._property_changed('publish_to_factset')
-        self.__publish_to_factset = value        
+        self._property_changed("publish_to_factset")
+        self.__publish_to_factset = value
 
 
 class CustomBasketsEditInputs(Base):
-        
+
     """parameters used to edit a basket"""
 
     @camel_case_translate
@@ -591,8 +575,8 @@ class CustomBasketsEditInputs(Base):
         index_notes: str = None,
         index_not_trading_reasons: Union[IndexNotTradingReasons, str] = None,
         flagship: bool = None,
-        clone_parent_id: str = None
-    ):        
+        clone_parent_id: str = None,
+    ):
         super().__init__()
         self.name = name
         self.description = description
@@ -611,19 +595,19 @@ class CustomBasketsEditInputs(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def description(self) -> str:
         """Free text description of basket, default to empty. Description provided will be
-           indexed in the search service for free text relevance match."""
+        indexed in the search service for free text relevance match."""
         return self.__description
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def styles(self) -> Tuple[str, ...]:
@@ -632,8 +616,8 @@ class CustomBasketsEditInputs(Base):
 
     @styles.setter
     def styles(self, value: Tuple[str, ...]):
-        self._property_changed('styles')
-        self.__styles = value        
+        self._property_changed("styles")
+        self.__styles = value
 
     @property
     def related_content(self) -> GIRDomain:
@@ -642,20 +626,20 @@ class CustomBasketsEditInputs(Base):
 
     @related_content.setter
     def related_content(self, value: GIRDomain):
-        self._property_changed('related_content')
-        self.__related_content = value        
+        self._property_changed("related_content")
+        self.__related_content = value
 
     @property
     def publish_parameters(self) -> PublishParameters:
         """Publishing parameters to determine where and how to publish baskets, default all
-           to false. If not provided when rebalance/edit, selections during
-           create will be continued."""
+        to false. If not provided when rebalance/edit, selections during
+        create will be continued."""
         return self.__publish_parameters
 
     @publish_parameters.setter
     def publish_parameters(self, value: PublishParameters):
-        self._property_changed('publish_parameters')
-        self.__publish_parameters = value        
+        self._property_changed("publish_parameters")
+        self.__publish_parameters = value
 
     @property
     def index_notes(self) -> str:
@@ -664,8 +648,8 @@ class CustomBasketsEditInputs(Base):
 
     @index_notes.setter
     def index_notes(self, value: str):
-        self._property_changed('index_notes')
-        self.__index_notes = value        
+        self._property_changed("index_notes")
+        self.__index_notes = value
 
     @property
     def index_not_trading_reasons(self) -> Union[IndexNotTradingReasons, str]:
@@ -674,8 +658,8 @@ class CustomBasketsEditInputs(Base):
 
     @index_not_trading_reasons.setter
     def index_not_trading_reasons(self, value: Union[IndexNotTradingReasons, str]):
-        self._property_changed('index_not_trading_reasons')
-        self.__index_not_trading_reasons = get_enum_value(IndexNotTradingReasons, value)        
+        self._property_changed("index_not_trading_reasons")
+        self.__index_not_trading_reasons = get_enum_value(IndexNotTradingReasons, value)
 
     @property
     def flagship(self) -> bool:
@@ -684,23 +668,23 @@ class CustomBasketsEditInputs(Base):
 
     @flagship.setter
     def flagship(self, value: bool):
-        self._property_changed('flagship')
-        self.__flagship = value        
+        self._property_changed("flagship")
+        self.__flagship = value
 
     @property
     def clone_parent_id(self) -> str:
         """Marquee Id of the source basket, in case current basket composition is sourced
-           from another marquee basket"""
+        from another marquee basket"""
         return self.__clone_parent_id
 
     @clone_parent_id.setter
     def clone_parent_id(self, value: str):
-        self._property_changed('clone_parent_id')
-        self.__clone_parent_id = value        
+        self._property_changed("clone_parent_id")
+        self.__clone_parent_id = value
 
 
 class CustomBasketsPricingParameters(Base):
-        
+
     """Parameters for pricing baskets"""
 
     @camel_case_translate
@@ -712,8 +696,8 @@ class CustomBasketsPricingParameters(Base):
         target_notional: float = None,
         weighting_strategy: str = None,
         reweight: bool = False,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.currency = currency
         self.divisor = divisor
@@ -726,13 +710,13 @@ class CustomBasketsPricingParameters(Base):
     @property
     def currency(self) -> Union[IndicesCurrency, str]:
         """Currencies supported for basket creation. During rebalance, cannot change basket
-           currency hence the input value will be discarded."""
+        currency hence the input value will be discarded."""
         return self.__currency
 
     @currency.setter
     def currency(self, value: Union[IndicesCurrency, str]):
-        self._property_changed('currency')
-        self.__currency = get_enum_value(IndicesCurrency, value)        
+        self._property_changed("currency")
+        self.__currency = get_enum_value(IndicesCurrency, value)
 
     @property
     def divisor(self) -> float:
@@ -741,8 +725,8 @@ class CustomBasketsPricingParameters(Base):
 
     @divisor.setter
     def divisor(self, value: float):
-        self._property_changed('divisor')
-        self.__divisor = value        
+        self._property_changed("divisor")
+        self.__divisor = value
 
     @property
     def initial_price(self) -> float:
@@ -751,8 +735,8 @@ class CustomBasketsPricingParameters(Base):
 
     @initial_price.setter
     def initial_price(self, value: float):
-        self._property_changed('initial_price')
-        self.__initial_price = value        
+        self._property_changed("initial_price")
+        self.__initial_price = value
 
     @property
     def target_notional(self) -> float:
@@ -761,19 +745,19 @@ class CustomBasketsPricingParameters(Base):
 
     @target_notional.setter
     def target_notional(self, value: float):
-        self._property_changed('target_notional')
-        self.__target_notional = value        
+        self._property_changed("target_notional")
+        self.__target_notional = value
 
     @property
     def weighting_strategy(self) -> str:
         """Strategy used to price the position set. If not supplied, it is inferred from
-           the quantities or weights in the positions."""
+        the quantities or weights in the positions."""
         return self.__weighting_strategy
 
     @weighting_strategy.setter
     def weighting_strategy(self, value: str):
-        self._property_changed('weighting_strategy')
-        self.__weighting_strategy = value        
+        self._property_changed("weighting_strategy")
+        self.__weighting_strategy = value
 
     @property
     def reweight(self) -> bool:
@@ -782,12 +766,11 @@ class CustomBasketsPricingParameters(Base):
 
     @reweight.setter
     def reweight(self, value: bool):
-        self._property_changed('reweight')
-        self.__reweight = value        
+        self._property_changed("reweight")
+        self.__reweight = value
 
 
 class DynamicConstructionResponse(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -806,8 +789,8 @@ class DynamicConstructionResponse(Base):
         status=None,
         valid: int = None,
         validation_messages: Tuple[str, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.action = action
         self.columns = columns
@@ -833,8 +816,8 @@ class DynamicConstructionResponse(Base):
 
     @action.setter
     def action(self, value):
-        self._property_changed('action')
-        self.__action = value        
+        self._property_changed("action")
+        self.__action = value
 
     @property
     def columns(self) -> Tuple[ISelectConstituentColumn, ...]:
@@ -843,8 +826,8 @@ class DynamicConstructionResponse(Base):
 
     @columns.setter
     def columns(self, value: Tuple[ISelectConstituentColumn, ...]):
-        self._property_changed('columns')
-        self.__columns = value        
+        self._property_changed("columns")
+        self.__columns = value
 
     @property
     def constituent_validations(self) -> tuple:
@@ -852,8 +835,8 @@ class DynamicConstructionResponse(Base):
 
     @constituent_validations.setter
     def constituent_validations(self, value: tuple):
-        self._property_changed('constituent_validations')
-        self.__constituent_validations = value        
+        self._property_changed("constituent_validations")
+        self.__constituent_validations = value
 
     @property
     def date_validation_status(self) -> str:
@@ -861,8 +844,8 @@ class DynamicConstructionResponse(Base):
 
     @date_validation_status.setter
     def date_validation_status(self, value: str):
-        self._property_changed('date_validation_status')
-        self.__date_validation_status = value        
+        self._property_changed("date_validation_status")
+        self.__date_validation_status = value
 
     @property
     def types(self) -> tuple:
@@ -870,8 +853,8 @@ class DynamicConstructionResponse(Base):
 
     @types.setter
     def types(self, value: tuple):
-        self._property_changed('types')
-        self.__types = value        
+        self._property_changed("types")
+        self.__types = value
 
     @property
     def date_validations(self) -> tuple:
@@ -879,8 +862,8 @@ class DynamicConstructionResponse(Base):
 
     @date_validations.setter
     def date_validations(self, value: tuple):
-        self._property_changed('date_validations')
-        self.__date_validations = value        
+        self._property_changed("date_validations")
+        self.__date_validations = value
 
     @property
     def new_parameters(self) -> Tuple[ISelectNewParameter, ...]:
@@ -889,8 +872,8 @@ class DynamicConstructionResponse(Base):
 
     @new_parameters.setter
     def new_parameters(self, value: Tuple[ISelectNewParameter, ...]):
-        self._property_changed('new_parameters')
-        self.__new_parameters = value        
+        self._property_changed("new_parameters")
+        self.__new_parameters = value
 
     @property
     def index_type(self) -> str:
@@ -899,8 +882,8 @@ class DynamicConstructionResponse(Base):
 
     @index_type.setter
     def index_type(self, value: str):
-        self._property_changed('index_type')
-        self.__index_type = value        
+        self._property_changed("index_type")
+        self.__index_type = value
 
     @property
     def index_parameter_definitions(self) -> tuple:
@@ -908,8 +891,8 @@ class DynamicConstructionResponse(Base):
 
     @index_parameter_definitions.setter
     def index_parameter_definitions(self, value: tuple):
-        self._property_changed('index_parameter_definitions')
-        self.__index_parameter_definitions = value        
+        self._property_changed("index_parameter_definitions")
+        self.__index_parameter_definitions = value
 
     @property
     def index_metadata(self) -> tuple:
@@ -917,8 +900,8 @@ class DynamicConstructionResponse(Base):
 
     @index_metadata.setter
     def index_metadata(self, value: tuple):
-        self._property_changed('index_metadata')
-        self.__index_metadata = value        
+        self._property_changed("index_metadata")
+        self.__index_metadata = value
 
     @property
     def index_parameters(self) -> tuple:
@@ -926,8 +909,8 @@ class DynamicConstructionResponse(Base):
 
     @index_parameters.setter
     def index_parameters(self, value: tuple):
-        self._property_changed('index_parameters')
-        self.__index_parameters = value        
+        self._property_changed("index_parameters")
+        self.__index_parameters = value
 
     @property
     def index_parameter_validation(self) -> tuple:
@@ -935,8 +918,8 @@ class DynamicConstructionResponse(Base):
 
     @index_parameter_validation.setter
     def index_parameter_validation(self, value: tuple):
-        self._property_changed('index_parameter_validation')
-        self.__index_parameter_validation = value        
+        self._property_changed("index_parameter_validation")
+        self.__index_parameter_validation = value
 
     @property
     def status(self):
@@ -944,8 +927,8 @@ class DynamicConstructionResponse(Base):
 
     @status.setter
     def status(self, value):
-        self._property_changed('status')
-        self.__status = value        
+        self._property_changed("status")
+        self.__status = value
 
     @property
     def valid(self) -> int:
@@ -953,8 +936,8 @@ class DynamicConstructionResponse(Base):
 
     @valid.setter
     def valid(self, value: int):
-        self._property_changed('valid')
-        self.__valid = value        
+        self._property_changed("valid")
+        self.__valid = value
 
     @property
     def validation_messages(self) -> Tuple[str, ...]:
@@ -962,12 +945,11 @@ class DynamicConstructionResponse(Base):
 
     @validation_messages.setter
     def validation_messages(self, value: Tuple[str, ...]):
-        self._property_changed('validation_messages')
-        self.__validation_messages = value        
+        self._property_changed("validation_messages")
+        self.__validation_messages = value
 
 
 class ISelectRebalance(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -976,8 +958,8 @@ class ISelectRebalance(Base):
         new_parameters: Tuple[ISelectNewParameter, ...] = None,
         index_parameters: Tuple[ISelectIndexParameters, ...] = None,
         waiver_requested: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.new_weights = new_weights
         self.rebalance_date = rebalance_date
@@ -993,8 +975,8 @@ class ISelectRebalance(Base):
 
     @new_weights.setter
     def new_weights(self, value: Tuple[ISelectNewWeight, ...]):
-        self._property_changed('new_weights')
-        self.__new_weights = value        
+        self._property_changed("new_weights")
+        self.__new_weights = value
 
     @property
     def rebalance_date(self) -> str:
@@ -1003,8 +985,8 @@ class ISelectRebalance(Base):
 
     @rebalance_date.setter
     def rebalance_date(self, value: str):
-        self._property_changed('rebalance_date')
-        self.__rebalance_date = value        
+        self._property_changed("rebalance_date")
+        self.__rebalance_date = value
 
     @property
     def new_parameters(self) -> Tuple[ISelectNewParameter, ...]:
@@ -1013,8 +995,8 @@ class ISelectRebalance(Base):
 
     @new_parameters.setter
     def new_parameters(self, value: Tuple[ISelectNewParameter, ...]):
-        self._property_changed('new_parameters')
-        self.__new_parameters = value        
+        self._property_changed("new_parameters")
+        self.__new_parameters = value
 
     @property
     def index_parameters(self) -> Tuple[ISelectIndexParameters, ...]:
@@ -1023,8 +1005,8 @@ class ISelectRebalance(Base):
 
     @index_parameters.setter
     def index_parameters(self, value: Tuple[ISelectIndexParameters, ...]):
-        self._property_changed('index_parameters')
-        self.__index_parameters = value        
+        self._property_changed("index_parameters")
+        self.__index_parameters = value
 
     @property
     def waiver_requested(self) -> bool:
@@ -1033,12 +1015,11 @@ class ISelectRebalance(Base):
 
     @waiver_requested.setter
     def waiver_requested(self, value: bool):
-        self._property_changed('waiver_requested')
-        self.__waiver_requested = value        
+        self._property_changed("waiver_requested")
+        self.__waiver_requested = value
 
 
 class ISelectRequest(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -1053,8 +1034,8 @@ class ISelectRequest(Base):
         waiver_requested: bool = None,
         presubmit: bool = None,
         requester_id: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.use_new_rebalance_interface = use_new_rebalance_interface
         self.new_parameters = new_parameters
@@ -1076,8 +1057,8 @@ class ISelectRequest(Base):
 
     @use_new_rebalance_interface.setter
     def use_new_rebalance_interface(self, value: bool):
-        self._property_changed('use_new_rebalance_interface')
-        self.__use_new_rebalance_interface = value        
+        self._property_changed("use_new_rebalance_interface")
+        self.__use_new_rebalance_interface = value
 
     @property
     def new_parameters(self) -> Tuple[ISelectNewParameter, ...]:
@@ -1086,8 +1067,8 @@ class ISelectRequest(Base):
 
     @new_parameters.setter
     def new_parameters(self, value: Tuple[ISelectNewParameter, ...]):
-        self._property_changed('new_parameters')
-        self.__new_parameters = value        
+        self._property_changed("new_parameters")
+        self.__new_parameters = value
 
     @property
     def index_parameters(self) -> Tuple[ISelectIndexParameter, ...]:
@@ -1096,8 +1077,8 @@ class ISelectRequest(Base):
 
     @index_parameters.setter
     def index_parameters(self, value: Tuple[ISelectIndexParameter, ...]):
-        self._property_changed('index_parameters')
-        self.__index_parameters = value        
+        self._property_changed("index_parameters")
+        self.__index_parameters = value
 
     @property
     def new_weights(self) -> Tuple[ISelectNewWeight, ...]:
@@ -1106,8 +1087,8 @@ class ISelectRequest(Base):
 
     @new_weights.setter
     def new_weights(self, value: Tuple[ISelectNewWeight, ...]):
-        self._property_changed('new_weights')
-        self.__new_weights = value        
+        self._property_changed("new_weights")
+        self.__new_weights = value
 
     @property
     def new_units(self) -> Tuple[ISelectNewUnit, ...]:
@@ -1116,8 +1097,8 @@ class ISelectRequest(Base):
 
     @new_units.setter
     def new_units(self, value: Tuple[ISelectNewUnit, ...]):
-        self._property_changed('new_units')
-        self.__new_units = value        
+        self._property_changed("new_units")
+        self.__new_units = value
 
     @property
     def rebalance_date(self) -> str:
@@ -1125,8 +1106,8 @@ class ISelectRequest(Base):
 
     @rebalance_date.setter
     def rebalance_date(self, value: str):
-        self._property_changed('rebalance_date')
-        self.__rebalance_date = value        
+        self._property_changed("rebalance_date")
+        self.__rebalance_date = value
 
     @property
     def entry_type(self) -> str:
@@ -1135,8 +1116,8 @@ class ISelectRequest(Base):
 
     @entry_type.setter
     def entry_type(self, value: str):
-        self._property_changed('entry_type')
-        self.__entry_type = value        
+        self._property_changed("entry_type")
+        self.__entry_type = value
 
     @property
     def request_counter(self) -> int:
@@ -1144,8 +1125,8 @@ class ISelectRequest(Base):
 
     @request_counter.setter
     def request_counter(self, value: int):
-        self._property_changed('request_counter')
-        self.__request_counter = value        
+        self._property_changed("request_counter")
+        self.__request_counter = value
 
     @property
     def waiver_requested(self) -> bool:
@@ -1153,8 +1134,8 @@ class ISelectRequest(Base):
 
     @waiver_requested.setter
     def waiver_requested(self, value: bool):
-        self._property_changed('waiver_requested')
-        self.__waiver_requested = value        
+        self._property_changed("waiver_requested")
+        self.__waiver_requested = value
 
     @property
     def presubmit(self) -> bool:
@@ -1162,8 +1143,8 @@ class ISelectRequest(Base):
 
     @presubmit.setter
     def presubmit(self, value: bool):
-        self._property_changed('presubmit')
-        self.__presubmit = value        
+        self._property_changed("presubmit")
+        self.__presubmit = value
 
     @property
     def requester_id(self) -> str:
@@ -1172,12 +1153,11 @@ class ISelectRequest(Base):
 
     @requester_id.setter
     def requester_id(self, value: str):
-        self._property_changed('requester_id')
-        self.__requester_id = value        
+        self._property_changed("requester_id")
+        self.__requester_id = value
 
 
 class ISelectResponse(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -1211,8 +1191,8 @@ class ISelectResponse(Base):
         submission_text: str = None,
         valid: int = None,
         validation_messages: Tuple[str, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.action = action
         self.action_comment = action_comment
@@ -1253,8 +1233,8 @@ class ISelectResponse(Base):
 
     @action.setter
     def action(self, value):
-        self._property_changed('action')
-        self.__action = value        
+        self._property_changed("action")
+        self.__action = value
 
     @property
     def action_comment(self) -> str:
@@ -1263,8 +1243,8 @@ class ISelectResponse(Base):
 
     @action_comment.setter
     def action_comment(self, value: str):
-        self._property_changed('action_comment')
-        self.__action_comment = value        
+        self._property_changed("action_comment")
+        self.__action_comment = value
 
     @property
     def asset_name(self) -> str:
@@ -1273,8 +1253,8 @@ class ISelectResponse(Base):
 
     @asset_name.setter
     def asset_name(self, value: str):
-        self._property_changed('asset_name')
-        self.__asset_name = value        
+        self._property_changed("asset_name")
+        self.__asset_name = value
 
     @property
     def asset_short_name(self) -> str:
@@ -1283,8 +1263,8 @@ class ISelectResponse(Base):
 
     @asset_short_name.setter
     def asset_short_name(self, value: str):
-        self._property_changed('asset_short_name')
-        self.__asset_short_name = value        
+        self._property_changed("asset_short_name")
+        self.__asset_short_name = value
 
     @property
     def available_action_confirms(self) -> Tuple[Tuple[str, ...], ...]:
@@ -1292,8 +1272,8 @@ class ISelectResponse(Base):
 
     @available_action_confirms.setter
     def available_action_confirms(self, value: Tuple[Tuple[str, ...], ...]):
-        self._property_changed('available_action_confirms')
-        self.__available_action_confirms = value        
+        self._property_changed("available_action_confirms")
+        self.__available_action_confirms = value
 
     @property
     def available_actions(self) -> tuple:
@@ -1301,8 +1281,8 @@ class ISelectResponse(Base):
 
     @available_actions.setter
     def available_actions(self, value: tuple):
-        self._property_changed('available_actions')
-        self.__available_actions = value        
+        self._property_changed("available_actions")
+        self.__available_actions = value
 
     @property
     def available_rebalance_dates(self) -> Tuple[str, ...]:
@@ -1310,8 +1290,8 @@ class ISelectResponse(Base):
 
     @available_rebalance_dates.setter
     def available_rebalance_dates(self, value: Tuple[str, ...]):
-        self._property_changed('available_rebalance_dates')
-        self.__available_rebalance_dates = value        
+        self._property_changed("available_rebalance_dates")
+        self.__available_rebalance_dates = value
 
     @property
     def constituent_validations(self) -> tuple:
@@ -1319,8 +1299,8 @@ class ISelectResponse(Base):
 
     @constituent_validations.setter
     def constituent_validations(self, value: tuple):
-        self._property_changed('constituent_validations')
-        self.__constituent_validations = value        
+        self._property_changed("constituent_validations")
+        self.__constituent_validations = value
 
     @property
     def date_validation_status(self) -> str:
@@ -1328,8 +1308,8 @@ class ISelectResponse(Base):
 
     @date_validation_status.setter
     def date_validation_status(self, value: str):
-        self._property_changed('date_validation_status')
-        self.__date_validation_status = value        
+        self._property_changed("date_validation_status")
+        self.__date_validation_status = value
 
     @property
     def date_validations(self) -> tuple:
@@ -1337,8 +1317,8 @@ class ISelectResponse(Base):
 
     @date_validations.setter
     def date_validations(self, value: tuple):
-        self._property_changed('date_validations')
-        self.__date_validations = value        
+        self._property_changed("date_validations")
+        self.__date_validations = value
 
     @property
     def entry_mode(self) -> str:
@@ -1346,8 +1326,8 @@ class ISelectResponse(Base):
 
     @entry_mode.setter
     def entry_mode(self, value: str):
-        self._property_changed('entry_mode')
-        self.__entry_mode = value        
+        self._property_changed("entry_mode")
+        self.__entry_mode = value
 
     @property
     def entry_type(self) -> str:
@@ -1355,8 +1335,8 @@ class ISelectResponse(Base):
 
     @entry_type.setter
     def entry_type(self, value: str):
-        self._property_changed('entry_type')
-        self.__entry_type = value        
+        self._property_changed("entry_type")
+        self.__entry_type = value
 
     @property
     def internal_rebalance(self) -> int:
@@ -1365,8 +1345,8 @@ class ISelectResponse(Base):
 
     @internal_rebalance.setter
     def internal_rebalance(self, value: int):
-        self._property_changed('internal_rebalance')
-        self.__internal_rebalance = value        
+        self._property_changed("internal_rebalance")
+        self.__internal_rebalance = value
 
     @property
     def index_parameter_definitions(self) -> tuple:
@@ -1374,8 +1354,8 @@ class ISelectResponse(Base):
 
     @index_parameter_definitions.setter
     def index_parameter_definitions(self, value: tuple):
-        self._property_changed('index_parameter_definitions')
-        self.__index_parameter_definitions = value        
+        self._property_changed("index_parameter_definitions")
+        self.__index_parameter_definitions = value
 
     @property
     def index_parameters(self) -> tuple:
@@ -1383,8 +1363,8 @@ class ISelectResponse(Base):
 
     @index_parameters.setter
     def index_parameters(self, value: tuple):
-        self._property_changed('index_parameters')
-        self.__index_parameters = value        
+        self._property_changed("index_parameters")
+        self.__index_parameters = value
 
     @property
     def index_parameter_validation(self) -> tuple:
@@ -1392,8 +1372,8 @@ class ISelectResponse(Base):
 
     @index_parameter_validation.setter
     def index_parameter_validation(self, value: tuple):
-        self._property_changed('index_parameter_validation')
-        self.__index_parameter_validation = value        
+        self._property_changed("index_parameter_validation")
+        self.__index_parameter_validation = value
 
     @property
     def new_units(self) -> Tuple[ISelectNewUnit, ...]:
@@ -1401,8 +1381,8 @@ class ISelectResponse(Base):
 
     @new_units.setter
     def new_units(self, value: Tuple[ISelectNewUnit, ...]):
-        self._property_changed('new_units')
-        self.__new_units = value        
+        self._property_changed("new_units")
+        self.__new_units = value
 
     @property
     def new_weights(self) -> Tuple[ISelectNewWeight, ...]:
@@ -1410,8 +1390,8 @@ class ISelectResponse(Base):
 
     @new_weights.setter
     def new_weights(self, value: Tuple[ISelectNewWeight, ...]):
-        self._property_changed('new_weights')
-        self.__new_weights = value        
+        self._property_changed("new_weights")
+        self.__new_weights = value
 
     @property
     def notification_date(self) -> str:
@@ -1419,8 +1399,8 @@ class ISelectResponse(Base):
 
     @notification_date.setter
     def notification_date(self, value: str):
-        self._property_changed('notification_date')
-        self.__notification_date = value        
+        self._property_changed("notification_date")
+        self.__notification_date = value
 
     @property
     def rebalance_date(self) -> str:
@@ -1428,8 +1408,8 @@ class ISelectResponse(Base):
 
     @rebalance_date.setter
     def rebalance_date(self, value: str):
-        self._property_changed('rebalance_date')
-        self.__rebalance_date = value        
+        self._property_changed("rebalance_date")
+        self.__rebalance_date = value
 
     @property
     def rebalance_determination_date(self) -> str:
@@ -1437,8 +1417,8 @@ class ISelectResponse(Base):
 
     @rebalance_determination_date.setter
     def rebalance_determination_date(self, value: str):
-        self._property_changed('rebalance_determination_date')
-        self.__rebalance_determination_date = value        
+        self._property_changed("rebalance_determination_date")
+        self.__rebalance_determination_date = value
 
     @property
     def reb_determination_index_level(self) -> float:
@@ -1446,8 +1426,8 @@ class ISelectResponse(Base):
 
     @reb_determination_index_level.setter
     def reb_determination_index_level(self, value: float):
-        self._property_changed('reb_determination_index_level')
-        self.__reb_determination_index_level = value        
+        self._property_changed("reb_determination_index_level")
+        self.__reb_determination_index_level = value
 
     @property
     def request_counter(self) -> int:
@@ -1455,8 +1435,8 @@ class ISelectResponse(Base):
 
     @request_counter.setter
     def request_counter(self, value: int):
-        self._property_changed('request_counter')
-        self.__request_counter = value        
+        self._property_changed("request_counter")
+        self.__request_counter = value
 
     @property
     def series(self) -> ISelectSeries:
@@ -1464,8 +1444,8 @@ class ISelectResponse(Base):
 
     @series.setter
     def series(self, value: ISelectSeries):
-        self._property_changed('series')
-        self.__series = value        
+        self._property_changed("series")
+        self.__series = value
 
     @property
     def status(self):
@@ -1473,8 +1453,8 @@ class ISelectResponse(Base):
 
     @status.setter
     def status(self, value):
-        self._property_changed('status')
-        self.__status = value        
+        self._property_changed("status")
+        self.__status = value
 
     @property
     def submission_data(self) -> tuple:
@@ -1482,8 +1462,8 @@ class ISelectResponse(Base):
 
     @submission_data.setter
     def submission_data(self, value: tuple):
-        self._property_changed('submission_data')
-        self.__submission_data = value        
+        self._property_changed("submission_data")
+        self.__submission_data = value
 
     @property
     def submission_data_columns(self) -> Tuple[ISelectConstituentColumn, ...]:
@@ -1491,8 +1471,8 @@ class ISelectResponse(Base):
 
     @submission_data_columns.setter
     def submission_data_columns(self, value: Tuple[ISelectConstituentColumn, ...]):
-        self._property_changed('submission_data_columns')
-        self.__submission_data_columns = value        
+        self._property_changed("submission_data_columns")
+        self.__submission_data_columns = value
 
     @property
     def submission_text(self) -> str:
@@ -1500,8 +1480,8 @@ class ISelectResponse(Base):
 
     @submission_text.setter
     def submission_text(self, value: str):
-        self._property_changed('submission_text')
-        self.__submission_text = value        
+        self._property_changed("submission_text")
+        self.__submission_text = value
 
     @property
     def valid(self) -> int:
@@ -1509,8 +1489,8 @@ class ISelectResponse(Base):
 
     @valid.setter
     def valid(self, value: int):
-        self._property_changed('valid')
-        self.__valid = value        
+        self._property_changed("valid")
+        self.__valid = value
 
     @property
     def validation_messages(self) -> Tuple[str, ...]:
@@ -1518,12 +1498,12 @@ class ISelectResponse(Base):
 
     @validation_messages.setter
     def validation_messages(self, value: Tuple[str, ...]):
-        self._property_changed('validation_messages')
-        self.__validation_messages = value        
+        self._property_changed("validation_messages")
+        self.__validation_messages = value
 
 
 class IndicesDynamicConstructInputs(Base):
-        
+
     """STS Indices Dynamic Construction Inputs"""
 
     @camel_case_translate
@@ -1533,8 +1513,8 @@ class IndicesDynamicConstructInputs(Base):
         new_parameters: Tuple[ISelectNewParameter, ...],
         index_parameters: Tuple[ISelectIndexParameters, ...],
         index_metadata: Tuple[ISelectIndexParameters, ...],
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.index_type = index_type
         self.new_parameters = new_parameters
@@ -1549,8 +1529,8 @@ class IndicesDynamicConstructInputs(Base):
 
     @index_type.setter
     def index_type(self, value: str):
-        self._property_changed('index_type')
-        self.__index_type = value        
+        self._property_changed("index_type")
+        self.__index_type = value
 
     @property
     def new_parameters(self) -> Tuple[ISelectNewParameter, ...]:
@@ -1559,8 +1539,8 @@ class IndicesDynamicConstructInputs(Base):
 
     @new_parameters.setter
     def new_parameters(self, value: Tuple[ISelectNewParameter, ...]):
-        self._property_changed('new_parameters')
-        self.__new_parameters = value        
+        self._property_changed("new_parameters")
+        self.__new_parameters = value
 
     @property
     def index_parameters(self) -> Tuple[ISelectIndexParameters, ...]:
@@ -1569,8 +1549,8 @@ class IndicesDynamicConstructInputs(Base):
 
     @index_parameters.setter
     def index_parameters(self, value: Tuple[ISelectIndexParameters, ...]):
-        self._property_changed('index_parameters')
-        self.__index_parameters = value        
+        self._property_changed("index_parameters")
+        self.__index_parameters = value
 
     @property
     def index_metadata(self) -> Tuple[ISelectIndexParameters, ...]:
@@ -1579,12 +1559,12 @@ class IndicesDynamicConstructInputs(Base):
 
     @index_metadata.setter
     def index_metadata(self, value: Tuple[ISelectIndexParameters, ...]):
-        self._property_changed('index_metadata')
-        self.__index_metadata = value        
+        self._property_changed("index_metadata")
+        self.__index_metadata = value
 
 
 class CustomBasketsCreateInputs(Base):
-        
+
     """Inputs required to create a basket"""
 
     @camel_case_translate
@@ -1607,8 +1587,8 @@ class CustomBasketsCreateInputs(Base):
         allow_limited_access_assets: bool = False,
         allow_ca_restricted_assets: bool = False,
         vendor: str = None,
-        default_backcast: bool = True
-    ):        
+        default_backcast: bool = True,
+    ):
         super().__init__()
         self.ticker = ticker
         self.name = name
@@ -1632,15 +1612,15 @@ class CustomBasketsCreateInputs(Base):
     @property
     def ticker(self) -> str:
         """Ticker Identifier for the basket (Prefix with 'GS' to publish to Bloomberg).
-           Please note ticker should start with your assigned prefix. If you do
-           not have a prefix setup, reach out to your GS representative or you
-           can use the default prefix GSMB"""
+        Please note ticker should start with your assigned prefix. If you do
+        not have a prefix setup, reach out to your GS representative or you
+        can use the default prefix GSMB"""
         return self.__ticker
 
     @ticker.setter
     def ticker(self, value: str):
-        self._property_changed('ticker')
-        self.__ticker = value        
+        self._property_changed("ticker")
+        self.__ticker = value
 
     @property
     def name(self) -> str:
@@ -1649,19 +1629,19 @@ class CustomBasketsCreateInputs(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def description(self) -> str:
         """Free text description of basket, default to empty. Description provided will be
-           indexed in the search service for free text relevance match."""
+        indexed in the search service for free text relevance match."""
         return self.__description
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def styles(self) -> Tuple[str, ...]:
@@ -1670,8 +1650,8 @@ class CustomBasketsCreateInputs(Base):
 
     @styles.setter
     def styles(self, value: Tuple[str, ...]):
-        self._property_changed('styles')
-        self.__styles = value        
+        self._property_changed("styles")
+        self.__styles = value
 
     @property
     def related_content(self) -> GIRDomain:
@@ -1680,65 +1660,65 @@ class CustomBasketsCreateInputs(Base):
 
     @related_content.setter
     def related_content(self, value: GIRDomain):
-        self._property_changed('related_content')
-        self.__related_content = value        
+        self._property_changed("related_content")
+        self.__related_content = value
 
     @property
     def hedge_id(self) -> str:
         """Marquee Id of the source hedge, in case current basket composition is sourced
-           from marquee hedge"""
+        from marquee hedge"""
         return self.__hedge_id
 
     @hedge_id.setter
     def hedge_id(self, value: str):
-        self._property_changed('hedge_id')
-        self.__hedge_id = value        
+        self._property_changed("hedge_id")
+        self.__hedge_id = value
 
     @property
     def clone_parent_id(self) -> str:
         """Marquee Id of the source basket, in case current basket composition is sourced
-           from another marquee basket"""
+        from another marquee basket"""
         return self.__clone_parent_id
 
     @clone_parent_id.setter
     def clone_parent_id(self, value: str):
-        self._property_changed('clone_parent_id')
-        self.__clone_parent_id = value        
+        self._property_changed("clone_parent_id")
+        self.__clone_parent_id = value
 
     @property
     def return_type(self) -> str:
         """Determines the index calculation methodology with respect to dividend
-           reinvestment."""
+        reinvestment."""
         return self.__return_type
 
     @return_type.setter
     def return_type(self, value: str):
-        self._property_changed('return_type')
-        self.__return_type = value        
+        self._property_changed("return_type")
+        self.__return_type = value
 
     @property
     def position_set(self) -> Tuple[PositionPriceInput, ...]:
         """Information of constituents associated with the basket. Need to supply one of
-           weight or quantity. If using weight, need to provide weight for all
-           constituents and similarly for quantity"""
+        weight or quantity. If using weight, need to provide weight for all
+        constituents and similarly for quantity"""
         return self.__position_set
 
     @position_set.setter
     def position_set(self, value: Tuple[PositionPriceInput, ...]):
-        self._property_changed('position_set')
-        self.__position_set = value        
+        self._property_changed("position_set")
+        self.__position_set = value
 
     @property
     def publish_parameters(self) -> PublishParameters:
         """Publishing parameters to determine where and how to publish baskets, default all
-           to false. If not provided when rebalance/edit, selections during
-           create will be continued."""
+        to false. If not provided when rebalance/edit, selections during
+        create will be continued."""
         return self.__publish_parameters
 
     @publish_parameters.setter
     def publish_parameters(self, value: PublishParameters):
-        self._property_changed('publish_parameters')
-        self.__publish_parameters = value        
+        self._property_changed("publish_parameters")
+        self.__publish_parameters = value
 
     @property
     def pricing_parameters(self) -> CustomBasketsPricingParameters:
@@ -1747,8 +1727,8 @@ class CustomBasketsCreateInputs(Base):
 
     @pricing_parameters.setter
     def pricing_parameters(self, value: CustomBasketsPricingParameters):
-        self._property_changed('pricing_parameters')
-        self.__pricing_parameters = value        
+        self._property_changed("pricing_parameters")
+        self.__pricing_parameters = value
 
     @property
     def index_notes(self) -> str:
@@ -1757,8 +1737,8 @@ class CustomBasketsCreateInputs(Base):
 
     @index_notes.setter
     def index_notes(self, value: str):
-        self._property_changed('index_notes')
-        self.__index_notes = value        
+        self._property_changed("index_notes")
+        self.__index_notes = value
 
     @property
     def flagship(self) -> bool:
@@ -1767,52 +1747,52 @@ class CustomBasketsCreateInputs(Base):
 
     @flagship.setter
     def flagship(self, value: bool):
-        self._property_changed('flagship')
-        self.__flagship = value        
+        self._property_changed("flagship")
+        self.__flagship = value
 
     @property
     def on_behalf_of(self) -> str:
         """If creating the basket on behalf of a client, please provide the client's guid
-           here."""
+        here."""
         return self.__on_behalf_of
 
     @on_behalf_of.setter
     def on_behalf_of(self, value: str):
-        self._property_changed('on_behalf_of')
-        self.__on_behalf_of = value        
+        self._property_changed("on_behalf_of")
+        self.__on_behalf_of = value
 
     @property
     def allow_limited_access_assets(self) -> bool:
         """To allow basket creation with constituents GS has limited access to. Default is
-           false."""
+        false."""
         return self.__allow_limited_access_assets
 
     @allow_limited_access_assets.setter
     def allow_limited_access_assets(self, value: bool):
-        self._property_changed('allow_limited_access_assets')
-        self.__allow_limited_access_assets = value        
+        self._property_changed("allow_limited_access_assets")
+        self.__allow_limited_access_assets = value
 
     @property
     def allow_ca_restricted_assets(self) -> bool:
         """To allow basket creation with constituents that will not be corporate action
-           adjusted in the future. Default is false."""
+        adjusted in the future. Default is false."""
         return self.__allow_ca_restricted_assets
 
     @allow_ca_restricted_assets.setter
     def allow_ca_restricted_assets(self, value: bool):
-        self._property_changed('allow_ca_restricted_assets')
-        self.__allow_ca_restricted_assets = value        
+        self._property_changed("allow_ca_restricted_assets")
+        self.__allow_ca_restricted_assets = value
 
     @property
     def vendor(self) -> str:
         """If the basket composition was sourced from a vendor, please provide vendor oeid
-           here"""
+        here"""
         return self.__vendor
 
     @vendor.setter
     def vendor(self, value: str):
-        self._property_changed('vendor')
-        self.__vendor = value        
+        self._property_changed("vendor")
+        self.__vendor = value
 
     @property
     def default_backcast(self) -> bool:
@@ -1821,12 +1801,12 @@ class CustomBasketsCreateInputs(Base):
 
     @default_backcast.setter
     def default_backcast(self, value: bool):
-        self._property_changed('default_backcast')
-        self.__default_backcast = value        
+        self._property_changed("default_backcast")
+        self.__default_backcast = value
 
 
 class CustomBasketsRebalanceInputs(Base):
-        
+
     """Inputs used to rebalance a custom basket"""
 
     @camel_case_translate
@@ -1837,8 +1817,8 @@ class CustomBasketsRebalanceInputs(Base):
         pricing_parameters: CustomBasketsPricingParameters = None,
         allow_limited_access_assets: bool = False,
         allow_ca_restricted_assets: bool = False,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.position_set = position_set
         self.publish_parameters = publish_parameters
@@ -1850,26 +1830,26 @@ class CustomBasketsRebalanceInputs(Base):
     @property
     def position_set(self) -> Tuple[PositionPriceInput, ...]:
         """Information of constituents associated with the basket. Need to supply one of
-           weight or quantity. If using weight, need to provide weight for all
-           constituents and similarly for quantity"""
+        weight or quantity. If using weight, need to provide weight for all
+        constituents and similarly for quantity"""
         return self.__position_set
 
     @position_set.setter
     def position_set(self, value: Tuple[PositionPriceInput, ...]):
-        self._property_changed('position_set')
-        self.__position_set = value        
+        self._property_changed("position_set")
+        self.__position_set = value
 
     @property
     def publish_parameters(self) -> PublishParameters:
         """Publishing parameters to determine where and how to publish baskets, default all
-           to false. If not provided when rebalance/edit, selections during
-           create will be continued."""
+        to false. If not provided when rebalance/edit, selections during
+        create will be continued."""
         return self.__publish_parameters
 
     @publish_parameters.setter
     def publish_parameters(self, value: PublishParameters):
-        self._property_changed('publish_parameters')
-        self.__publish_parameters = value        
+        self._property_changed("publish_parameters")
+        self.__publish_parameters = value
 
     @property
     def pricing_parameters(self) -> CustomBasketsPricingParameters:
@@ -1878,40 +1858,35 @@ class CustomBasketsRebalanceInputs(Base):
 
     @pricing_parameters.setter
     def pricing_parameters(self, value: CustomBasketsPricingParameters):
-        self._property_changed('pricing_parameters')
-        self.__pricing_parameters = value        
+        self._property_changed("pricing_parameters")
+        self.__pricing_parameters = value
 
     @property
     def allow_limited_access_assets(self) -> bool:
         """To allow basket rebalance with constituents GS has limited access to. Default is
-           false."""
+        false."""
         return self.__allow_limited_access_assets
 
     @allow_limited_access_assets.setter
     def allow_limited_access_assets(self, value: bool):
-        self._property_changed('allow_limited_access_assets')
-        self.__allow_limited_access_assets = value        
+        self._property_changed("allow_limited_access_assets")
+        self.__allow_limited_access_assets = value
 
     @property
     def allow_ca_restricted_assets(self) -> bool:
         """To allow basket rebalance with constituents that will not be corporate action
-           adjusted in the future. Default is false."""
+        adjusted in the future. Default is false."""
         return self.__allow_ca_restricted_assets
 
     @allow_ca_restricted_assets.setter
     def allow_ca_restricted_assets(self, value: bool):
-        self._property_changed('allow_ca_restricted_assets')
-        self.__allow_ca_restricted_assets = value        
+        self._property_changed("allow_ca_restricted_assets")
+        self.__allow_ca_restricted_assets = value
 
 
 class IndicesEditInputs(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        parameters: CustomBasketsEditInputs,
-        name: str = None
-    ):        
+    def __init__(self, parameters: CustomBasketsEditInputs, name: str = None):
         super().__init__()
         self.parameters = parameters
         self.name = name
@@ -1923,18 +1898,13 @@ class IndicesEditInputs(Base):
 
     @parameters.setter
     def parameters(self, value: CustomBasketsEditInputs):
-        self._property_changed('parameters')
-        self.__parameters = value        
+        self._property_changed("parameters")
+        self.__parameters = value
 
 
 class IndicesRebalanceInputs(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        parameters: dict,
-        name: str = None
-    ):        
+    def __init__(self, parameters: dict, name: str = None):
         super().__init__()
         self.parameters = parameters
         self.name = name
@@ -1946,5 +1916,5 @@ class IndicesRebalanceInputs(Base):
 
     @parameters.setter
     def parameters(self, value: dict):
-        self._property_changed('parameters')
-        self.__parameters = value        
+        self._property_changed("parameters")
+        self.__parameters = value

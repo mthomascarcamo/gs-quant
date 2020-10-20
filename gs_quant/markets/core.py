@@ -21,21 +21,29 @@ from abc import ABCMeta
 from concurrent.futures import ThreadPoolExecutor
 from inspect import signature
 from itertools import zip_longest
-from tqdm import tqdm
 from typing import Optional, Union
 
-from .markets import CloseMarket, LiveMarket, Market, close_market_date
+from tqdm import tqdm
+
 from gs_quant.base import InstrumentBase, RiskKey, Scenario, get_enum_value
 from gs_quant.common import PricingLocation
 from gs_quant.context_base import ContextBaseWithDefault
 from gs_quant.datetime.date import business_day_offset
-from gs_quant.risk import CompositeScenario, DataFrameWithInfo, ErrorValue, FloatWithInfo, MarketDataScenario, \
-    RiskMeasure, StringWithInfo
+from gs_quant.risk import (
+    CompositeScenario,
+    DataFrameWithInfo,
+    ErrorValue,
+    FloatWithInfo,
+    MarketDataScenario,
+    RiskMeasure,
+    StringWithInfo,
+)
 from gs_quant.risk.results import PricingFuture
 from gs_quant.session import GsSession
 from gs_quant.target.common import PricingDateAndMarketDataAsOf
 from gs_quant.target.risk import RiskPosition, RiskRequest, RiskRequestParameters
 
+from .markets import CloseMarket, LiveMarket, Market, close_market_date
 
 _logger = logging.getLogger(__name__)
 
@@ -46,6 +54,7 @@ class PricingCache(metaclass=ABCMeta):
     """
     Weakref cache for instrument calcs
     """
+
     __cache = weakref.WeakKeyDictionary()
 
     @classmethod
@@ -73,17 +82,19 @@ class PricingContext(ContextBaseWithDefault):
     A context for controlling pricing and market data behaviour
     """
 
-    def __init__(self,
-                 pricing_date: Optional[dt.date] = None,
-                 market_data_location: Optional[Union[PricingLocation, str]] = None,
-                 is_async: bool = False,
-                 is_batch: bool = False,
-                 use_cache: bool = False,
-                 visible_to_gs: bool = False,
-                 csa_term: Optional[str] = None,
-                 timeout: Optional[int] = None,
-                 market: Optional[Market] = None,
-                 show_progress: Optional[bool] = False):
+    def __init__(
+        self,
+        pricing_date: Optional[dt.date] = None,
+        market_data_location: Optional[Union[PricingLocation, str]] = None,
+        is_async: bool = False,
+        is_batch: bool = False,
+        use_cache: bool = False,
+        visible_to_gs: bool = False,
+        csa_term: Optional[str] = None,
+        timeout: Optional[int] = None,
+        market: Optional[Market] = None,
+        show_progress: Optional[bool] = False,
+    ):
         """
         The methods on this class should not be called directly. Instead, use the methods on the instruments,
         as per the examples
@@ -127,7 +138,7 @@ class PricingContext(ContextBaseWithDefault):
         super().__init__()
 
         if market and market_data_location and market.location is not market_data_location:
-            raise ValueError('market.location and market_data_location cannot be different')
+            raise ValueError("market.location and market_data_location cannot be different")
 
         if not market_data_location:
             if not market:
@@ -140,8 +151,11 @@ class PricingContext(ContextBaseWithDefault):
             else:
                 market_data_location = market.location
 
-        self.__pricing_date = pricing_date or (self.prior_context.pricing_date if self.prior_context else
-                                               business_day_offset(dt.date.today(), 0, roll='preceding'))
+        self.__pricing_date = pricing_date or (
+            self.prior_context.pricing_date
+            if self.prior_context
+            else business_day_offset(dt.date.today(), 0, roll="preceding")
+        )
         self.__csa_term = csa_term
         self.__is_async = is_async
         self.__is_batch = is_batch
@@ -151,7 +165,8 @@ class PricingContext(ContextBaseWithDefault):
         self.__market_data_location = get_enum_value(PricingLocation, market_data_location)
         self.__market = market or CloseMarket(
             date=close_market_date(self.__market_data_location, self.__pricing_date) if pricing_date else None,
-            location=self.__market_data_location if market_data_location else None)
+            location=self.__market_data_location if market_data_location else None,
+        )
         self.__pending = {}
         self.__show_progress = show_progress
 
@@ -182,50 +197,78 @@ class PricingContext(ContextBaseWithDefault):
                         if self.__use_cache:
                             PricingCache.put(risk_key_, priceable_, result)
                     else:
-                        result = ErrorValue(risk_key_, 'No result returned')
+                        result = ErrorValue(risk_key_, "No result returned")
 
                     future.set_result(result)
 
         # Group requests optimally
         requests_by_provider = {}
         for (key, instrument) in self.__pending.keys():
-            requests_by_provider.setdefault(key.provider, {})\
-                .setdefault((key.params, key.scenario, key.date, key.market), {})\
-                .setdefault(instrument, set())\
-                .add(key.risk_measure)
+            requests_by_provider.setdefault(key.provider, {}).setdefault(
+                (key.params, key.scenario, key.date, key.market), {}
+            ).setdefault(instrument, set()).add(key.risk_measure)
 
         requests_for_provider = {}
         if requests_by_provider:
-            for provider, by_params_scenario_date_market in requests_by_provider.items():
+            for (
+                provider,
+                by_params_scenario_date_market,
+            ) in requests_by_provider.items():
                 grouped_requests = {}
 
-                for (params, scenario, date, market), positions_by_measures in by_params_scenario_date_market.items():
+                for (
+                    params,
+                    scenario,
+                    date,
+                    market,
+                ), positions_by_measures in by_params_scenario_date_market.items():
                     for instrument, risk_measures in positions_by_measures.items():
-                        grouped_requests.setdefault((params, scenario, date, market, tuple(sorted(risk_measures))),
-                                                    []).append(instrument)
+                        grouped_requests.setdefault(
+                            (
+                                params,
+                                scenario,
+                                date,
+                                market,
+                                tuple(sorted(risk_measures)),
+                            ),
+                            [],
+                        ).append(instrument)
 
                 requests = []
 
-                for (params, scenario, date, market, risk_measures), instruments in grouped_requests.items():
+                for (
+                    params,
+                    scenario,
+                    date,
+                    market,
+                    risk_measures,
+                ), instruments in grouped_requests.items():
                     for chunk in [tuple(filter(None, i)) for i in zip_longest(*[iter(instruments)] * 1000)]:
-                        requests.append(RiskRequest(
-                            tuple(RiskPosition(instrument=i, quantity=i.instrument_quantity) for i in chunk),
-                            risk_measures,
-                            parameters=self._parameters,
-                            wait_for_results=not self.__is_batch,
-                            scenario=scenario,
-                            pricing_and_market_data_as_of=(PricingDateAndMarketDataAsOf(pricing_date=date,
-                                                                                        market=market),),
-                            request_visible_to_gs=self.__visible_to_gs
-                        ))
+                        requests.append(
+                            RiskRequest(
+                                tuple(RiskPosition(instrument=i, quantity=i.instrument_quantity) for i in chunk),
+                                risk_measures,
+                                parameters=self._parameters,
+                                wait_for_results=not self.__is_batch,
+                                scenario=scenario,
+                                pricing_and_market_data_as_of=(
+                                    PricingDateAndMarketDataAsOf(pricing_date=date, market=market),
+                                ),
+                                request_visible_to_gs=self.__visible_to_gs,
+                            )
+                        )
 
                 requests_for_provider[provider] = requests
 
             session = GsSession.current
-            show_status = self.__show_progress and\
-                (len(requests_for_provider) > 1 or len(next(iter(requests_for_provider.values()))) > 1)
-            request_pool = ThreadPoolExecutor(len(requests_for_provider))\
-                if len(requests_for_provider) > 1 or self.__is_async else None
+            show_status = self.__show_progress and (
+                len(requests_for_provider) > 1 or len(next(iter(requests_for_provider.values()))) > 1
+            )
+            request_pool = (
+                ThreadPoolExecutor(len(requests_for_provider))
+                if len(requests_for_provider) > 1 or self.__is_async
+                else None
+            )
             progress_bar = tqdm(total=len(self.__pending), position=0, maxinterval=1) if show_status else None
             completion_futures = []
 
@@ -243,7 +286,14 @@ class PricingContext(ContextBaseWithDefault):
                 all(f.result() for f in completion_futures)
 
     def __risk_key(self, risk_measure: RiskMeasure, provider: type) -> RiskKey:
-        return RiskKey(provider, self.__pricing_date, self.__market, self._parameters, self._scenario, risk_measure)
+        return RiskKey(
+            provider,
+            self.__pricing_date,
+            self.__market,
+            self._parameters,
+            self._scenario,
+            risk_measure,
+        )
 
     @property
     def _parameters(self) -> RiskRequestParameters:
@@ -255,8 +305,9 @@ class PricingContext(ContextBaseWithDefault):
         if not scenarios:
             return None
 
-        return MarketDataScenario(scenario=scenarios[0] if len(scenarios) == 1 else
-                                  CompositeScenario(scenarios=tuple(reversed(scenarios))))
+        return MarketDataScenario(
+            scenario=scenarios[0] if len(scenarios) == 1 else CompositeScenario(scenarios=tuple(reversed(scenarios)))
+        )
 
     @property
     def active_context(self):
@@ -326,7 +377,7 @@ class PricingContext(ContextBaseWithDefault):
             self.__calc()
 
         return future
-    
+
     def calc(self, instrument: InstrumentBase, risk_measure: RiskMeasure) -> PricingFuture:
         """
         Calculate the risk measure for the instrument. Do not use directly, use via instruments

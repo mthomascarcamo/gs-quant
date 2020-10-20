@@ -14,7 +14,8 @@
 # Marquee Plot Service will attempt to make public functions (not prefixed with _) from this module available.
 # Such functions should be fully documented: docstrings should describe parameters and the return value, and provide
 # a 1-line description. Type annotations should be provided for parameters.
-from gs_quant.timeseries import diff, annualize, returns
+from gs_quant.timeseries import annualize, diff, returns
+
 from .statistics import *
 
 """

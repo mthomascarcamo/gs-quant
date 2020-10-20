@@ -16,8 +16,9 @@ under the License.
 import logging
 from datetime import datetime
 from typing import Tuple
-from gs_quant.target.hedge import PerformanceHedgeParameters, ClassificationConstraint, AssetConstraint, Target
+
 from gs_quant.session import GsSession
+from gs_quant.target.hedge import AssetConstraint, ClassificationConstraint, PerformanceHedgeParameters, Target
 
 _logger = logging.getLogger(__name__)
 
@@ -26,25 +27,36 @@ class GsHedgeApi:
     """GS Hedge API client implementation"""
 
     @classmethod
-    def construct_performance_hedge_query(cls, hedge_target: str, universe: Tuple[str, ...], notional: float,
-                                          observation_start_date: datetime.date, observation_end_date: datetime.date,
-                                          backtest_start_date: datetime.date, backtest_end_date: datetime.date,
-                                          use_machine_learning: bool = False, lasso_weight: float = None,
-                                          ridge_weight: float = None,
-                                          max_return_deviation: float = 5, max_adv_percentage: float = 15,
-                                          max_leverage: float =
-                                          100, max_weight: float = 100, min_market_cap: float = None,
-                                          max_market_cap: float = None,
-                                          asset_constraints: Tuple[AssetConstraint, ...] = None,
-                                          benchmarks: Tuple[str, ...] = None,
-                                          classification_constraints: Tuple[ClassificationConstraint, ...] = None,
-                                          exclude_corporate_actions: bool = False,
-                                          exclude_corporate_actions_types: Tuple = None,
-                                          exclude_hard_to_borrow_assets: bool = False,
-                                          exclude_restricted_assets: bool = False,
-                                          exclude_target_assets: bool = True, explode_universe: bool = True,
-                                          market_participation_rate: float = 10,
-                                          sampling_period: str = 'Daily') -> dict:
+    def construct_performance_hedge_query(
+        cls,
+        hedge_target: str,
+        universe: Tuple[str, ...],
+        notional: float,
+        observation_start_date: datetime.date,
+        observation_end_date: datetime.date,
+        backtest_start_date: datetime.date,
+        backtest_end_date: datetime.date,
+        use_machine_learning: bool = False,
+        lasso_weight: float = None,
+        ridge_weight: float = None,
+        max_return_deviation: float = 5,
+        max_adv_percentage: float = 15,
+        max_leverage: float = 100,
+        max_weight: float = 100,
+        min_market_cap: float = None,
+        max_market_cap: float = None,
+        asset_constraints: Tuple[AssetConstraint, ...] = None,
+        benchmarks: Tuple[str, ...] = None,
+        classification_constraints: Tuple[ClassificationConstraint, ...] = None,
+        exclude_corporate_actions: bool = False,
+        exclude_corporate_actions_types: Tuple = None,
+        exclude_hard_to_borrow_assets: bool = False,
+        exclude_restricted_assets: bool = False,
+        exclude_target_assets: bool = True,
+        explode_universe: bool = True,
+        market_participation_rate: float = 10,
+        sampling_period: str = "Daily",
+    ) -> dict:
         """
         Function to construct a performance hedge query (for both the New Performance Hedger and Standard Hedger)
         by passing in required/optional arguments similar to the performance hedger on the Marquee UI.
@@ -96,20 +108,38 @@ class GsHedgeApi:
         :param sampling_period: str, the sampling period to use (i.e. 'Daily' or 'Weekly')
         :return: dict, the hedge query represented by a dictionary of inputs
         """
-        hedge_dict = {'objective': 'Replicate Performance',
-                      'parameters': PerformanceHedgeParameters(Target(id=hedge_target), universe, notional,
-                                                               observation_start_date, observation_end_date,
-                                                               max_leverage, backtest_start_date, backtest_end_date,
-                                                               sampling_period, exclude_target_assets,
-                                                               exclude_corporate_actions,
-                                                               exclude_corporate_actions_types,
-                                                               exclude_hard_to_borrow_assets, exclude_restricted_assets,
-                                                               max_adv_percentage, explode_universe,
-                                                               max_return_deviation, max_weight, min_market_cap,
-                                                               max_market_cap, market_participation_rate,
-                                                               asset_constraints, classification_constraints,
-                                                               benchmarks, use_machine_learning, lasso_weight,
-                                                               ridge_weight)}
+        hedge_dict = {
+            "objective": "Replicate Performance",
+            "parameters": PerformanceHedgeParameters(
+                Target(id=hedge_target),
+                universe,
+                notional,
+                observation_start_date,
+                observation_end_date,
+                max_leverage,
+                backtest_start_date,
+                backtest_end_date,
+                sampling_period,
+                exclude_target_assets,
+                exclude_corporate_actions,
+                exclude_corporate_actions_types,
+                exclude_hard_to_borrow_assets,
+                exclude_restricted_assets,
+                max_adv_percentage,
+                explode_universe,
+                max_return_deviation,
+                max_weight,
+                min_market_cap,
+                max_market_cap,
+                market_participation_rate,
+                asset_constraints,
+                classification_constraints,
+                benchmarks,
+                use_machine_learning,
+                lasso_weight,
+                ridge_weight,
+            ),
+        }
         return hedge_dict
 
     @classmethod
@@ -121,4 +151,4 @@ class GsHedgeApi:
         :param hedge_query: dict, hedge data that is sent to the Marquee API as input to the performance hedger
         :return: dict, the results of calling the Marquee performance hedger
         """
-        return GsSession.current._post('/hedges/calculations', payload=hedge_query)
+        return GsSession.current._post("/hedges/calculations", payload=hedge_query)

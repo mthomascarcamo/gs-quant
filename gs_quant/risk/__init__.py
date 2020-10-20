@@ -14,9 +14,20 @@ specific language governing permissions and limitations
 under the License.
 """
 
+from gs_quant.target.portfolios import LiquidityRequest
+from gs_quant.target.risk import (
+    CarryScenario,
+    CompositeScenario,
+    CurveScenario,
+    LiborFallbackScenario,
+    LiquidityResponse,
+    MarketDataPattern,
+    MarketDataScenario,
+    MarketDataShock,
+    MarketDataShockType,
+    RiskRequest,
+)
+
 from .core import *
 from .measures import *
 from .scenarios import MarketDataShockBasedScenario
-from gs_quant.target.portfolios import LiquidityRequest
-from gs_quant.target.risk import LiborFallbackScenario, CarryScenario, CompositeScenario, CurveScenario, LiquidityResponse,\
-    MarketDataPattern, MarketDataScenario, MarketDataShock, MarketDataShockType, RiskRequest

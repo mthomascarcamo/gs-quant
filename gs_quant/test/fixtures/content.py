@@ -18,71 +18,61 @@ import datetime as dt
 from base64 import b64encode
 
 from gs_quant.target.common import Entitlements
-from gs_quant.target.content import GetManyContentsResponse, ContentResponse, Content
+from gs_quant.target.content import Content, ContentResponse, GetManyContentsResponse
 
 
 class ContentFixtures:
     _data = {
-        'id': 'some-id',
-        'version': 'some-version',
-        'name': 'some-name',
-        'entitlements': {
-            'view': [
-                'some-view-entitlement'
-            ],
-            'edit': [
-                'some-edit-entitlement'
-            ],
-            'delete': [
-                'some-delete-token'
-            ],
-            'admin': [
-                'some-admin-token'
-            ]
+        "id": "some-id",
+        "version": "some-version",
+        "name": "some-name",
+        "entitlements": {
+            "view": ["some-view-entitlement"],
+            "edit": ["some-edit-entitlement"],
+            "delete": ["some-delete-token"],
+            "admin": ["some-admin-token"],
         },
-        'createdById': 'some-created-by-id',
-        'createdTime': dt.date(2019, 5, 13),
-        'authors': [
+        "createdById": "some-created-by-id",
+        "createdTime": dt.date(2019, 5, 13),
+        "authors": [
             {
-                'name': 'some-author-name',
-                'firstName': 'some-author-first-name',
-                'lastName': 'some-author-last-name',
-                'id': 'some-author-id',
-                'division': 'some-author-division'
+                "name": "some-author-name",
+                "firstName": "some-author-first-name",
+                "lastName": "some-author-last-name",
+                "id": "some-author-id",
+                "division": "some-author-division",
             }
         ],
-        'lastUpdatedTime': dt.date(2019, 5, 14),
-        'content': {
-            'body': b64encode(b'Hello world!'),
-            'mimeType': 'text/plain',
-            'encoding': 'UTF-8'
+        "lastUpdatedTime": dt.date(2019, 5, 14),
+        "content": {
+            "body": b64encode(b"Hello world!"),
+            "mimeType": "text/plain",
+            "encoding": "UTF-8",
         },
-        'channels': [
-            'some-channel'
-        ]
+        "channels": ["some-channel"],
     }
 
     @classmethod
     def _get_content_response(cls):
         return ContentResponse(
-            id=cls._data['id'],
-            version=cls._data['version'],
-            name=cls._data['name'],
+            id=cls._data["id"],
+            version=cls._data["version"],
+            name=cls._data["name"],
             entitlements=Entitlements(
-                cls._data['entitlements']['view'],
-                cls._data['entitlements']['edit'],
-                cls._data['entitlements']['admin'],
-                cls._data['entitlements']['delete']
+                cls._data["entitlements"]["view"],
+                cls._data["entitlements"]["edit"],
+                cls._data["entitlements"]["admin"],
+                cls._data["entitlements"]["delete"],
             ),
-            created_by_id=cls._data['createdById'],
-            created_time=cls._data['createdTime'],
-            last_updated_time=cls._data['lastUpdatedTime'],
-            channels=cls._data['channels'],
+            created_by_id=cls._data["createdById"],
+            created_time=cls._data["createdTime"],
+            last_updated_time=cls._data["lastUpdatedTime"],
+            channels=cls._data["channels"],
             content=Content(
-                cls._data['content']['body'],
-                cls._data['content']['mimeType'],
-                cls._data['content']['encoding']
-            )
+                cls._data["content"]["body"],
+                cls._data["content"]["mimeType"],
+                cls._data["content"]["encoding"],
+            ),
         )
 
     @classmethod

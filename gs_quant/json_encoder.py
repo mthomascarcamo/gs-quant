@@ -15,17 +15,18 @@ under the License.
 """
 
 import datetime
-from enum import Enum
 import json
-import pandas as pd
 import re
+from enum import Enum
+
+import pandas as pd
 
 from gs_quant.base import Base, QuotableBuilder
 
 
 def default(o):
     if isinstance(o, datetime.datetime):
-        return o.strftime('%Y-%m-%dT%H:%M:%S.') + '{:06d}'.format(o.microsecond)[:-3] + 'Z'
+        return o.strftime("%Y-%m-%dT%H:%M:%S.") + "{:06d}".format(o.microsecond)[:-3] + "Z"
     if isinstance(o, datetime.date):
         return o.isoformat()
     elif isinstance(o, Enum):
@@ -33,12 +34,12 @@ def default(o):
     elif isinstance(o, pd.DataFrame):
         return o.to_json()
     elif isinstance(o, Base):
-        properties = {re.sub('_$', '', k): v for k, v in o.as_dict(as_camel_case=True).items()}
+        properties = {re.sub("_$", "", k): v for k, v in o.as_dict(as_camel_case=True).items()}
 
         if isinstance(o, QuotableBuilder):
-            ret = {'$type': o._type, 'properties': properties}
-            if 'valuationOverrides' in properties:
-                ret['valuationOverrides'] = properties.pop('valuationOverrides')
+            ret = {"$type": o._type, "properties": properties}
+            if "valuationOverrides" in properties:
+                ret["valuationOverrides"] = properties.pop("valuationOverrides")
 
             return ret
         else:
@@ -46,7 +47,6 @@ def default(o):
 
 
 class JSONEncoder(json.JSONEncoder):
-
     def default(self, o):
         ret = default(o)
         return super().default(o) if ret is None else ret

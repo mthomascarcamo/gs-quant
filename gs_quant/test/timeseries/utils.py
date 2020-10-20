@@ -36,8 +36,8 @@ def __unpack(results: Union[dict, list], cls: type) -> Union[Base, tuple, dict]:
 
 def handle_response(res, cls=None):
     if cls:
-        if isinstance(res, dict) and 'results' in res:
-            res['results'] = __unpack(res['results'], cls)
+        if isinstance(res, dict) and "results" in res:
+            res["results"] = __unpack(res["results"], cls)
         else:
             res = __unpack(res, cls)
 
@@ -47,19 +47,19 @@ def handle_response(res, cls=None):
 def mock_request(path, payload=None, cls=None):
     response = {}
     "/assets/{id}/xrefs"
-    if '/assets' in path:
+    if "/assets" in path:
         if path == "/assets/query":
             bbid = payload.where.bbid
-            with open(pathlib.Path(__file__).parents[1] / f'resources/asset-query-{bbid}.json') as response:
+            with open(pathlib.Path(__file__).parents[1] / f"resources/asset-query-{bbid}.json") as response:
                 response = handle_response(json.load(response), cls)
         else:
             split = path.split("/")
             asset_id = split[2]
             if len(split) == 3:
-                with open(pathlib.Path(__file__).parents[1] / f'resources/{asset_id}.json') as response:
+                with open(pathlib.Path(__file__).parents[1] / f"resources/{asset_id}.json") as response:
                     response = handle_response(json.load(response), cls)
             else:
                 if "xrefs" in path:
-                    with open(pathlib.Path(__file__).parents[1] / f'resources/{asset_id}-xrefs.json') as response:
+                    with open(pathlib.Path(__file__).parents[1] / f"resources/{asset_id}-xrefs.json") as response:
                         response = handle_response(json.load(response), cls)
     return response

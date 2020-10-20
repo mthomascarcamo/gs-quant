@@ -18,8 +18,9 @@ from typing import Iterable, Optional, Tuple, Union
 
 from gs_quant.base import InstrumentBase, RiskKey
 from gs_quant.datetime.date import date_range
-from gs_quant.risk import RiskMeasure, CarryScenario, MarketDataScenario
+from gs_quant.risk import CarryScenario, MarketDataScenario, RiskMeasure
 from gs_quant.risk.results import HistoricalPricingFuture, PricingFuture
+
 from .core import PricingContext
 from .markets import CloseMarket, close_market_date
 
@@ -30,19 +31,20 @@ class HistoricalPricingContext(PricingContext):
     """
 
     def __init__(
-            self,
-            start: Optional[Union[int, dt.date]] = None,
-            end: Optional[Union[int, dt.date]] = None,
-            calendars: Union[str, Tuple] = (),
-            dates: Optional[Iterable[dt.date]] = None,
-            is_async: bool = False,
-            is_batch: bool = False,
-            use_cache: bool = False,
-            visible_to_gs: bool = False,
-            csa_term: str = None,
-            market_data_location: Optional[str] = None,
-            timeout: Optional[int] = None,
-            show_progress: Optional[bool] = False):
+        self,
+        start: Optional[Union[int, dt.date]] = None,
+        end: Optional[Union[int, dt.date]] = None,
+        calendars: Union[str, Tuple] = (),
+        dates: Optional[Iterable[dt.date]] = None,
+        is_async: bool = False,
+        is_batch: bool = False,
+        use_cache: bool = False,
+        visible_to_gs: bool = False,
+        csa_term: str = None,
+        market_data_location: Optional[str] = None,
+        timeout: Optional[int] = None,
+        show_progress: Optional[bool] = False,
+    ):
         """
         A context for producing valuations over multiple dates
 
@@ -68,12 +70,19 @@ class HistoricalPricingContext(PricingContext):
         >>>
         >>> price_series = price_f.result()
         """
-        super().__init__(is_async=is_async, is_batch=is_batch, use_cache=use_cache, visible_to_gs=visible_to_gs,
-                         csa_term=csa_term, market_data_location=market_data_location,
-                         timeout=timeout, show_progress=show_progress)
+        super().__init__(
+            is_async=is_async,
+            is_batch=is_batch,
+            use_cache=use_cache,
+            visible_to_gs=visible_to_gs,
+            csa_term=csa_term,
+            market_data_location=market_data_location,
+            timeout=timeout,
+            show_progress=show_progress,
+        )
         if start is not None:
             if dates is not None:
-                raise ValueError('Must supply start or dates, not both')
+                raise ValueError("Must supply start or dates, not both")
 
             if end is None:
                 end = dt.date.today()
@@ -82,7 +91,7 @@ class HistoricalPricingContext(PricingContext):
         elif dates is not None:
             self.__date_range = tuple(dates)
         else:
-            raise ValueError('Must supply start or dates')
+            raise ValueError("Must supply start or dates")
 
     def calc(self, instrument: InstrumentBase, risk_measure: RiskMeasure) -> PricingFuture:
         futures = []
@@ -106,20 +115,21 @@ class BackToTheFuturePricingContext(HistoricalPricingContext):
     """
 
     def __init__(
-            self,
-            start: Optional[Union[int, dt.date]] = None,
-            end: Optional[Union[int, dt.date]] = None,
-            calendars: Union[str, Tuple] = (),
-            dates: Optional[Iterable[dt.date]] = None,
-            roll_to_fwds: bool = True,
-            is_async: bool = False,
-            is_batch: bool = False,
-            use_cache: bool = False,
-            visible_to_gs: bool = False,
-            csa_term: str = None,
-            market_data_location: Optional[str] = None,
-            timeout: Optional[int] = None,
-            show_progress: Optional[bool] = False):
+        self,
+        start: Optional[Union[int, dt.date]] = None,
+        end: Optional[Union[int, dt.date]] = None,
+        calendars: Union[str, Tuple] = (),
+        dates: Optional[Iterable[dt.date]] = None,
+        roll_to_fwds: bool = True,
+        is_async: bool = False,
+        is_batch: bool = False,
+        use_cache: bool = False,
+        visible_to_gs: bool = False,
+        csa_term: str = None,
+        market_data_location: Optional[str] = None,
+        timeout: Optional[int] = None,
+        show_progress: Optional[bool] = False,
+    ):
         """
         A context for producing valuations over multiple dates
 
@@ -147,14 +157,24 @@ class BackToTheFuturePricingContext(HistoricalPricingContext):
         >>>
         >>> price_series = price_f.result()
         """
-        super().__init__(start=start, end=end, calendars=calendars, dates=dates,
-                         is_async=is_async, is_batch=is_batch, use_cache=use_cache, visible_to_gs=visible_to_gs,
-                         csa_term=csa_term, market_data_location=market_data_location,
-                         timeout=timeout, show_progress=show_progress)
+        super().__init__(
+            start=start,
+            end=end,
+            calendars=calendars,
+            dates=dates,
+            is_async=is_async,
+            is_batch=is_batch,
+            use_cache=use_cache,
+            visible_to_gs=visible_to_gs,
+            csa_term=csa_term,
+            market_data_location=market_data_location,
+            timeout=timeout,
+            show_progress=show_progress,
+        )
         self._roll_to_fwds = roll_to_fwds
         if start is not None:
             if dates is not None:
-                raise ValueError('Must supply start or dates, not both')
+                raise ValueError("Must supply start or dates, not both")
 
             if end is None:
                 end = dt.date.today()
@@ -163,7 +183,7 @@ class BackToTheFuturePricingContext(HistoricalPricingContext):
         elif dates is not None:
             self.__date_range = tuple(dates)
         else:
-            raise ValueError('Must supply start or dates')
+            raise ValueError("Must supply start or dates")
 
     def calc(self, instrument: InstrumentBase, risk_measure: RiskMeasure) -> PricingFuture:
         futures = []

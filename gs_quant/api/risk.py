@@ -13,15 +13,16 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
-from abc import ABCMeta, abstractmethod
 import asyncio
-from concurrent.futures import TimeoutError
 import logging
 import queue
 import sys
+from abc import ABCMeta, abstractmethod
+from concurrent.futures import TimeoutError
 from threading import Thread
+from typing import Iterable, Optional, Tuple, Union
+
 from tqdm import tqdm
-from typing import Iterable, Optional, Union, Tuple
 
 from gs_quant.base import RiskKey, Sentinel
 from gs_quant.risk import ErrorValue, RiskRequest
@@ -33,11 +34,16 @@ _logger = logging.getLogger(__name__)
 
 class RiskApi(metaclass=ABCMeta):
 
-    __SHUTDOWN_SENTINEL = Sentinel('QueueListenerShutdown')
+    __SHUTDOWN_SENTINEL = Sentinel("QueueListenerShutdown")
 
     @classmethod
     @abstractmethod
-    async def get_results(cls, responses: asyncio.Queue, results: asyncio.Queue, timeout: Optional[int] = None):
+    async def get_results(
+        cls,
+        responses: asyncio.Queue,
+        results: asyncio.Queue,
+        timeout: Optional[int] = None,
+    ):
         ...
 
     @classmethod
@@ -50,9 +56,7 @@ class RiskApi(metaclass=ABCMeta):
         return {request: cls.calc(request) for request in requests}
 
     @classmethod
-    def __handle_queue_update(cls,
-                              q: Union[queue.Queue, asyncio.Queue],
-                              first: object) -> Tuple[bool, list]:
+    def __handle_queue_update(cls, q: Union[queue.Queue, asyncio.Queue], first: object) -> Tuple[bool, list]:
         if first is cls.__SHUTDOWN_SENTINEL:
             return True, []
 
@@ -87,10 +91,12 @@ class RiskApi(metaclass=ABCMeta):
             return False, []
 
     @classmethod
-    def enqueue(cls,
-                q: Union[queue.Queue, asyncio.Queue],
-                items: Iterable,
-                loop: Optional[asyncio.AbstractEventLoop] = None):
+    def enqueue(
+        cls,
+        q: Union[queue.Queue, asyncio.Queue],
+        items: Iterable,
+        loop: Optional[asyncio.AbstractEventLoop] = None,
+    ):
         for item in items:
             if loop:
                 loop.call_soon_threadsafe(q.put_nowait, item)
@@ -98,25 +104,31 @@ class RiskApi(metaclass=ABCMeta):
                 q.put_nowait(item)
 
     @classmethod
-    def shutdown_queue_listener(cls,
-                                q: Union[queue.Queue, asyncio.Queue],
-                                loop: Optional[asyncio.AbstractEventLoop] = None):
+    def shutdown_queue_listener(
+        cls,
+        q: Union[queue.Queue, asyncio.Queue],
+        loop: Optional[asyncio.AbstractEventLoop] = None,
+    ):
         if loop:
             loop.call_soon_threadsafe(q.put_nowait, cls.__SHUTDOWN_SENTINEL)
         else:
             q.put_nowait(cls.__SHUTDOWN_SENTINEL)
 
     @classmethod
-    def run(cls,
-            requests: list,
-            max_concurrent: int,
-            progress_bar: Optional[tqdm] = None,
-            timeout: Optional[int] = None) -> dict:
-        def execute_requests(outstanding_requests: queue.Queue,
-                             responses: asyncio.Queue,
-                             raw_results: asyncio.Queue,
-                             session: GsSession,
-                             loop: asyncio.AbstractEventLoop):
+    def run(
+        cls,
+        requests: list,
+        max_concurrent: int,
+        progress_bar: Optional[tqdm] = None,
+        timeout: Optional[int] = None,
+    ) -> dict:
+        def execute_requests(
+            outstanding_requests: queue.Queue,
+            responses: asyncio.Queue,
+            raw_results: asyncio.Queue,
+            session: GsSession,
+            loop: asyncio.AbstractEventLoop,
+        ):
             with session:
                 shutdown = False
                 while not shutdown:
@@ -126,14 +138,16 @@ class RiskApi(metaclass=ABCMeta):
                             # Get the responses for our requests chunk
                             responses_chunk = cls.calc_multi(requests_chunk)
 
-                            # Enqueue the replies for either the result subscriber (if async requests) or directly
+                            # Enqueue the replies for either the result
+                            # subscriber (if async requests) or directly
                             cls.enqueue(responses, responses_chunk.items(), loop=loop)
                         except Exception as e:
                             # Enqueue the error as a reply
                             cls.enqueue(raw_results, ((r, e) for r in requests_chunk), loop=loop)
 
                 if responses != raw_results:
-                    # If we are in async mode, indicate to the result subscriber that there are no more requests
+                    # If we are in async mode, indicate to the result
+                    # subscriber that there are no more requests
                     cls.shutdown_queue_listener(responses, loop=loop)
 
         async def run_async():
@@ -144,10 +158,19 @@ class RiskApi(metaclass=ABCMeta):
             outstanding_requests = queue.Queue()
             results_handler = None
 
-            # The requests library (which we use for dispatching) is not async, so we need a thread for concurrency
-            Thread(daemon=True,
-                   target=execute_requests,
-                   args=(outstanding_requests, responses, raw_results, GsSession.current, loop)).start()
+            # The requests library (which we use for dispatching) is not async,
+            # so we need a thread for concurrency
+            Thread(
+                daemon=True,
+                target=execute_requests,
+                args=(
+                    outstanding_requests,
+                    responses,
+                    raw_results,
+                    GsSession.current,
+                    loop,
+                ),
+            ).start()
 
             if is_async:
                 # If async we need a task to handle result subscription
@@ -161,9 +184,14 @@ class RiskApi(metaclass=ABCMeta):
             while received < expected:
                 if requests:
                     # Enqueue requests for dispatch
-                    cls.enqueue(outstanding_requests, (requests.pop(0) for _ in range(chunk_size)), loop=loop)
+                    cls.enqueue(
+                        outstanding_requests,
+                        (requests.pop(0) for _ in range(chunk_size)),
+                        loop=loop,
+                    )
                     if not requests:
-                        # No more requests - shutdown the listener queue, the thread will exit
+                        # No more requests - shutdown the listener queue, the
+                        # thread will exit
                         cls.shutdown_queue_listener(outstanding_requests, loop=loop)
 
                 # Wait for results
@@ -172,7 +200,8 @@ class RiskApi(metaclass=ABCMeta):
                     # Only happens on error
                     break
 
-                # Enable as many new requests as we've received results, to keep the outstanding number constant
+                # Enable as many new requests as we've received results, to
+                # keep the outstanding number constant
                 chunk_size = min(len(completed), len(requests))
 
                 # Handle the results
@@ -219,22 +248,23 @@ class RiskApi(metaclass=ABCMeta):
         formatted_results = {}
 
         if isinstance(results, Exception):
-            date_results = [
-                {'$type': 'Error', 'errorString': str(results)}] * len(request.pricing_and_market_data_as_of)
+            date_results = [{"$type": "Error", "errorString": str(results)}] * len(
+                request.pricing_and_market_data_as_of
+            )
             position_results = [date_results] * len(request.positions)
             results = [position_results] * len(request.measures)
 
         for risk_measure, position_results in zip(request.measures, results):
             for position, date_results in zip(request.positions, position_results):
                 for as_of, date_result in zip(request.pricing_and_market_data_as_of, date_results):
-                    handler = result_handlers.get(date_result.get('$type'))
+                    handler = result_handlers.get(date_result.get("$type"))
                     risk_key = RiskKey(
                         cls,
                         as_of.pricing_date,
                         as_of.market,
                         request.parameters,
                         request.scenario,
-                        risk_measure
+                        risk_measure,
                     )
 
                     try:

@@ -14,42 +14,43 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
-from typing import Tuple, Union
 from enum import Enum
+from typing import Tuple, Union
+
 from gs_quant.base import Base, EnumBase, InstrumentBase, camel_case_translate, get_enum_value
+from gs_quant.target.common import *
 
 
-class MarketDataMeasure(EnumBase, Enum):    
-    
-    Last = 'Last'
-    Curve = 'Curve'
-    Close_Change = 'Close Change'
-    Previous_Close = 'Previous Close'
-    
+class MarketDataMeasure(EnumBase, Enum):
+
+    Last = "Last"
+    Curve = "Curve"
+    Close_Change = "Close Change"
+    Previous_Close = "Previous Close"
+
     def __repr__(self):
         return self.value
 
 
-class MeasureEntityType(EnumBase, Enum):    
-    
+class MeasureEntityType(EnumBase, Enum):
+
     """Entity type associated with a measure."""
 
-    ASSET = 'ASSET'
-    BACKTEST = 'BACKTEST'
-    KPI = 'KPI'
-    COUNTRY = 'COUNTRY'
-    SUBDIVISION = 'SUBDIVISION'
-    REPORT = 'REPORT'
-    HEDGE = 'HEDGE'
-    
+    ASSET = "ASSET"
+    BACKTEST = "BACKTEST"
+    KPI = "KPI"
+    COUNTRY = "COUNTRY"
+    SUBDIVISION = "SUBDIVISION"
+    REPORT = "REPORT"
+    HEDGE = "HEDGE"
+
     def __repr__(self):
         return self.value
 
 
 class AdvancedFilter(Base):
-        
+
     """Advanced filters for the Dataset."""
 
     @camel_case_translate
@@ -59,8 +60,8 @@ class AdvancedFilter(Base):
         operator: str,
         value: float = None,
         values: Tuple[str, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.column = column
         self.value = value
@@ -75,19 +76,19 @@ class AdvancedFilter(Base):
 
     @column.setter
     def column(self, value: str):
-        self._property_changed('column')
-        self.__column = value        
+        self._property_changed("column")
+        self.__column = value
 
     @property
     def value(self) -> float:
         """Numeric value to compare against. Cannot be used with 'in' and 'notIn'
-           operators."""
+        operators."""
         return self.__value
 
     @value.setter
     def value(self, value: float):
-        self._property_changed('value')
-        self.__value = value        
+        self._property_changed("value")
+        self.__value = value
 
     @property
     def values(self) -> Tuple[str, ...]:
@@ -96,8 +97,8 @@ class AdvancedFilter(Base):
 
     @values.setter
     def values(self, value: Tuple[str, ...]):
-        self._property_changed('values')
-        self.__values = value        
+        self._property_changed("values")
+        self.__values = value
 
     @property
     def operator(self) -> str:
@@ -106,12 +107,12 @@ class AdvancedFilter(Base):
 
     @operator.setter
     def operator(self, value: str):
-        self._property_changed('operator')
-        self.__operator = value        
+        self._property_changed("operator")
+        self.__operator = value
 
 
 class DataGroup(Base):
-        
+
     """Dataset grouped by context (key dimensions)"""
 
     @camel_case_translate
@@ -119,8 +120,8 @@ class DataGroup(Base):
         self,
         context: FieldValueMap = None,
         data: Tuple[FieldValueMap, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.context = context
         self.data = data
@@ -133,8 +134,8 @@ class DataGroup(Base):
 
     @context.setter
     def context(self, value: FieldValueMap):
-        self._property_changed('context')
-        self.__context = value        
+        self._property_changed("context")
+        self.__context = value
 
     @property
     def data(self) -> Tuple[FieldValueMap, ...]:
@@ -143,12 +144,11 @@ class DataGroup(Base):
 
     @data.setter
     def data(self, value: Tuple[FieldValueMap, ...]):
-        self._property_changed('data')
-        self.__data = value        
+        self._property_changed("data")
+        self.__data = value
 
 
 class DataQuery(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -183,8 +183,8 @@ class DataQuery(Base):
         time_filter: TimeFilter = None,
         use_field_alias: bool = False,
         remap_schema_to_alias: bool = False,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.__id = id_
         self.data_set_id = data_set_id
@@ -226,8 +226,8 @@ class DataQuery(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def data_set_id(self) -> str:
@@ -236,8 +236,8 @@ class DataQuery(Base):
 
     @data_set_id.setter
     def data_set_id(self, value: str):
-        self._property_changed('data_set_id')
-        self.__data_set_id = value        
+        self._property_changed("data_set_id")
+        self.__data_set_id = value
 
     @property
     def format(self) -> Union[Format, str]:
@@ -246,8 +246,8 @@ class DataQuery(Base):
 
     @format.setter
     def format(self, value: Union[Format, str]):
-        self._property_changed('format')
-        self.__format = get_enum_value(Format, value)        
+        self._property_changed("format")
+        self.__format = get_enum_value(Format, value)
 
     @property
     def where(self) -> FieldFilterMap:
@@ -256,8 +256,8 @@ class DataQuery(Base):
 
     @where.setter
     def where(self, value: FieldFilterMap):
-        self._property_changed('where')
-        self.__where = value        
+        self._property_changed("where")
+        self.__where = value
 
     @property
     def vendor(self) -> Union[MarketDataVendor, str]:
@@ -265,8 +265,8 @@ class DataQuery(Base):
 
     @vendor.setter
     def vendor(self, value: Union[MarketDataVendor, str]):
-        self._property_changed('vendor')
-        self.__vendor = get_enum_value(MarketDataVendor, value)        
+        self._property_changed("vendor")
+        self.__vendor = get_enum_value(MarketDataVendor, value)
 
     @property
     def start_date(self) -> datetime.date:
@@ -275,8 +275,8 @@ class DataQuery(Base):
 
     @start_date.setter
     def start_date(self, value: datetime.date):
-        self._property_changed('start_date')
-        self.__start_date = value        
+        self._property_changed("start_date")
+        self.__start_date = value
 
     @property
     def end_date(self) -> datetime.date:
@@ -285,8 +285,8 @@ class DataQuery(Base):
 
     @end_date.setter
     def end_date(self, value: datetime.date):
-        self._property_changed('end_date')
-        self.__end_date = value        
+        self._property_changed("end_date")
+        self.__end_date = value
 
     @property
     def start_time(self) -> datetime.datetime:
@@ -295,8 +295,8 @@ class DataQuery(Base):
 
     @start_time.setter
     def start_time(self, value: datetime.datetime):
-        self._property_changed('start_time')
-        self.__start_time = value        
+        self._property_changed("start_time")
+        self.__start_time = value
 
     @property
     def page(self) -> int:
@@ -305,8 +305,8 @@ class DataQuery(Base):
 
     @page.setter
     def page(self, value: int):
-        self._property_changed('page')
-        self.__page = value        
+        self._property_changed("page")
+        self.__page = value
 
     @property
     def page_size(self) -> int:
@@ -315,8 +315,8 @@ class DataQuery(Base):
 
     @page_size.setter
     def page_size(self, value: int):
-        self._property_changed('page_size')
-        self.__page_size = value        
+        self._property_changed("page_size")
+        self.__page_size = value
 
     @property
     def end_time(self) -> datetime.datetime:
@@ -325,8 +325,8 @@ class DataQuery(Base):
 
     @end_time.setter
     def end_time(self, value: datetime.datetime):
-        self._property_changed('end_time')
-        self.__end_time = value        
+        self._property_changed("end_time")
+        self.__end_time = value
 
     @property
     def as_of_time(self) -> datetime.datetime:
@@ -335,8 +335,8 @@ class DataQuery(Base):
 
     @as_of_time.setter
     def as_of_time(self, value: datetime.datetime):
-        self._property_changed('as_of_time')
-        self.__as_of_time = value        
+        self._property_changed("as_of_time")
+        self.__as_of_time = value
 
     @property
     def id_as_of_date(self) -> datetime.date:
@@ -345,20 +345,20 @@ class DataQuery(Base):
 
     @id_as_of_date.setter
     def id_as_of_date(self, value: datetime.date):
-        self._property_changed('id_as_of_date')
-        self.__id_as_of_date = value        
+        self._property_changed("id_as_of_date")
+        self.__id_as_of_date = value
 
     @property
     def use_temporal_x_ref(self) -> bool:
         """Set to true when xrefs provided in the query should be treated in a temporal way
-           (e.g. get data points which had a certain BCID at some point in time,
-           not which currently have it)."""
+        (e.g. get data points which had a certain BCID at some point in time,
+        not which currently have it)."""
         return self.__use_temporal_x_ref
 
     @use_temporal_x_ref.setter
     def use_temporal_x_ref(self, value: bool):
-        self._property_changed('use_temporal_x_ref')
-        self.__use_temporal_x_ref = value        
+        self._property_changed("use_temporal_x_ref")
+        self.__use_temporal_x_ref = value
 
     @property
     def since(self) -> datetime.datetime:
@@ -367,8 +367,8 @@ class DataQuery(Base):
 
     @since.setter
     def since(self, value: datetime.datetime):
-        self._property_changed('since')
-        self.__since = value        
+        self._property_changed("since")
+        self.__since = value
 
     @property
     def dates(self) -> Tuple[datetime.date, ...]:
@@ -377,8 +377,8 @@ class DataQuery(Base):
 
     @dates.setter
     def dates(self, value: Tuple[datetime.date, ...]):
-        self._property_changed('dates')
-        self.__dates = value        
+        self._property_changed("dates")
+        self.__dates = value
 
     @property
     def times(self) -> Tuple[datetime.datetime, ...]:
@@ -387,8 +387,8 @@ class DataQuery(Base):
 
     @times.setter
     def times(self, value: Tuple[datetime.datetime, ...]):
-        self._property_changed('times')
-        self.__times = value        
+        self._property_changed("times")
+        self.__times = value
 
     @property
     def delay(self) -> int:
@@ -397,30 +397,30 @@ class DataQuery(Base):
 
     @delay.setter
     def delay(self, value: int):
-        self._property_changed('delay')
-        self.__delay = value        
+        self._property_changed("delay")
+        self.__delay = value
 
     @property
     def intervals(self) -> int:
         """Number of intervals for which to return output times, for example if 10, it will
-           return 10 data points evenly spaced over the time/date range."""
+        return 10 data points evenly spaced over the time/date range."""
         return self.__intervals
 
     @intervals.setter
     def intervals(self, value: int):
-        self._property_changed('intervals')
-        self.__intervals = value        
+        self._property_changed("intervals")
+        self.__intervals = value
 
     @property
     def samples(self) -> int:
         """Number of points to down sample the data, for example if 10, it will return at
-           most 10 sample data points evenly spaced over the time/date range"""
+        most 10 sample data points evenly spaced over the time/date range"""
         return self.__samples
 
     @samples.setter
     def samples(self, value: int):
-        self._property_changed('samples')
-        self.__samples = value        
+        self._property_changed("samples")
+        self.__samples = value
 
     @property
     def limit(self) -> int:
@@ -429,8 +429,8 @@ class DataQuery(Base):
 
     @limit.setter
     def limit(self, value: int):
-        self._property_changed('limit')
-        self.__limit = value        
+        self._property_changed("limit")
+        self.__limit = value
 
     @property
     def polling_interval(self) -> int:
@@ -439,8 +439,8 @@ class DataQuery(Base):
 
     @polling_interval.setter
     def polling_interval(self, value: int):
-        self._property_changed('polling_interval')
-        self.__polling_interval = value        
+        self._property_changed("polling_interval")
+        self.__polling_interval = value
 
     @property
     def grouped(self) -> bool:
@@ -449,8 +449,8 @@ class DataQuery(Base):
 
     @grouped.setter
     def grouped(self, value: bool):
-        self._property_changed('grouped')
-        self.__grouped = value        
+        self._property_changed("grouped")
+        self.__grouped = value
 
     @property
     def fields(self) -> Tuple[Union[dict, str], ...]:
@@ -459,42 +459,42 @@ class DataQuery(Base):
 
     @fields.setter
     def fields(self, value: Tuple[Union[dict, str], ...]):
-        self._property_changed('fields')
-        self.__fields = value        
+        self._property_changed("fields")
+        self.__fields = value
 
     @property
     def restrict_fields(self) -> bool:
         """Whether to return only the fields which are requested and suppress every other
-           field"""
+        field"""
         return self.__restrict_fields
 
     @restrict_fields.setter
     def restrict_fields(self, value: bool):
-        self._property_changed('restrict_fields')
-        self.__restrict_fields = value        
+        self._property_changed("restrict_fields")
+        self.__restrict_fields = value
 
     @property
     def entity_filter(self) -> FieldFilterMap:
         """Filters that are applied only to entities i.e Asset. It is used for querying by
-           asset parameters to return data for assets matching a certain
-           criteria i.e floatingRateOption = LIBOR."""
+        asset parameters to return data for assets matching a certain
+        criteria i.e floatingRateOption = LIBOR."""
         return self.__entity_filter
 
     @entity_filter.setter
     def entity_filter(self, value: FieldFilterMap):
-        self._property_changed('entity_filter')
-        self.__entity_filter = value        
+        self._property_changed("entity_filter")
+        self.__entity_filter = value
 
     @property
     def interval(self) -> str:
         """Interval to use when returning data. E.g. 1s, 1m, 1h, 1d. Only seconds(s),
-           minutes(m), hours(h) and days(d) are supported."""
+        minutes(m), hours(h) and days(d) are supported."""
         return self.__interval
 
     @interval.setter
     def interval(self, value: str):
-        self._property_changed('interval')
-        self.__interval = value        
+        self._property_changed("interval")
+        self.__interval = value
 
     @property
     def distinct_consecutive(self) -> bool:
@@ -503,8 +503,8 @@ class DataQuery(Base):
 
     @distinct_consecutive.setter
     def distinct_consecutive(self, value: bool):
-        self._property_changed('distinct_consecutive')
-        self.__distinct_consecutive = value        
+        self._property_changed("distinct_consecutive")
+        self.__distinct_consecutive = value
 
     @property
     def time_filter(self) -> TimeFilter:
@@ -513,8 +513,8 @@ class DataQuery(Base):
 
     @time_filter.setter
     def time_filter(self, value: TimeFilter):
-        self._property_changed('time_filter')
-        self.__time_filter = value        
+        self._property_changed("time_filter")
+        self.__time_filter = value
 
     @property
     def use_field_alias(self) -> bool:
@@ -523,23 +523,23 @@ class DataQuery(Base):
 
     @use_field_alias.setter
     def use_field_alias(self, value: bool):
-        self._property_changed('use_field_alias')
-        self.__use_field_alias = value        
+        self._property_changed("use_field_alias")
+        self.__use_field_alias = value
 
     @property
     def remap_schema_to_alias(self) -> bool:
         """Whether to remap the schema of the output data to field aliases, if aliases have
-           been used to query the data"""
+        been used to query the data"""
         return self.__remap_schema_to_alias
 
     @remap_schema_to_alias.setter
     def remap_schema_to_alias(self, value: bool):
-        self._property_changed('remap_schema_to_alias')
-        self.__remap_schema_to_alias = value        
+        self._property_changed("remap_schema_to_alias")
+        self.__remap_schema_to_alias = value
 
 
 class DataSetCondition(Base):
-        
+
     """Condition for Dataset Transformations and Filters."""
 
     @camel_case_translate
@@ -549,8 +549,8 @@ class DataSetCondition(Base):
         operator: str,
         value: float = None,
         values: Tuple[str, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.column = column
         self.value = value
@@ -565,19 +565,19 @@ class DataSetCondition(Base):
 
     @column.setter
     def column(self, value: str):
-        self._property_changed('column')
-        self.__column = value        
+        self._property_changed("column")
+        self.__column = value
 
     @property
     def value(self) -> float:
         """Numeric value to compare against. Cannot be used with 'in' and 'notIn'
-           operators."""
+        operators."""
         return self.__value
 
     @value.setter
     def value(self, value: float):
-        self._property_changed('value')
-        self.__value = value        
+        self._property_changed("value")
+        self.__value = value
 
     @property
     def values(self) -> Tuple[str, ...]:
@@ -586,8 +586,8 @@ class DataSetCondition(Base):
 
     @values.setter
     def values(self, value: Tuple[str, ...]):
-        self._property_changed('values')
-        self.__values = value        
+        self._property_changed("values")
+        self.__values = value
 
     @property
     def operator(self) -> str:
@@ -596,12 +596,12 @@ class DataSetCondition(Base):
 
     @operator.setter
     def operator(self, value: str):
-        self._property_changed('operator')
-        self.__operator = value        
+        self._property_changed("operator")
+        self.__operator = value
 
 
 class DataSetDefaults(Base):
-        
+
     """Default settings."""
 
     @camel_case_translate
@@ -610,8 +610,8 @@ class DataSetDefaults(Base):
         start_seconds: float = None,
         end_seconds: float = None,
         delay_seconds: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.start_seconds = start_seconds
         self.end_seconds = end_seconds
@@ -625,8 +625,8 @@ class DataSetDefaults(Base):
 
     @start_seconds.setter
     def start_seconds(self, value: float):
-        self._property_changed('start_seconds')
-        self.__start_seconds = value        
+        self._property_changed("start_seconds")
+        self.__start_seconds = value
 
     @property
     def end_seconds(self) -> float:
@@ -635,8 +635,8 @@ class DataSetDefaults(Base):
 
     @end_seconds.setter
     def end_seconds(self, value: float):
-        self._property_changed('end_seconds')
-        self.__end_seconds = value        
+        self._property_changed("end_seconds")
+        self.__end_seconds = value
 
     @property
     def delay_seconds(self) -> float:
@@ -645,12 +645,12 @@ class DataSetDefaults(Base):
 
     @delay_seconds.setter
     def delay_seconds(self, value: float):
-        self._property_changed('delay_seconds')
-        self.__delay_seconds = value        
+        self._property_changed("delay_seconds")
+        self.__delay_seconds = value
 
 
 class DataSetDelay(Base):
-        
+
     """Specifies the delayed data properties."""
 
     @camel_case_translate
@@ -660,8 +660,8 @@ class DataSetDelay(Base):
         at_time_zone: str,
         history_up_to_seconds: float = None,
         history_up_to_time: datetime.datetime = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.until_seconds = until_seconds
         self.at_time_zone = at_time_zone
@@ -676,30 +676,30 @@ class DataSetDelay(Base):
 
     @until_seconds.setter
     def until_seconds(self, value: float):
-        self._property_changed('until_seconds')
-        self.__until_seconds = value        
+        self._property_changed("until_seconds")
+        self.__until_seconds = value
 
     @property
     def at_time_zone(self) -> str:
         """The time zone with respect to which the delay will be applied (must be a valid
-           IANA TimeZone identifier)."""
+        IANA TimeZone identifier)."""
         return self.__at_time_zone
 
     @at_time_zone.setter
     def at_time_zone(self, value: str):
-        self._property_changed('at_time_zone')
-        self.__at_time_zone = value        
+        self._property_changed("at_time_zone")
+        self.__at_time_zone = value
 
     @property
     def history_up_to_seconds(self) -> float:
         """Relative seconds up to which the data history will be shown for the business
-           day."""
+        day."""
         return self.__history_up_to_seconds
 
     @history_up_to_seconds.setter
     def history_up_to_seconds(self, value: float):
-        self._property_changed('history_up_to_seconds')
-        self.__history_up_to_seconds = value        
+        self._property_changed("history_up_to_seconds")
+        self.__history_up_to_seconds = value
 
     @property
     def history_up_to_time(self) -> datetime.datetime:
@@ -708,12 +708,12 @@ class DataSetDelay(Base):
 
     @history_up_to_time.setter
     def history_up_to_time(self, value: datetime.datetime):
-        self._property_changed('history_up_to_time')
-        self.__history_up_to_time = value        
+        self._property_changed("history_up_to_time")
+        self.__history_up_to_time = value
 
 
 class DataSetParameters(Base):
-        
+
     """Dataset parameters."""
 
     @camel_case_translate
@@ -740,8 +740,8 @@ class DataSetParameters(Base):
         coverage_enabled: bool = True,
         use_created_time_for_upload: bool = None,
         apply_entity_entitlements: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.category = category
         self.sub_category = sub_category
@@ -773,8 +773,8 @@ class DataSetParameters(Base):
 
     @category.setter
     def category(self, value: str):
-        self._property_changed('category')
-        self.__category = value        
+        self._property_changed("category")
+        self.__category = value
 
     @property
     def sub_category(self) -> str:
@@ -783,8 +783,8 @@ class DataSetParameters(Base):
 
     @sub_category.setter
     def sub_category(self, value: str):
-        self._property_changed('sub_category')
-        self.__sub_category = value        
+        self._property_changed("sub_category")
+        self.__sub_category = value
 
     @property
     def methodology(self) -> str:
@@ -793,8 +793,8 @@ class DataSetParameters(Base):
 
     @methodology.setter
     def methodology(self, value: str):
-        self._property_changed('methodology')
-        self.__methodology = value        
+        self._property_changed("methodology")
+        self.__methodology = value
 
     @property
     def coverage(self) -> str:
@@ -803,8 +803,8 @@ class DataSetParameters(Base):
 
     @coverage.setter
     def coverage(self, value: str):
-        self._property_changed('coverage')
-        self.__coverage = value        
+        self._property_changed("coverage")
+        self.__coverage = value
 
     @property
     def coverages(self) -> Tuple[Union[AssetType, str], ...]:
@@ -813,8 +813,8 @@ class DataSetParameters(Base):
 
     @coverages.setter
     def coverages(self, value: Tuple[Union[AssetType, str], ...]):
-        self._property_changed('coverages')
-        self.__coverages = value        
+        self._property_changed("coverages")
+        self.__coverages = value
 
     @property
     def notes(self) -> str:
@@ -823,8 +823,8 @@ class DataSetParameters(Base):
 
     @notes.setter
     def notes(self, value: str):
-        self._property_changed('notes')
-        self.__notes = value        
+        self._property_changed("notes")
+        self.__notes = value
 
     @property
     def history(self) -> str:
@@ -833,8 +833,8 @@ class DataSetParameters(Base):
 
     @history.setter
     def history(self, value: str):
-        self._property_changed('history')
-        self.__history = value        
+        self._property_changed("history")
+        self.__history = value
 
     @property
     def sample_start(self) -> datetime.datetime:
@@ -843,8 +843,8 @@ class DataSetParameters(Base):
 
     @sample_start.setter
     def sample_start(self, value: datetime.datetime):
-        self._property_changed('sample_start')
-        self.__sample_start = value        
+        self._property_changed("sample_start")
+        self.__sample_start = value
 
     @property
     def sample_end(self) -> datetime.datetime:
@@ -853,8 +853,8 @@ class DataSetParameters(Base):
 
     @sample_end.setter
     def sample_end(self, value: datetime.datetime):
-        self._property_changed('sample_end')
-        self.__sample_end = value        
+        self._property_changed("sample_end")
+        self.__sample_end = value
 
     @property
     def published_date(self) -> datetime.datetime:
@@ -863,8 +863,8 @@ class DataSetParameters(Base):
 
     @published_date.setter
     def published_date(self, value: datetime.datetime):
-        self._property_changed('published_date')
-        self.__published_date = value        
+        self._property_changed("published_date")
+        self.__published_date = value
 
     @property
     def history_date(self) -> datetime.datetime:
@@ -873,8 +873,8 @@ class DataSetParameters(Base):
 
     @history_date.setter
     def history_date(self, value: datetime.datetime):
-        self._property_changed('history_date')
-        self.__history_date = value        
+        self._property_changed("history_date")
+        self.__history_date = value
 
     @property
     def frequency(self) -> str:
@@ -883,20 +883,20 @@ class DataSetParameters(Base):
 
     @frequency.setter
     def frequency(self, value: str):
-        self._property_changed('frequency')
-        self.__frequency = value        
+        self._property_changed("frequency")
+        self.__frequency = value
 
     @property
     def asset_class(self) -> Union[AssetClass, str]:
         """Asset classification of security. Assets are classified into broad groups which
-           exhibit similar characteristics and behave in a consistent way under
-           different market conditions"""
+        exhibit similar characteristics and behave in a consistent way under
+        different market conditions"""
         return self.__asset_class
 
     @asset_class.setter
     def asset_class(self, value: Union[AssetClass, str]):
-        self._property_changed('asset_class')
-        self.__asset_class = get_enum_value(AssetClass, value)        
+        self._property_changed("asset_class")
+        self.__asset_class = get_enum_value(AssetClass, value)
 
     @property
     def owner_ids(self) -> Tuple[str, ...]:
@@ -905,8 +905,8 @@ class DataSetParameters(Base):
 
     @owner_ids.setter
     def owner_ids(self, value: Tuple[str, ...]):
-        self._property_changed('owner_ids')
-        self.__owner_ids = value        
+        self._property_changed("owner_ids")
+        self.__owner_ids = value
 
     @property
     def approver_ids(self) -> Tuple[str, ...]:
@@ -915,8 +915,8 @@ class DataSetParameters(Base):
 
     @approver_ids.setter
     def approver_ids(self, value: Tuple[str, ...]):
-        self._property_changed('approver_ids')
-        self.__approver_ids = value        
+        self._property_changed("approver_ids")
+        self.__approver_ids = value
 
     @property
     def support_ids(self) -> Tuple[str, ...]:
@@ -925,8 +925,8 @@ class DataSetParameters(Base):
 
     @support_ids.setter
     def support_ids(self, value: Tuple[str, ...]):
-        self._property_changed('support_ids')
-        self.__support_ids = value        
+        self._property_changed("support_ids")
+        self.__support_ids = value
 
     @property
     def support_distribution_list(self) -> Tuple[str, ...]:
@@ -935,8 +935,8 @@ class DataSetParameters(Base):
 
     @support_distribution_list.setter
     def support_distribution_list(self, value: Tuple[str, ...]):
-        self._property_changed('support_distribution_list')
-        self.__support_distribution_list = value        
+        self._property_changed("support_distribution_list")
+        self.__support_distribution_list = value
 
     @property
     def plot(self) -> bool:
@@ -945,8 +945,8 @@ class DataSetParameters(Base):
 
     @plot.setter
     def plot(self, value: bool):
-        self._property_changed('plot')
-        self.__plot = value        
+        self._property_changed("plot")
+        self.__plot = value
 
     @property
     def coverage_enabled(self) -> bool:
@@ -955,41 +955,35 @@ class DataSetParameters(Base):
 
     @coverage_enabled.setter
     def coverage_enabled(self, value: bool):
-        self._property_changed('coverage_enabled')
-        self.__coverage_enabled = value        
+        self._property_changed("coverage_enabled")
+        self.__coverage_enabled = value
 
     @property
     def use_created_time_for_upload(self) -> bool:
         """Whether the dataset uses createdTime to record the time at which the data got
-           uploaded."""
+        uploaded."""
         return self.__use_created_time_for_upload
 
     @use_created_time_for_upload.setter
     def use_created_time_for_upload(self, value: bool):
-        self._property_changed('use_created_time_for_upload')
-        self.__use_created_time_for_upload = value        
+        self._property_changed("use_created_time_for_upload")
+        self.__use_created_time_for_upload = value
 
     @property
     def apply_entity_entitlements(self) -> bool:
         """Whether entity level entitlements are applied while querying the dataset and its
-           coverage."""
+        coverage."""
         return self.__apply_entity_entitlements
 
     @apply_entity_entitlements.setter
     def apply_entity_entitlements(self, value: bool):
-        self._property_changed('apply_entity_entitlements')
-        self.__apply_entity_entitlements = value        
+        self._property_changed("apply_entity_entitlements")
+        self.__apply_entity_entitlements = value
 
 
 class DeleteCoverageQuery(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        where: FieldFilterMap = None,
-        delete_all: bool = False,
-        name: str = None
-    ):        
+    def __init__(self, where: FieldFilterMap = None, delete_all: bool = False, name: str = None):
         super().__init__()
         self.where = where
         self.delete_all = delete_all
@@ -1002,8 +996,8 @@ class DeleteCoverageQuery(Base):
 
     @where.setter
     def where(self, value: FieldFilterMap):
-        self._property_changed('where')
-        self.__where = value        
+        self._property_changed("where")
+        self.__where = value
 
     @property
     def delete_all(self) -> bool:
@@ -1011,12 +1005,12 @@ class DeleteCoverageQuery(Base):
 
     @delete_all.setter
     def delete_all(self, value: bool):
-        self._property_changed('delete_all')
-        self.__delete_all = value        
+        self._property_changed("delete_all")
+        self.__delete_all = value
 
 
 class FieldLinkSelector(Base):
-        
+
     """Stores selector and name how field is presented in dataset."""
 
     @camel_case_translate
@@ -1025,8 +1019,8 @@ class FieldLinkSelector(Base):
         field_selector: str = None,
         description: str = None,
         display_name: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.field_selector = field_selector
         self.description = description
@@ -1040,8 +1034,8 @@ class FieldLinkSelector(Base):
 
     @field_selector.setter
     def field_selector(self, value: str):
-        self._property_changed('field_selector')
-        self.__field_selector = value        
+        self._property_changed("field_selector")
+        self.__field_selector = value
 
     @property
     def description(self) -> str:
@@ -1050,23 +1044,23 @@ class FieldLinkSelector(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def display_name(self) -> str:
         """Name under which the captured field will be displayed. The name must be
-           registered in fields."""
+        registered in fields."""
         return self.__display_name
 
     @display_name.setter
     def display_name(self, value: str):
-        self._property_changed('display_name')
-        self.__display_name = value        
+        self._property_changed("display_name")
+        self.__display_name = value
 
 
 class MDAPI(Base):
-        
+
     """Defines MDAPI fields."""
 
     @camel_case_translate
@@ -1075,8 +1069,8 @@ class MDAPI(Base):
         type_: str,
         quoting_styles: Tuple[dict, ...],
         class_: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.__class = class_
         self.__type = type_
@@ -1090,8 +1084,8 @@ class MDAPI(Base):
 
     @class_.setter
     def class_(self, value: str):
-        self._property_changed('class_')
-        self.__class = value        
+        self._property_changed("class_")
+        self.__class = value
 
     @property
     def type(self) -> str:
@@ -1100,8 +1094,8 @@ class MDAPI(Base):
 
     @type.setter
     def type(self, value: str):
-        self._property_changed('type')
-        self.__type = value        
+        self._property_changed("type")
+        self.__type = value
 
     @property
     def quoting_styles(self) -> Tuple[dict, ...]:
@@ -1110,18 +1104,13 @@ class MDAPI(Base):
 
     @quoting_styles.setter
     def quoting_styles(self, value: Tuple[dict, ...]):
-        self._property_changed('quoting_styles')
-        self.__quoting_styles = value        
+        self._property_changed("quoting_styles")
+        self.__quoting_styles = value
 
 
 class MarketDataField(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        name: str = None,
-        mapping: str = None
-    ):        
+    def __init__(self, name: str = None, mapping: str = None):
         super().__init__()
         self.name = name
         self.mapping = mapping
@@ -1132,8 +1121,8 @@ class MarketDataField(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def mapping(self) -> str:
@@ -1141,12 +1130,11 @@ class MarketDataField(Base):
 
     @mapping.setter
     def mapping(self, value: str):
-        self._property_changed('mapping')
-        self.__mapping = value        
+        self._property_changed("mapping")
+        self.__mapping = value
 
 
 class MarketDataFilteredField(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -1156,8 +1144,8 @@ class MarketDataFilteredField(Base):
         default_boolean_value: bool = None,
         numerical_values: Tuple[float, ...] = None,
         values: Tuple[str, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.field = field
         self.default_value = default_value
@@ -1174,8 +1162,8 @@ class MarketDataFilteredField(Base):
 
     @field.setter
     def field(self, value: str):
-        self._property_changed('field')
-        self.__field = value        
+        self._property_changed("field")
+        self.__field = value
 
     @property
     def default_value(self) -> str:
@@ -1184,8 +1172,8 @@ class MarketDataFilteredField(Base):
 
     @default_value.setter
     def default_value(self, value: str):
-        self._property_changed('default_value')
-        self.__default_value = value        
+        self._property_changed("default_value")
+        self.__default_value = value
 
     @property
     def default_numerical_value(self) -> float:
@@ -1194,8 +1182,8 @@ class MarketDataFilteredField(Base):
 
     @default_numerical_value.setter
     def default_numerical_value(self, value: float):
-        self._property_changed('default_numerical_value')
-        self.__default_numerical_value = value        
+        self._property_changed("default_numerical_value")
+        self.__default_numerical_value = value
 
     @property
     def default_boolean_value(self) -> bool:
@@ -1204,8 +1192,8 @@ class MarketDataFilteredField(Base):
 
     @default_boolean_value.setter
     def default_boolean_value(self, value: bool):
-        self._property_changed('default_boolean_value')
-        self.__default_boolean_value = value        
+        self._property_changed("default_boolean_value")
+        self.__default_boolean_value = value
 
     @property
     def numerical_values(self) -> Tuple[float, ...]:
@@ -1214,8 +1202,8 @@ class MarketDataFilteredField(Base):
 
     @numerical_values.setter
     def numerical_values(self, value: Tuple[float, ...]):
-        self._property_changed('numerical_values')
-        self.__numerical_values = value        
+        self._property_changed("numerical_values")
+        self.__numerical_values = value
 
     @property
     def values(self) -> Tuple[str, ...]:
@@ -1224,38 +1212,32 @@ class MarketDataFilteredField(Base):
 
     @values.setter
     def values(self, value: Tuple[str, ...]):
-        self._property_changed('values')
-        self.__values = value        
+        self._property_changed("values")
+        self.__values = value
 
 
 class MeasureBacktest(Base):
-        
+
     """Describes backtests that should be associated with a measure."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        name: str = None
-    ):        
+    def __init__(self, name: str = None):
         super().__init__()
         self.name = name
 
 
 class MeasureKpi(Base):
-        
+
     """Describes KPIs that should be associated with a measure."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        name: str = None
-    ):        
+    def __init__(self, name: str = None):
         super().__init__()
         self.name = name
 
 
 class MidPrice(Base):
-        
+
     """Specification for a mid price column derived from bid and ask columns."""
 
     @camel_case_translate
@@ -1264,8 +1246,8 @@ class MidPrice(Base):
         bid_column: str = None,
         ask_column: str = None,
         mid_column: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.bid_column = bid_column
         self.ask_column = ask_column
@@ -1279,8 +1261,8 @@ class MidPrice(Base):
 
     @bid_column.setter
     def bid_column(self, value: str):
-        self._property_changed('bid_column')
-        self.__bid_column = value        
+        self._property_changed("bid_column")
+        self.__bid_column = value
 
     @property
     def ask_column(self) -> str:
@@ -1289,8 +1271,8 @@ class MidPrice(Base):
 
     @ask_column.setter
     def ask_column(self, value: str):
-        self._property_changed('ask_column')
-        self.__ask_column = value        
+        self._property_changed("ask_column")
+        self.__ask_column = value
 
     @property
     def mid_column(self) -> str:
@@ -1299,12 +1281,12 @@ class MidPrice(Base):
 
     @mid_column.setter
     def mid_column(self, value: str):
-        self._property_changed('mid_column')
-        self.__mid_column = value        
+        self._property_changed("mid_column")
+        self.__mid_column = value
 
 
 class ParserEntity(Base):
-        
+
     """Settings for a parser processor"""
 
     @camel_case_translate
@@ -1313,8 +1295,8 @@ class ParserEntity(Base):
         only_normalized_fields: bool = None,
         quotes: bool = None,
         trades: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.only_normalized_fields = only_normalized_fields
         self.quotes = quotes
@@ -1328,8 +1310,8 @@ class ParserEntity(Base):
 
     @only_normalized_fields.setter
     def only_normalized_fields(self, value: bool):
-        self._property_changed('only_normalized_fields')
-        self.__only_normalized_fields = value        
+        self._property_changed("only_normalized_fields")
+        self.__only_normalized_fields = value
 
     @property
     def quotes(self) -> bool:
@@ -1338,8 +1320,8 @@ class ParserEntity(Base):
 
     @quotes.setter
     def quotes(self, value: bool):
-        self._property_changed('quotes')
-        self.__quotes = value        
+        self._property_changed("quotes")
+        self.__quotes = value
 
     @property
     def trades(self) -> bool:
@@ -1348,21 +1330,16 @@ class ParserEntity(Base):
 
     @trades.setter
     def trades(self, value: bool):
-        self._property_changed('trades')
-        self.__trades = value        
+        self._property_changed("trades")
+        self.__trades = value
 
 
 class RemapFieldPair(Base):
-        
+
     """Field and remapTo field pair."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        field: str = None,
-        remap_to: str = None,
-        name: str = None
-    ):        
+    def __init__(self, field: str = None, remap_to: str = None, name: str = None):
         super().__init__()
         self.field = field
         self.remap_to = remap_to
@@ -1375,8 +1352,8 @@ class RemapFieldPair(Base):
 
     @field.setter
     def field(self, value: str):
-        self._property_changed('field')
-        self.__field = value        
+        self._property_changed("field")
+        self.__field = value
 
     @property
     def remap_to(self) -> str:
@@ -1385,21 +1362,16 @@ class RemapFieldPair(Base):
 
     @remap_to.setter
     def remap_to(self, value: str):
-        self._property_changed('remap_to')
-        self.__remap_to = value        
+        self._property_changed("remap_to")
+        self.__remap_to = value
 
 
 class SymbolFilterLink(Base):
-        
+
     """The entity type and field used to filter symbols."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        entity_type: str = None,
-        entity_field: str = None,
-        name: str = None
-    ):        
+    def __init__(self, entity_type: str = None, entity_field: str = None, name: str = None):
         super().__init__()
         self.entity_type = entity_type
         self.entity_field = entity_field
@@ -1412,8 +1384,8 @@ class SymbolFilterLink(Base):
 
     @entity_type.setter
     def entity_type(self, value: str):
-        self._property_changed('entity_type')
-        self.__entity_type = value        
+        self._property_changed("entity_type")
+        self.__entity_type = value
 
     @property
     def entity_field(self) -> str:
@@ -1422,12 +1394,12 @@ class SymbolFilterLink(Base):
 
     @entity_field.setter
     def entity_field(self, value: str):
-        self._property_changed('entity_field')
-        self.__entity_field = value        
+        self._property_changed("entity_field")
+        self.__entity_field = value
 
 
 class DataFilter(Base):
-        
+
     """Filter on specified field."""
 
     @camel_case_translate
@@ -1437,8 +1409,8 @@ class DataFilter(Base):
         values: Tuple[str, ...],
         column: str = None,
         where: DataSetCondition = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.field = field
         self.column = column
@@ -1453,8 +1425,8 @@ class DataFilter(Base):
 
     @field.setter
     def field(self, value: str):
-        self._property_changed('field')
-        self.__field = value        
+        self._property_changed("field")
+        self.__field = value
 
     @property
     def column(self) -> str:
@@ -1463,8 +1435,8 @@ class DataFilter(Base):
 
     @column.setter
     def column(self, value: str):
-        self._property_changed('column')
-        self.__column = value        
+        self._property_changed("column")
+        self.__column = value
 
     @property
     def values(self) -> Tuple[str, ...]:
@@ -1473,8 +1445,8 @@ class DataFilter(Base):
 
     @values.setter
     def values(self, value: Tuple[str, ...]):
-        self._property_changed('values')
-        self.__values = value        
+        self._property_changed("values")
+        self.__values = value
 
     @property
     def where(self) -> DataSetCondition:
@@ -1483,12 +1455,11 @@ class DataFilter(Base):
 
     @where.setter
     def where(self, value: DataSetCondition):
-        self._property_changed('where')
-        self.__where = value        
+        self._property_changed("where")
+        self.__where = value
 
 
 class DataQueryResponse(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -1502,8 +1473,8 @@ class DataQueryResponse(Base):
         delay: int = None,
         data: Tuple[FieldValueMap, ...] = None,
         groups: Tuple[DataGroup, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.request_id = request_id
         self.__type = type_
@@ -1524,8 +1495,8 @@ class DataQueryResponse(Base):
 
     @request_id.setter
     def request_id(self, value: str):
-        self._property_changed('request_id')
-        self.__request_id = value        
+        self._property_changed("request_id")
+        self.__request_id = value
 
     @property
     def type(self) -> str:
@@ -1533,8 +1504,8 @@ class DataQueryResponse(Base):
 
     @type.setter
     def type(self, value: str):
-        self._property_changed('type')
-        self.__type = value        
+        self._property_changed("type")
+        self.__type = value
 
     @property
     def error_message(self) -> str:
@@ -1542,8 +1513,8 @@ class DataQueryResponse(Base):
 
     @error_message.setter
     def error_message(self, value: str):
-        self._property_changed('error_message')
-        self.__error_message = value        
+        self._property_changed("error_message")
+        self.__error_message = value
 
     @property
     def id(self) -> str:
@@ -1552,8 +1523,8 @@ class DataQueryResponse(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def total_pages(self) -> int:
@@ -1562,8 +1533,8 @@ class DataQueryResponse(Base):
 
     @total_pages.setter
     def total_pages(self, value: int):
-        self._property_changed('total_pages')
-        self.__total_pages = value        
+        self._property_changed("total_pages")
+        self.__total_pages = value
 
     @property
     def data_set_id(self) -> str:
@@ -1572,8 +1543,8 @@ class DataQueryResponse(Base):
 
     @data_set_id.setter
     def data_set_id(self, value: str):
-        self._property_changed('data_set_id')
-        self.__data_set_id = value        
+        self._property_changed("data_set_id")
+        self.__data_set_id = value
 
     @property
     def entity_type(self) -> Union[MeasureEntityType, str]:
@@ -1582,8 +1553,8 @@ class DataQueryResponse(Base):
 
     @entity_type.setter
     def entity_type(self, value: Union[MeasureEntityType, str]):
-        self._property_changed('entity_type')
-        self.__entity_type = get_enum_value(MeasureEntityType, value)        
+        self._property_changed("entity_type")
+        self.__entity_type = get_enum_value(MeasureEntityType, value)
 
     @property
     def delay(self) -> int:
@@ -1591,8 +1562,8 @@ class DataQueryResponse(Base):
 
     @delay.setter
     def delay(self, value: int):
-        self._property_changed('delay')
-        self.__delay = value        
+        self._property_changed("delay")
+        self.__delay = value
 
     @property
     def data(self) -> Tuple[FieldValueMap, ...]:
@@ -1601,8 +1572,8 @@ class DataQueryResponse(Base):
 
     @data.setter
     def data(self, value: Tuple[FieldValueMap, ...]):
-        self._property_changed('data')
-        self.__data = value        
+        self._property_changed("data")
+        self.__data = value
 
     @property
     def groups(self) -> Tuple[DataGroup, ...]:
@@ -1611,12 +1582,12 @@ class DataQueryResponse(Base):
 
     @groups.setter
     def groups(self, value: Tuple[DataGroup, ...]):
-        self._property_changed('groups')
-        self.__groups = value        
+        self._property_changed("groups")
+        self.__groups = value
 
 
 class DataSetTransforms(Base):
-        
+
     """Dataset transformation specifiers."""
 
     @camel_case_translate
@@ -1625,8 +1596,8 @@ class DataSetTransforms(Base):
         redact_columns: Tuple[str, ...] = None,
         round_columns: Tuple[str, ...] = None,
         remap_fields: Tuple[RemapFieldPair, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.redact_columns = redact_columns
         self.round_columns = round_columns
@@ -1640,8 +1611,8 @@ class DataSetTransforms(Base):
 
     @redact_columns.setter
     def redact_columns(self, value: Tuple[str, ...]):
-        self._property_changed('redact_columns')
-        self.__redact_columns = value        
+        self._property_changed("redact_columns")
+        self.__redact_columns = value
 
     @property
     def round_columns(self) -> Tuple[str, ...]:
@@ -1650,8 +1621,8 @@ class DataSetTransforms(Base):
 
     @round_columns.setter
     def round_columns(self, value: Tuple[str, ...]):
-        self._property_changed('round_columns')
-        self.__round_columns = value        
+        self._property_changed("round_columns")
+        self.__round_columns = value
 
     @property
     def remap_fields(self) -> Tuple[RemapFieldPair, ...]:
@@ -1660,15 +1631,15 @@ class DataSetTransforms(Base):
 
     @remap_fields.setter
     def remap_fields(self, value: Tuple[RemapFieldPair, ...]):
-        self._property_changed('remap_fields')
-        self.__remap_fields = value        
+        self._property_changed("remap_fields")
+        self.__remap_fields = value
 
 
 class FieldLink(Base):
-        
+
     """Link the dataset field to an entity to also fetch its fields. It has two
-       mutually exclusive modes of operation: prefixing or explicit inclusion
-       entity fields."""
+    mutually exclusive modes of operation: prefixing or explicit inclusion
+    entity fields."""
 
     @camel_case_translate
     def __init__(
@@ -1676,8 +1647,8 @@ class FieldLink(Base):
         entity_identifier: str = None,
         prefix: str = None,
         additional_entity_fields: Tuple[FieldLinkSelector, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.entity_identifier = entity_identifier
         self.prefix = prefix
@@ -1687,7 +1658,7 @@ class FieldLink(Base):
     @property
     def entity_type(self) -> str:
         """The type of the entity to lookup to."""
-        return 'Asset'        
+        return "Asset"
 
     @property
     def entity_identifier(self) -> str:
@@ -1696,35 +1667,35 @@ class FieldLink(Base):
 
     @entity_identifier.setter
     def entity_identifier(self, value: str):
-        self._property_changed('entity_identifier')
-        self.__entity_identifier = value        
+        self._property_changed("entity_identifier")
+        self.__entity_identifier = value
 
     @property
     def prefix(self) -> str:
         """Prefix to put before the fields fetched from the linked entity (must be unique
-           for each dataset field). Prefix cannot be applied with
-           additionalEntityFields."""
+        for each dataset field). Prefix cannot be applied with
+        additionalEntityFields."""
         return self.__prefix
 
     @prefix.setter
     def prefix(self, value: str):
-        self._property_changed('prefix')
-        self.__prefix = value        
+        self._property_changed("prefix")
+        self.__prefix = value
 
     @property
     def additional_entity_fields(self) -> Tuple[FieldLinkSelector, ...]:
         """List of fields from the linked entity to include. It cannot be applied with
-           prefix"""
+        prefix"""
         return self.__additional_entity_fields
 
     @additional_entity_fields.setter
     def additional_entity_fields(self, value: Tuple[FieldLinkSelector, ...]):
-        self._property_changed('additional_entity_fields')
-        self.__additional_entity_fields = value        
+        self._property_changed("additional_entity_fields")
+        self.__additional_entity_fields = value
 
 
 class HistoryFilter(Base):
-        
+
     """Restricts queries against dataset to a time range."""
 
     @camel_case_translate
@@ -1735,8 +1706,8 @@ class HistoryFilter(Base):
         relative_start_seconds: float = None,
         relative_end_seconds: float = None,
         delay: DataSetDelay = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.absolute_start = absolute_start
         self.absolute_end = absolute_end
@@ -1752,8 +1723,8 @@ class HistoryFilter(Base):
 
     @absolute_start.setter
     def absolute_start(self, value: datetime.datetime):
-        self._property_changed('absolute_start')
-        self.__absolute_start = value        
+        self._property_changed("absolute_start")
+        self.__absolute_start = value
 
     @property
     def absolute_end(self) -> datetime.datetime:
@@ -1762,8 +1733,8 @@ class HistoryFilter(Base):
 
     @absolute_end.setter
     def absolute_end(self, value: datetime.datetime):
-        self._property_changed('absolute_end')
-        self.__absolute_end = value        
+        self._property_changed("absolute_end")
+        self.__absolute_end = value
 
     @property
     def relative_start_seconds(self) -> float:
@@ -1772,8 +1743,8 @@ class HistoryFilter(Base):
 
     @relative_start_seconds.setter
     def relative_start_seconds(self, value: float):
-        self._property_changed('relative_start_seconds')
-        self.__relative_start_seconds = value        
+        self._property_changed("relative_start_seconds")
+        self.__relative_start_seconds = value
 
     @property
     def relative_end_seconds(self) -> float:
@@ -1782,8 +1753,8 @@ class HistoryFilter(Base):
 
     @relative_end_seconds.setter
     def relative_end_seconds(self, value: float):
-        self._property_changed('relative_end_seconds')
-        self.__relative_end_seconds = value        
+        self._property_changed("relative_end_seconds")
+        self.__relative_end_seconds = value
 
     @property
     def delay(self) -> DataSetDelay:
@@ -1792,12 +1763,11 @@ class HistoryFilter(Base):
 
     @delay.setter
     def delay(self, value: DataSetDelay):
-        self._property_changed('delay')
-        self.__delay = value        
+        self._property_changed("delay")
+        self.__delay = value
 
 
 class MarketDataMapping(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -1816,8 +1786,8 @@ class MarketDataMapping(Base):
         entity_type: Union[MeasureEntityType, str] = None,
         backtest_entity: MeasureBacktest = None,
         kpi_entity: MeasureKpi = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.asset_class = asset_class
         self.query_type = query_type
@@ -1843,8 +1813,8 @@ class MarketDataMapping(Base):
 
     @asset_class.setter
     def asset_class(self, value: Union[AssetClass, str]):
-        self._property_changed('asset_class')
-        self.__asset_class = get_enum_value(AssetClass, value)        
+        self._property_changed("asset_class")
+        self.__asset_class = get_enum_value(AssetClass, value)
 
     @property
     def query_type(self) -> str:
@@ -1853,8 +1823,8 @@ class MarketDataMapping(Base):
 
     @query_type.setter
     def query_type(self, value: str):
-        self._property_changed('query_type')
-        self.__query_type = value        
+        self._property_changed("query_type")
+        self.__query_type = value
 
     @property
     def description(self) -> str:
@@ -1863,8 +1833,8 @@ class MarketDataMapping(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def scale(self) -> float:
@@ -1873,8 +1843,8 @@ class MarketDataMapping(Base):
 
     @scale.setter
     def scale(self, value: float):
-        self._property_changed('scale')
-        self.__scale = value        
+        self._property_changed("scale")
+        self.__scale = value
 
     @property
     def frequency(self) -> Union[MarketDataFrequency, str]:
@@ -1882,8 +1852,8 @@ class MarketDataMapping(Base):
 
     @frequency.setter
     def frequency(self, value: Union[MarketDataFrequency, str]):
-        self._property_changed('frequency')
-        self.__frequency = get_enum_value(MarketDataFrequency, value)        
+        self._property_changed("frequency")
+        self.__frequency = get_enum_value(MarketDataFrequency, value)
 
     @property
     def measures(self) -> Tuple[Union[MarketDataMeasure, str], ...]:
@@ -1891,8 +1861,8 @@ class MarketDataMapping(Base):
 
     @measures.setter
     def measures(self, value: Tuple[Union[MarketDataMeasure, str], ...]):
-        self._property_changed('measures')
-        self.__measures = value        
+        self._property_changed("measures")
+        self.__measures = value
 
     @property
     def data_set(self) -> str:
@@ -1901,8 +1871,8 @@ class MarketDataMapping(Base):
 
     @data_set.setter
     def data_set(self, value: str):
-        self._property_changed('data_set')
-        self.__data_set = value        
+        self._property_changed("data_set")
+        self.__data_set = value
 
     @property
     def vendor(self) -> Union[MarketDataVendor, str]:
@@ -1910,8 +1880,8 @@ class MarketDataMapping(Base):
 
     @vendor.setter
     def vendor(self, value: Union[MarketDataVendor, str]):
-        self._property_changed('vendor')
-        self.__vendor = get_enum_value(MarketDataVendor, value)        
+        self._property_changed("vendor")
+        self.__vendor = get_enum_value(MarketDataVendor, value)
 
     @property
     def fields(self) -> Tuple[MarketDataField, ...]:
@@ -1919,8 +1889,8 @@ class MarketDataMapping(Base):
 
     @fields.setter
     def fields(self, value: Tuple[MarketDataField, ...]):
-        self._property_changed('fields')
-        self.__fields = value        
+        self._property_changed("fields")
+        self.__fields = value
 
     @property
     def rank(self) -> float:
@@ -1928,8 +1898,8 @@ class MarketDataMapping(Base):
 
     @rank.setter
     def rank(self, value: float):
-        self._property_changed('rank')
-        self.__rank = value        
+        self._property_changed("rank")
+        self.__rank = value
 
     @property
     def filtered_fields(self) -> Tuple[MarketDataFilteredField, ...]:
@@ -1937,8 +1907,8 @@ class MarketDataMapping(Base):
 
     @filtered_fields.setter
     def filtered_fields(self, value: Tuple[MarketDataFilteredField, ...]):
-        self._property_changed('filtered_fields')
-        self.__filtered_fields = value        
+        self._property_changed("filtered_fields")
+        self.__filtered_fields = value
 
     @property
     def asset_types(self) -> Tuple[Union[AssetType, str], ...]:
@@ -1947,8 +1917,8 @@ class MarketDataMapping(Base):
 
     @asset_types.setter
     def asset_types(self, value: Tuple[Union[AssetType, str], ...]):
-        self._property_changed('asset_types')
-        self.__asset_types = value        
+        self._property_changed("asset_types")
+        self.__asset_types = value
 
     @property
     def entity_type(self) -> Union[MeasureEntityType, str]:
@@ -1957,8 +1927,8 @@ class MarketDataMapping(Base):
 
     @entity_type.setter
     def entity_type(self, value: Union[MeasureEntityType, str]):
-        self._property_changed('entity_type')
-        self.__entity_type = get_enum_value(MeasureEntityType, value)        
+        self._property_changed("entity_type")
+        self.__entity_type = get_enum_value(MeasureEntityType, value)
 
     @property
     def backtest_entity(self) -> MeasureBacktest:
@@ -1967,8 +1937,8 @@ class MarketDataMapping(Base):
 
     @backtest_entity.setter
     def backtest_entity(self, value: MeasureBacktest):
-        self._property_changed('backtest_entity')
-        self.__backtest_entity = value        
+        self._property_changed("backtest_entity")
+        self.__backtest_entity = value
 
     @property
     def kpi_entity(self) -> MeasureKpi:
@@ -1977,12 +1947,12 @@ class MarketDataMapping(Base):
 
     @kpi_entity.setter
     def kpi_entity(self, value: MeasureKpi):
-        self._property_changed('kpi_entity')
-        self.__kpi_entity = value        
+        self._property_changed("kpi_entity")
+        self.__kpi_entity = value
 
 
 class ProcessorEntity(Base):
-        
+
     """Query processors for dataset."""
 
     @camel_case_translate
@@ -1991,8 +1961,8 @@ class ProcessorEntity(Base):
         filters: Tuple[str, ...] = None,
         parsers: Tuple[ParserEntity, ...] = None,
         deduplicate: Tuple[str, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.filters = filters
         self.parsers = parsers
@@ -2006,8 +1976,8 @@ class ProcessorEntity(Base):
 
     @filters.setter
     def filters(self, value: Tuple[str, ...]):
-        self._property_changed('filters')
-        self.__filters = value        
+        self._property_changed("filters")
+        self.__filters = value
 
     @property
     def parsers(self) -> Tuple[ParserEntity, ...]:
@@ -2016,8 +1986,8 @@ class ProcessorEntity(Base):
 
     @parsers.setter
     def parsers(self, value: Tuple[ParserEntity, ...]):
-        self._property_changed('parsers')
-        self.__parsers = value        
+        self._property_changed("parsers")
+        self.__parsers = value
 
     @property
     def deduplicate(self) -> Tuple[str, ...]:
@@ -2026,12 +1996,12 @@ class ProcessorEntity(Base):
 
     @deduplicate.setter
     def deduplicate(self, value: Tuple[str, ...]):
-        self._property_changed('deduplicate')
-        self.__deduplicate = value        
+        self._property_changed("deduplicate")
+        self.__deduplicate = value
 
 
 class SymbolFilterDimension(Base):
-        
+
     """Map the dataset field with an entity for filtering arctic symbols."""
 
     @camel_case_translate
@@ -2040,8 +2010,8 @@ class SymbolFilterDimension(Base):
         field: str = None,
         field_description: str = None,
         symbol_filter_link: SymbolFilterLink = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.field = field
         self.field_description = field_description
@@ -2055,8 +2025,8 @@ class SymbolFilterDimension(Base):
 
     @field.setter
     def field(self, value: str):
-        self._property_changed('field')
-        self.__field = value        
+        self._property_changed("field")
+        self.__field = value
 
     @property
     def field_description(self) -> str:
@@ -2065,8 +2035,8 @@ class SymbolFilterDimension(Base):
 
     @field_description.setter
     def field_description(self, value: str):
-        self._property_changed('field_description')
-        self.__field_description = value        
+        self._property_changed("field_description")
+        self.__field_description = value
 
     @property
     def symbol_filter_link(self) -> SymbolFilterLink:
@@ -2075,21 +2045,16 @@ class SymbolFilterDimension(Base):
 
     @symbol_filter_link.setter
     def symbol_filter_link(self, value: SymbolFilterLink):
-        self._property_changed('symbol_filter_link')
-        self.__symbol_filter_link = value        
+        self._property_changed("symbol_filter_link")
+        self.__symbol_filter_link = value
 
 
 class ComplexFilter(Base):
-        
+
     """A compound filter for data requests."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        operator: str,
-        simple_filters: Tuple[DataFilter, ...],
-        name: str = None
-    ):        
+    def __init__(self, operator: str, simple_filters: Tuple[DataFilter, ...], name: str = None):
         super().__init__()
         self.operator = operator
         self.simple_filters = simple_filters
@@ -2101,8 +2066,8 @@ class ComplexFilter(Base):
 
     @operator.setter
     def operator(self, value: str):
-        self._property_changed('operator')
-        self.__operator = value        
+        self._property_changed("operator")
+        self.__operator = value
 
     @property
     def simple_filters(self) -> Tuple[DataFilter, ...]:
@@ -2111,12 +2076,12 @@ class ComplexFilter(Base):
 
     @simple_filters.setter
     def simple_filters(self, value: Tuple[DataFilter, ...]):
-        self._property_changed('simple_filters')
-        self.__simple_filters = value        
+        self._property_changed("simple_filters")
+        self.__simple_filters = value
 
 
 class DataSetTransformation(Base):
-        
+
     """Transform the Dataset output. Can be used with or without certain conditions."""
 
     @camel_case_translate
@@ -2124,8 +2089,8 @@ class DataSetTransformation(Base):
         self,
         transforms: DataSetTransforms,
         condition: DataSetCondition = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.condition = condition
         self.transforms = transforms
@@ -2138,8 +2103,8 @@ class DataSetTransformation(Base):
 
     @condition.setter
     def condition(self, value: DataSetCondition):
-        self._property_changed('condition')
-        self.__condition = value        
+        self._property_changed("condition")
+        self.__condition = value
 
     @property
     def transforms(self) -> DataSetTransforms:
@@ -2148,12 +2113,12 @@ class DataSetTransformation(Base):
 
     @transforms.setter
     def transforms(self, value: DataSetTransforms):
-        self._property_changed('transforms')
-        self.__transforms = value        
+        self._property_changed("transforms")
+        self.__transforms = value
 
 
 class FieldColumnPair(Base):
-        
+
     """Map from fields to database columns."""
 
     @camel_case_translate
@@ -2164,8 +2129,8 @@ class FieldColumnPair(Base):
         field_description: str = None,
         link: FieldLink = None,
         aliases: Tuple[str, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.field = field
         self.column = column
@@ -2181,8 +2146,8 @@ class FieldColumnPair(Base):
 
     @field.setter
     def field(self, value: str):
-        self._property_changed('field')
-        self.__field = value        
+        self._property_changed("field")
+        self.__field = value
 
     @property
     def column(self) -> str:
@@ -2191,8 +2156,8 @@ class FieldColumnPair(Base):
 
     @column.setter
     def column(self, value: str):
-        self._property_changed('column')
-        self.__column = value        
+        self._property_changed("column")
+        self.__column = value
 
     @property
     def field_description(self) -> str:
@@ -2201,8 +2166,8 @@ class FieldColumnPair(Base):
 
     @field_description.setter
     def field_description(self, value: str):
-        self._property_changed('field_description')
-        self.__field_description = value        
+        self._property_changed("field_description")
+        self.__field_description = value
 
     @property
     def link(self) -> FieldLink:
@@ -2211,23 +2176,23 @@ class FieldColumnPair(Base):
 
     @link.setter
     def link(self, value: FieldLink):
-        self._property_changed('link')
-        self.__link = value        
+        self._property_changed("link")
+        self.__link = value
 
     @property
     def aliases(self) -> Tuple[str, ...]:
         """Set of alias fields that can be used to refer to the current field when
-           querying."""
+        querying."""
         return self.__aliases
 
     @aliases.setter
     def aliases(self, value: Tuple[str, ...]):
-        self._property_changed('aliases')
-        self.__aliases = value        
+        self._property_changed("aliases")
+        self.__aliases = value
 
 
 class DataSetDimensions(Base):
-        
+
     """Dataset dimensions."""
 
     @camel_case_translate
@@ -2244,8 +2209,8 @@ class DataSetDimensions(Base):
         key_dimensions: Tuple[str, ...] = None,
         measures: Tuple[FieldColumnPair, ...] = None,
         entity_dimension: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.time_field = time_field
         self.transaction_time_field = transaction_time_field
@@ -2266,19 +2231,19 @@ class DataSetDimensions(Base):
 
     @time_field.setter
     def time_field(self, value: str):
-        self._property_changed('time_field')
-        self.__time_field = value        
+        self._property_changed("time_field")
+        self.__time_field = value
 
     @property
     def transaction_time_field(self) -> str:
         """For bi-temporal datasets, field for capturing the time at which a data point was
-           updated."""
+        updated."""
         return self.__transaction_time_field
 
     @transaction_time_field.setter
     def transaction_time_field(self, value: str):
-        self._property_changed('transaction_time_field')
-        self.__transaction_time_field = value        
+        self._property_changed("transaction_time_field")
+        self.__transaction_time_field = value
 
     @property
     def symbol_dimensions(self) -> Tuple[str, ...]:
@@ -2287,8 +2252,8 @@ class DataSetDimensions(Base):
 
     @symbol_dimensions.setter
     def symbol_dimensions(self, value: Tuple[str, ...]):
-        self._property_changed('symbol_dimensions')
-        self.__symbol_dimensions = value        
+        self._property_changed("symbol_dimensions")
+        self.__symbol_dimensions = value
 
     @property
     def symbol_dimension_properties(self) -> Tuple[FieldColumnPair, ...]:
@@ -2297,8 +2262,8 @@ class DataSetDimensions(Base):
 
     @symbol_dimension_properties.setter
     def symbol_dimension_properties(self, value: Tuple[FieldColumnPair, ...]):
-        self._property_changed('symbol_dimension_properties')
-        self.__symbol_dimension_properties = value        
+        self._property_changed("symbol_dimension_properties")
+        self.__symbol_dimension_properties = value
 
     @property
     def non_symbol_dimensions(self) -> Tuple[FieldColumnPair, ...]:
@@ -2307,8 +2272,8 @@ class DataSetDimensions(Base):
 
     @non_symbol_dimensions.setter
     def non_symbol_dimensions(self, value: Tuple[FieldColumnPair, ...]):
-        self._property_changed('non_symbol_dimensions')
-        self.__non_symbol_dimensions = value        
+        self._property_changed("non_symbol_dimensions")
+        self.__non_symbol_dimensions = value
 
     @property
     def symbol_dimension_link(self) -> FieldLink:
@@ -2317,8 +2282,8 @@ class DataSetDimensions(Base):
 
     @symbol_dimension_link.setter
     def symbol_dimension_link(self, value: FieldLink):
-        self._property_changed('symbol_dimension_link')
-        self.__symbol_dimension_link = value        
+        self._property_changed("symbol_dimension_link")
+        self.__symbol_dimension_link = value
 
     @property
     def linked_dimensions(self) -> Tuple[FieldLinkSelector, ...]:
@@ -2327,8 +2292,8 @@ class DataSetDimensions(Base):
 
     @linked_dimensions.setter
     def linked_dimensions(self, value: Tuple[FieldLinkSelector, ...]):
-        self._property_changed('linked_dimensions')
-        self.__linked_dimensions = value        
+        self._property_changed("linked_dimensions")
+        self.__linked_dimensions = value
 
     @property
     def symbol_filter_dimensions(self) -> Tuple[SymbolFilterDimension, ...]:
@@ -2337,19 +2302,19 @@ class DataSetDimensions(Base):
 
     @symbol_filter_dimensions.setter
     def symbol_filter_dimensions(self, value: Tuple[SymbolFilterDimension, ...]):
-        self._property_changed('symbol_filter_dimensions')
-        self.__symbol_filter_dimensions = value        
+        self._property_changed("symbol_filter_dimensions")
+        self.__symbol_filter_dimensions = value
 
     @property
     def key_dimensions(self) -> Tuple[str, ...]:
         """Fields to slice dataset by. Used for query results where same symbolDimension
-           has multiple updateTimes."""
+        has multiple updateTimes."""
         return self.__key_dimensions
 
     @key_dimensions.setter
     def key_dimensions(self, value: Tuple[str, ...]):
-        self._property_changed('key_dimensions')
-        self.__key_dimensions = value        
+        self._property_changed("key_dimensions")
+        self.__key_dimensions = value
 
     @property
     def measures(self) -> Tuple[FieldColumnPair, ...]:
@@ -2358,8 +2323,8 @@ class DataSetDimensions(Base):
 
     @measures.setter
     def measures(self, value: Tuple[FieldColumnPair, ...]):
-        self._property_changed('measures')
-        self.__measures = value        
+        self._property_changed("measures")
+        self.__measures = value
 
     @property
     def entity_dimension(self) -> str:
@@ -2368,12 +2333,12 @@ class DataSetDimensions(Base):
 
     @entity_dimension.setter
     def entity_dimension(self, value: str):
-        self._property_changed('entity_dimension')
-        self.__entity_dimension = value        
+        self._property_changed("entity_dimension")
+        self.__entity_dimension = value
 
 
 class EntityFilter(Base):
-        
+
     """Filter on entities."""
 
     @camel_case_translate
@@ -2382,8 +2347,8 @@ class EntityFilter(Base):
         operator: str = None,
         simple_filters: Tuple[DataFilter, ...] = None,
         complex_filters: Tuple[ComplexFilter, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.operator = operator
         self.simple_filters = simple_filters
@@ -2396,8 +2361,8 @@ class EntityFilter(Base):
 
     @operator.setter
     def operator(self, value: str):
-        self._property_changed('operator')
-        self.__operator = value        
+        self._property_changed("operator")
+        self.__operator = value
 
     @property
     def simple_filters(self) -> Tuple[DataFilter, ...]:
@@ -2406,8 +2371,8 @@ class EntityFilter(Base):
 
     @simple_filters.setter
     def simple_filters(self, value: Tuple[DataFilter, ...]):
-        self._property_changed('simple_filters')
-        self.__simple_filters = value        
+        self._property_changed("simple_filters")
+        self.__simple_filters = value
 
     @property
     def complex_filters(self) -> Tuple[ComplexFilter, ...]:
@@ -2416,12 +2381,12 @@ class EntityFilter(Base):
 
     @complex_filters.setter
     def complex_filters(self, value: Tuple[ComplexFilter, ...]):
-        self._property_changed('complex_filters')
-        self.__complex_filters = value        
+        self._property_changed("complex_filters")
+        self.__complex_filters = value
 
 
 class DataSetFilters(Base):
-        
+
     """Filters to restrict the set of data returned."""
 
     @camel_case_translate
@@ -2432,8 +2397,8 @@ class DataSetFilters(Base):
         advanced_filters: Tuple[AdvancedFilter, ...] = None,
         history_filter: HistoryFilter = None,
         time_filter: TimeFilter = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.entity_filter = entity_filter
         self.row_filters = row_filters
@@ -2449,8 +2414,8 @@ class DataSetFilters(Base):
 
     @entity_filter.setter
     def entity_filter(self, value: EntityFilter):
-        self._property_changed('entity_filter')
-        self.__entity_filter = value        
+        self._property_changed("entity_filter")
+        self.__entity_filter = value
 
     @property
     def row_filters(self) -> Tuple[DataFilter, ...]:
@@ -2459,8 +2424,8 @@ class DataSetFilters(Base):
 
     @row_filters.setter
     def row_filters(self, value: Tuple[DataFilter, ...]):
-        self._property_changed('row_filters')
-        self.__row_filters = value        
+        self._property_changed("row_filters")
+        self.__row_filters = value
 
     @property
     def advanced_filters(self) -> Tuple[AdvancedFilter, ...]:
@@ -2469,8 +2434,8 @@ class DataSetFilters(Base):
 
     @advanced_filters.setter
     def advanced_filters(self, value: Tuple[AdvancedFilter, ...]):
-        self._property_changed('advanced_filters')
-        self.__advanced_filters = value        
+        self._property_changed("advanced_filters")
+        self.__advanced_filters = value
 
     @property
     def history_filter(self) -> HistoryFilter:
@@ -2479,8 +2444,8 @@ class DataSetFilters(Base):
 
     @history_filter.setter
     def history_filter(self, value: HistoryFilter):
-        self._property_changed('history_filter')
-        self.__history_filter = value        
+        self._property_changed("history_filter")
+        self.__history_filter = value
 
     @property
     def time_filter(self) -> TimeFilter:
@@ -2489,12 +2454,11 @@ class DataSetFilters(Base):
 
     @time_filter.setter
     def time_filter(self, value: TimeFilter):
-        self._property_changed('time_filter')
-        self.__time_filter = value        
+        self._property_changed("time_filter")
+        self.__time_filter = value
 
 
 class DataSetEntity(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -2520,8 +2484,8 @@ class DataSetEntity(Base):
         created_time: datetime.datetime = None,
         last_updated_by_id: str = None,
         last_updated_time: datetime.datetime = None,
-        tags: Tuple[str, ...] = None
-    ):        
+        tags: Tuple[str, ...] = None,
+    ):
         super().__init__()
         self.owner_id = owner_id
         self.__id = id_
@@ -2554,8 +2518,8 @@ class DataSetEntity(Base):
 
     @owner_id.setter
     def owner_id(self, value: str):
-        self._property_changed('owner_id')
-        self.__owner_id = value        
+        self._property_changed("owner_id")
+        self.__owner_id = value
 
     @property
     def id(self) -> str:
@@ -2564,8 +2528,8 @@ class DataSetEntity(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def name(self) -> str:
@@ -2574,8 +2538,8 @@ class DataSetEntity(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def description(self) -> str:
@@ -2584,8 +2548,8 @@ class DataSetEntity(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def short_description(self) -> str:
@@ -2594,8 +2558,8 @@ class DataSetEntity(Base):
 
     @short_description.setter
     def short_description(self, value: str):
-        self._property_changed('short_description')
-        self.__short_description = value        
+        self._property_changed("short_description")
+        self.__short_description = value
 
     @property
     def mappings(self) -> Tuple[MarketDataMapping, ...]:
@@ -2604,8 +2568,8 @@ class DataSetEntity(Base):
 
     @mappings.setter
     def mappings(self, value: Tuple[MarketDataMapping, ...]):
-        self._property_changed('mappings')
-        self.__mappings = value        
+        self._property_changed("mappings")
+        self.__mappings = value
 
     @property
     def vendor(self) -> Union[MarketDataVendor, str]:
@@ -2613,8 +2577,8 @@ class DataSetEntity(Base):
 
     @vendor.setter
     def vendor(self, value: Union[MarketDataVendor, str]):
-        self._property_changed('vendor')
-        self.__vendor = get_enum_value(MarketDataVendor, value)        
+        self._property_changed("vendor")
+        self.__vendor = get_enum_value(MarketDataVendor, value)
 
     @property
     def start_date(self) -> datetime.date:
@@ -2623,8 +2587,8 @@ class DataSetEntity(Base):
 
     @start_date.setter
     def start_date(self, value: datetime.date):
-        self._property_changed('start_date')
-        self.__start_date = value        
+        self._property_changed("start_date")
+        self.__start_date = value
 
     @property
     def mdapi(self) -> MDAPI:
@@ -2633,8 +2597,8 @@ class DataSetEntity(Base):
 
     @mdapi.setter
     def mdapi(self, value: MDAPI):
-        self._property_changed('mdapi')
-        self.__mdapi = value        
+        self._property_changed("mdapi")
+        self.__mdapi = value
 
     @property
     def data_product(self) -> str:
@@ -2643,8 +2607,8 @@ class DataSetEntity(Base):
 
     @data_product.setter
     def data_product(self, value: str):
-        self._property_changed('data_product')
-        self.__data_product = value        
+        self._property_changed("data_product")
+        self.__data_product = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -2653,8 +2617,8 @@ class DataSetEntity(Base):
 
     @entitlements.setter
     def entitlements(self, value: Entitlements):
-        self._property_changed('entitlements')
-        self.__entitlements = value        
+        self._property_changed("entitlements")
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -2663,8 +2627,8 @@ class DataSetEntity(Base):
 
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
-        self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self._property_changed("entitlement_exclusions")
+        self.__entitlement_exclusions = value
 
     @property
     def query_processors(self) -> ProcessorEntity:
@@ -2673,8 +2637,8 @@ class DataSetEntity(Base):
 
     @query_processors.setter
     def query_processors(self, value: ProcessorEntity):
-        self._property_changed('query_processors')
-        self.__query_processors = value        
+        self._property_changed("query_processors")
+        self.__query_processors = value
 
     @property
     def parameters(self) -> DataSetParameters:
@@ -2683,8 +2647,8 @@ class DataSetEntity(Base):
 
     @parameters.setter
     def parameters(self, value: DataSetParameters):
-        self._property_changed('parameters')
-        self.__parameters = value        
+        self._property_changed("parameters")
+        self.__parameters = value
 
     @property
     def dimensions(self) -> DataSetDimensions:
@@ -2693,8 +2657,8 @@ class DataSetEntity(Base):
 
     @dimensions.setter
     def dimensions(self, value: DataSetDimensions):
-        self._property_changed('dimensions')
-        self.__dimensions = value        
+        self._property_changed("dimensions")
+        self.__dimensions = value
 
     @property
     def defaults(self) -> DataSetDefaults:
@@ -2703,8 +2667,8 @@ class DataSetEntity(Base):
 
     @defaults.setter
     def defaults(self, value: DataSetDefaults):
-        self._property_changed('defaults')
-        self.__defaults = value        
+        self._property_changed("defaults")
+        self.__defaults = value
 
     @property
     def filters(self) -> DataSetFilters:
@@ -2713,8 +2677,8 @@ class DataSetEntity(Base):
 
     @filters.setter
     def filters(self, value: DataSetFilters):
-        self._property_changed('filters')
-        self.__filters = value        
+        self._property_changed("filters")
+        self.__filters = value
 
     @property
     def transformations(self) -> Tuple[DataSetTransformation, ...]:
@@ -2722,8 +2686,8 @@ class DataSetEntity(Base):
 
     @transformations.setter
     def transformations(self, value: Tuple[DataSetTransformation, ...]):
-        self._property_changed('transformations')
-        self.__transformations = value        
+        self._property_changed("transformations")
+        self.__transformations = value
 
     @property
     def created_by_id(self) -> str:
@@ -2732,8 +2696,8 @@ class DataSetEntity(Base):
 
     @created_by_id.setter
     def created_by_id(self, value: str):
-        self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self._property_changed("created_by_id")
+        self.__created_by_id = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -2742,8 +2706,8 @@ class DataSetEntity(Base):
 
     @created_time.setter
     def created_time(self, value: datetime.datetime):
-        self._property_changed('created_time')
-        self.__created_time = value        
+        self._property_changed("created_time")
+        self.__created_time = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -2752,8 +2716,8 @@ class DataSetEntity(Base):
 
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
-        self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self._property_changed("last_updated_by_id")
+        self.__last_updated_by_id = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -2762,8 +2726,8 @@ class DataSetEntity(Base):
 
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
-        self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self._property_changed("last_updated_time")
+        self.__last_updated_time = value
 
     @property
     def tags(self) -> Tuple[str, ...]:
@@ -2772,5 +2736,5 @@ class DataSetEntity(Base):
 
     @tags.setter
     def tags(self, value: Tuple[str, ...]):
-        self._property_changed('tags')
-        self.__tags = value        
+        self._property_changed("tags")
+        self.__tags = value

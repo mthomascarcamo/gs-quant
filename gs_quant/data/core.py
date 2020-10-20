@@ -15,6 +15,7 @@ under the License.
 """
 import datetime
 from enum import Enum
+
 from gs_quant.context_base import ContextBaseWithDefault
 
 
@@ -30,13 +31,13 @@ class DataFrequency(Enum):
     """
 
     #: Data subscription for series updating daily
-    DAILY = 'DAILY'
+    DAILY = "DAILY"
 
     #: Data subscription for real-time or intraday series
-    REAL_TIME = 'REALTIME'
+    REAL_TIME = "REALTIME"
 
     #: Data subscription for real-time or daily series
-    ANY = 'ANY'
+    ANY = "ANY"
 
 
 class DataContext(ContextBaseWithDefault):
@@ -55,11 +56,11 @@ class DataContext(ContextBaseWithDefault):
         elif isinstance(o, datetime.date):
             return o
         elif isinstance(o, str):
-            loc = o.find('T')
+            loc = o.find("T")
             ds = o[:loc] if loc != -1 else o
-            return datetime.datetime.strptime(ds, '%Y-%m-%d').date()
+            return datetime.datetime.strptime(ds, "%Y-%m-%d").date()
         else:
-            raise ValueError(f'{o} is not a valid date')
+            raise ValueError(f"{o} is not a valid date")
 
     @staticmethod
     def _get_datetime(o, default):
@@ -70,10 +71,10 @@ class DataContext(ContextBaseWithDefault):
         elif isinstance(o, datetime.date):
             return datetime.datetime.combine(o, datetime.time(tzinfo=datetime.timezone.utc))
         elif isinstance(o, str):
-            tmp = datetime.datetime.strptime(o, '%Y-%m-%dT%H:%M:%SZ')
+            tmp = datetime.datetime.strptime(o, "%Y-%m-%dT%H:%M:%SZ")
             return tmp.replace(tzinfo=datetime.timezone.utc)
         else:
-            raise ValueError(f'{o} is not a valid date')
+            raise ValueError(f"{o} is not a valid date")
 
     @property
     def start_date(self):
@@ -92,10 +93,13 @@ class DataContext(ContextBaseWithDefault):
         return self._get_datetime(self.__end, _now())
 
 
-if __name__ == '__main__':
-    with DataContext(datetime.date(2019, 1, 1), datetime.datetime(2019, 2, 1, tzinfo=datetime.timezone.utc)) as dc:
-        print(f'{dc.start_date}, {dc.end_date}')
-        print(f'{dc.start_time}, {dc.end_time}')
-    with DataContext(None, '2019-01-01T00:00:00Z') as dc2:
-        print(f'{dc2.start_date}, {dc2.end_date}')
-        print(f'{dc2.start_time}, {dc2.end_time}')
+if __name__ == "__main__":
+    with DataContext(
+        datetime.date(2019, 1, 1),
+        datetime.datetime(2019, 2, 1, tzinfo=datetime.timezone.utc),
+    ) as dc:
+        print(f"{dc.start_date}, {dc.end_date}")
+        print(f"{dc.start_time}, {dc.end_time}")
+    with DataContext(None, "2019-01-01T00:00:00Z") as dc2:
+        print(f"{dc2.start_date}, {dc2.end_date}")
+        print(f"{dc2.start_time}, {dc2.end_time}")

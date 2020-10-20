@@ -14,17 +14,18 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from copy import deepcopy
 from collections import defaultdict
-import pandas as pd
+from copy import deepcopy
 from typing import Optional
 
-from gs_quant.backtests.backtest_utils import make_list, CalcType
-from gs_quant.instrument import Instrument
-from gs_quant.markets.portfolio import Portfolio
-from gs_quant.markets import PricingContext, HistoricalPricingContext
-from gs_quant.risk import RiskMeasure, Price
+import pandas as pd
+
+from gs_quant.backtests.backtest_utils import CalcType, make_list
 from gs_quant.errors import MqValueError
+from gs_quant.instrument import Instrument
+from gs_quant.markets import HistoricalPricingContext, PricingContext
+from gs_quant.markets.portfolio import Portfolio
+from gs_quant.risk import Price, RiskMeasure
 
 
 class BackTest(object):
@@ -90,7 +91,7 @@ class BackTest(object):
 
     def get_aggregated_result(self, risk: Optional[RiskMeasure] = Price):
         if risk not in self.risks:
-            raise MqValueError('{} not in calculated risks for this backtest'.format(risk))
+            raise MqValueError("{} not in calculated risks for this backtest".format(risk))
         return pd.Series({d: i[risk].aggregate() for d, i in self._results.items()})
 
 
@@ -103,14 +104,22 @@ class ScalingPortfolio(object):
 
 
 class GenericEngine(object):
-
     @classmethod
     def supports_strategy(cls, strategy):
         return True
 
     @classmethod
-    def run_backtest(cls, strategy, start=None, end=None, frequency='BM', window=None, states=None, risks=Price,
-                     show_progress=True):
+    def run_backtest(
+        cls,
+        strategy,
+        start=None,
+        end=None,
+        frequency="BM",
+        window=None,
+        states=None,
+        risks=Price,
+        show_progress=True,
+    ):
         dates = pd.date_range(start=start, end=end, freq=frequency).date.tolist()
         risks = make_list(risks) + strategy.risks
 
@@ -145,7 +154,7 @@ class GenericEngine(object):
                     scale_date = p.dates[0]
                     scaling_factor = backtest.results[scale_date][p.risk][0] / p.results[scale_date][p.risk][0]
                     scaled_trade = p.trade.as_dict()
-                    scaled_trade['notional_amount'] *= scaling_factor
+                    scaled_trade["notional_amount"] *= scaling_factor
                     scaled_trade = Instrument.from_dict(scaled_trade)
                     for day in p.dates:
                         backtest.add_results(day, p.results[day] * scaling_factor)

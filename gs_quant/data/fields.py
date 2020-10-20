@@ -14,8 +14,9 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from aenum import Enum, extend_enum
 from typing import Optional
+
+from aenum import Enum, extend_enum
 
 
 class DataMeasure(Enum):
@@ -25,25 +26,26 @@ class DataMeasure(Enum):
     be aggregated over a defined period of time. For example: tradePrice and volume are measures
 
     """
-    ASK_PRICE = 'askPrice'
-    BID_PRICE = 'bidPrice'
-    HIGH_PRICE = 'highPrice'
-    MID_PRICE = 'midPrice'
-    LOW_PRICE = 'lowPrice'
-    OPEN_PRICE = 'openPrice'
-    CLOSE_PRICE = 'closePrice'
-    TRADE_PRICE = 'tradePrice'
-    SPOT_PRICE = 'spot'
-    VOLUME = 'volume'
-    ADJUSTED_ASK_PRICE = 'adjustedAskPrice'
-    ADJUSTED_BID_PRICE = 'adjustedBidPrice'
-    ADJUSTED_HIGH_PRICE = 'adjustedHighPrice'
-    ADJUSTED_LOW_PRICE = 'adjustedLowPrice'
-    ADJUSTED_OPEN_PRICE = 'adjustedBidPrice'
-    ADJUSTED_TRADE_PRICE = 'adjustedTradePrice'
-    ADJUSTED_VOLUME = 'adjustedVolume'
-    IMPLIED_VOLATILITY = 'impliedVolatility'
-    VAR_SWAP = 'varSwap'
+
+    ASK_PRICE = "askPrice"
+    BID_PRICE = "bidPrice"
+    HIGH_PRICE = "highPrice"
+    MID_PRICE = "midPrice"
+    LOW_PRICE = "lowPrice"
+    OPEN_PRICE = "openPrice"
+    CLOSE_PRICE = "closePrice"
+    TRADE_PRICE = "tradePrice"
+    SPOT_PRICE = "spot"
+    VOLUME = "volume"
+    ADJUSTED_ASK_PRICE = "adjustedAskPrice"
+    ADJUSTED_BID_PRICE = "adjustedBidPrice"
+    ADJUSTED_HIGH_PRICE = "adjustedHighPrice"
+    ADJUSTED_LOW_PRICE = "adjustedLowPrice"
+    ADJUSTED_OPEN_PRICE = "adjustedBidPrice"
+    ADJUSTED_TRADE_PRICE = "adjustedTradePrice"
+    ADJUSTED_VOLUME = "adjustedVolume"
+    IMPLIED_VOLATILITY = "impliedVolatility"
+    VAR_SWAP = "varSwap"
 
 
 class DataDimension(Enum):
@@ -53,14 +55,15 @@ class DataDimension(Enum):
     be used to select or group data. For example: ticker and exchange are dimensions
 
     """
-    ASSET_ID = 'assetId'
-    NAME = 'name'
-    RIC = 'ric'
-    TENOR = 'tenor'
-    STRIKE_REFERENCE = 'strikeReference'
-    RELATIVE_STRIKE = 'relativeStrike'
-    EXPIRATION_DATE = 'expirationDate'
-    UPDATE_TIME = 'updateTime'
+
+    ASSET_ID = "assetId"
+    NAME = "name"
+    RIC = "ric"
+    TENOR = "tenor"
+    STRIKE_REFERENCE = "strikeReference"
+    RELATIVE_STRIKE = "relativeStrike"
+    EXPIRATION_DATE = "expirationDate"
+    UPDATE_TIME = "updateTime"
 
 
 class Fields(Enum):

@@ -14,15 +14,14 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.backtests.strategy_systematic import StrategySystematic, DeltaHedgeParameters, QuantityType, TradeInMethod
-from gs_quant.backtests import triggers as t
 from gs_quant.backtests import actions as a
+from gs_quant.backtests import triggers as t
+from gs_quant.backtests.strategy_systematic import DeltaHedgeParameters, QuantityType, StrategySystematic, TradeInMethod
 from gs_quant.instrument import EqOption, EqVarianceSwap
 from gs_quant.risk import EqDelta
 
 
 class EquityVolEngine(object):
-
     @classmethod
     def supports_strategy(cls, strategy):
         for trigger in strategy.triggers:
@@ -31,8 +30,9 @@ class EquityVolEngine(object):
                 if len(trigger.actions) != 1:
                     return False
                 elif isinstance(trigger.actions[0], a.AddTradeAction):
-                    if not all((isinstance(p, EqOption) | isinstance(p, EqVarianceSwap))
-                               for p in trigger.actions[0].priceables):
+                    if not all(
+                        (isinstance(p, EqOption) | isinstance(p, EqVarianceSwap)) for p in trigger.actions[0].priceables
+                    ):
                         return False
                 elif isinstance(trigger.actions[0], a.HedgeAction):
                     if not isinstance(trigger.actions[0].risk, EqDelta):
@@ -44,7 +44,7 @@ class EquityVolEngine(object):
     @classmethod
     def run_backtest(cls, strategy, start, end):
         if not EquityVolEngine.supports_strategy(strategy):
-            raise RuntimeError('unsupported strategy')
+            raise RuntimeError("unsupported strategy")
         underlier_list = None
         roll_frequency = None
         hedge = None
@@ -54,24 +54,25 @@ class EquityVolEngine(object):
                     underlier_list = trigger.actions[0].priceables
                     roll_frequency = trigger.actions[0].trade_duration
                 elif isinstance(trigger.actions[0], a.HedgeAction):
-                    if trigger.trigger_requirements.frequency == '1B':
-                        frequency = 'Daily'
-                    elif trigger.trigger_requirements.frequency == '1M':
-                        frequency = 'Monthly'
+                    if trigger.trigger_requirements.frequency == "1B":
+                        frequency = "Daily"
+                    elif trigger.trigger_requirements.frequency == "1M":
+                        frequency = "Monthly"
                     else:
-                        raise RuntimeError('unrecognised hedge frequency')
+                        raise RuntimeError("unrecognised hedge frequency")
                     hedge = DeltaHedgeParameters(frequency=frequency)
 
-        strategy = StrategySystematic(name="Mock Test",
-                                      underliers=underlier_list,
-                                      delta_hedge=hedge,
-                                      quantity=-1,
-                                      quantity_type=QuantityType.Quantity,
-                                      trade_in_method=TradeInMethod.FixedRoll,
-                                      roll_frequency=roll_frequency,
-                                      # entry_signal= Mapping of Date->0/1,
-                                      # exit_signal= Mapping of Date->0/1
-                                      )
+        strategy = StrategySystematic(
+            name="Mock Test",
+            underliers=underlier_list,
+            delta_hedge=hedge,
+            quantity=-1,
+            quantity_type=QuantityType.Quantity,
+            trade_in_method=TradeInMethod.FixedRoll,
+            roll_frequency=roll_frequency,
+            # entry_signal= Mapping of Date->0/1,
+            # exit_signal= Mapping of Date->0/1
+        )
         result = strategy.backtest(start, end)
         perf = result.performance
         return perf

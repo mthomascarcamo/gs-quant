@@ -14,13 +14,14 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from typing import Union, Iterable, Optional
 import datetime
 from enum import Enum
+from typing import Iterable, Optional, Union
+
 import pandas as pd
 
 from gs_quant.backtests.actions import Action
-from gs_quant.backtests.backtest_utils import make_list, CalcType
+from gs_quant.backtests.backtest_utils import CalcType, make_list
 from gs_quant.backtests.generic_engine import BackTest
 
 
@@ -68,8 +69,11 @@ class AggregateTriggerRequirements(TriggerRequirements):
 
 
 class Trigger(object):
-
-    def __init__(self, trigger_requirements: Optional[TriggerRequirements], actions: Union[Action, Iterable[Action]]):
+    def __init__(
+        self,
+        trigger_requirements: Optional[TriggerRequirements],
+        actions: Union[Action, Iterable[Action]],
+    ):
         self._trigger_requirements = trigger_requirements
         self._actions = make_list(actions)
         self._risks = [x.risk for x in self.actions if x.risk is not None]
@@ -82,7 +86,7 @@ class Trigger(object):
         :param backtest:
         :return:
         """
-        raise RuntimeError('has_triggered to be implemented by subclass')
+        raise RuntimeError("has_triggered to be implemented by subclass")
 
     @property
     def calc_type(self):
@@ -102,17 +106,25 @@ class Trigger(object):
 
 
 class PeriodicTrigger(Trigger):
-    def __init__(self,
-                 trigger_requirements: PeriodicTriggerRequirements,
-                 actions: Union[Action, Iterable[Action]]):
+    def __init__(
+        self,
+        trigger_requirements: PeriodicTriggerRequirements,
+        actions: Union[Action, Iterable[Action]],
+    ):
         super().__init__(trigger_requirements, actions)
         self._trigger_dates = None
 
     def get_trigger_dates(self) -> [datetime.date]:
         if not self._trigger_dates:
-            self._trigger_dates = pd.date_range(start=self._trigger_requirements.start_date,
-                                                end=self._trigger_requirements.end_date,
-                                                freq=self._trigger_requirements.frequency).to_pydatetime().tolist()
+            self._trigger_dates = (
+                pd.date_range(
+                    start=self._trigger_requirements.start_date,
+                    end=self._trigger_requirements.end_date,
+                    freq=self._trigger_requirements.frequency,
+                )
+                .to_pydatetime()
+                .tolist()
+            )
             self._trigger_dates = [my_date.date() for my_date in self._trigger_dates]
         return self._trigger_dates
 
@@ -123,9 +135,11 @@ class PeriodicTrigger(Trigger):
 
 
 class MktTrigger(Trigger):
-    def __init__(self,
-                 trigger_requirements: MktTriggerRequirements,
-                 actions: Union[Action, Iterable[Action]]):
+    def __init__(
+        self,
+        trigger_requirements: MktTriggerRequirements,
+        actions: Union[Action, Iterable[Action]],
+    ):
         super().__init__(trigger_requirements, actions)
 
     def has_triggered(self, state: datetime.date, backtest: BackTest = None) -> bool:
@@ -143,9 +157,11 @@ class MktTrigger(Trigger):
 
 
 class StrategyRiskTrigger(Trigger):
-    def __init__(self,
-                 trigger_requirements: RiskTriggerRequirements,
-                 actions: Union[Action, Iterable[Action]]):
+    def __init__(
+        self,
+        trigger_requirements: RiskTriggerRequirements,
+        actions: Union[Action, Iterable[Action]],
+    ):
         super().__init__(trigger_requirements, actions)
         self._calc_type = CalcType.path_dependent
         self._risks += [trigger_requirements.risk]

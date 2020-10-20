@@ -19,6 +19,7 @@ import sys
 
 class MqError(Exception):
     """Base class for errors in this module"""
+
     pass
 
 
@@ -37,10 +38,10 @@ class MqRequestError(MqError):
         self.context = context
 
     def __str__(self):
-        prepend = 'context: {}\n'.format(self.context) if self.context else ''
-        result = '{}status: {}, message: {}'.format(prepend, self.status, self.message)
+        prepend = "context: {}\n".format(self.context) if self.context else ""
+        result = "{}status: {}, message: {}".format(prepend, self.status, self.message)
         if sys.version_info.major < 3:
-            result = result.encode('ascii', 'ignore')
+            result = result.encode("ascii", "ignore")
         return result
 
 

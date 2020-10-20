@@ -13,24 +13,25 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
-from gs_quant.base import InstrumentBase, Priceable, RiskKey, Sentinel
-from gs_quant.risk import DataFrameWithInfo, ErrorValue, FloatWithInfo, RiskMeasure, SeriesWithInfo, aggregate_results
-
-from concurrent.futures import Future
 import copy
 import datetime as dt
-from itertools import chain
 import logging
 import operator as op
-import pandas as pd
+from concurrent.futures import Future
+from itertools import chain
 from typing import Any, Iterable, Mapping, Optional, Tuple, Union
 
+import pandas as pd
+
+from gs_quant.base import InstrumentBase, Priceable, RiskKey, Sentinel
+from gs_quant.risk import DataFrameWithInfo, ErrorValue, FloatWithInfo, RiskMeasure, SeriesWithInfo, aggregate_results
 
 _logger = logging.getLogger(__name__)
 
 
-def _value_for_date(result: Union[DataFrameWithInfo, SeriesWithInfo], date: dt.date) -> \
-        Union[DataFrameWithInfo, ErrorValue, FloatWithInfo]:
+def _value_for_date(
+    result: Union[DataFrameWithInfo, SeriesWithInfo], date: dt.date
+) -> Union[DataFrameWithInfo, ErrorValue, FloatWithInfo]:
     from gs_quant.markets import CloseMarket
 
     raw_value = result.loc[date]
@@ -39,10 +40,14 @@ def _value_for_date(result: Union[DataFrameWithInfo, SeriesWithInfo], date: dt.d
     risk_key = RiskKey(
         key.provider,
         date,
-        CloseMarket(date=date, location=key.market.location if isinstance(key.market, CloseMarket) else None),
+        CloseMarket(
+            date=date,
+            location=key.market.location if isinstance(key.market, CloseMarket) else None,
+        ),
         key.params,
         key.scenario,
-        key.risk_measure)
+        key.risk_measure,
+    )
 
     if isinstance(raw_value, ErrorValue):
         return raw_value
@@ -51,18 +56,20 @@ def _value_for_date(result: Union[DataFrameWithInfo, SeriesWithInfo], date: dt.d
             raw_value.raw_value.reset_index(drop=True),
             risk_key,
             unit=result.unit,
-            error=result.error)
+            error=result.error,
+        )
     else:
         return FloatWithInfo(
             risk_key,
             raw_value,
-            unit=result.unit.get(date, '') if result.unit else None,
-            error=result.error)
+            unit=result.unit.get(date, "") if result.unit else None,
+            error=result.error,
+        )
 
 
 class PricingFuture(Future):
 
-    __RESULT_SENTINEL = Sentinel('PricingFuture')
+    __RESULT_SENTINEL = Sentinel("PricingFuture")
 
     def __init__(self, result: Optional[Any] = __RESULT_SENTINEL):
         super().__init__()
@@ -85,14 +92,14 @@ class PricingFuture(Future):
         Exception: If the call raised then that exception will be raised.
         """
         from gs_quant.markets import PricingContext
+
         if not self.done() and PricingContext.current.active_context.is_entered:
-            raise RuntimeError('Cannot evaluate results under the same pricing context being used to produce them')
+            raise RuntimeError("Cannot evaluate results under the same pricing context being used to produce them")
 
         return super().result(timeout=timeout)
 
 
 class CompositeResultFuture(PricingFuture):
-
     def __init__(self, futures: Iterable[PricingFuture]):
         super().__init__()
         self.__futures = tuple(futures)
@@ -123,7 +130,6 @@ class CompositeResultFuture(PricingFuture):
 
 
 class MultipleRiskMeasureResult(dict):
-
     def __init__(self, instrument, dict_values: Iterable):
         super().__init__(dict_values)
         self.__instrument = instrument
@@ -131,10 +137,12 @@ class MultipleRiskMeasureResult(dict):
     def __getitem__(self, item):
         if isinstance(item, dt.date):
             if all(isinstance(v, (DataFrameWithInfo, SeriesWithInfo)) for v in self.values()):
-                return MultipleRiskMeasureResult(self.__instrument, ((k, _value_for_date(v, item))
-                                                                     for k, v in self.items()))
+                return MultipleRiskMeasureResult(
+                    self.__instrument,
+                    ((k, _value_for_date(v, item)) for k, v in self.items()),
+                )
             else:
-                raise ValueError('Can only index by date on historical results')
+                raise ValueError("Can only index by date on historical results")
         else:
             return super().__getitem__(item)
 
@@ -142,7 +150,7 @@ class MultipleRiskMeasureResult(dict):
         if isinstance(other, (int, float)):
             return self.__op(op.mul, other)
         else:
-            return ValueError('Can only multiply by an int or float')
+            return ValueError("Can only multiply by an int or float")
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
@@ -150,22 +158,26 @@ class MultipleRiskMeasureResult(dict):
         elif isinstance(other, MultipleRiskMeasureResult):
             if sorted(self.keys()) == sorted(other.keys()):
                 from gs_quant.markets.portfolio import Portfolio
+
                 return PortfolioRiskResult(
                     Portfolio((self.__instrument, other.__instrument)),
                     self.keys(),
-                    tuple(MultipleRiskMeasureFuture(r.__instrument, dict((k, PricingFuture(v)) for k, v in r))
-                          for r in (self, other))
+                    tuple(
+                        MultipleRiskMeasureFuture(r.__instrument, dict((k, PricingFuture(v)) for k, v in r))
+                        for r in (self, other)
+                    ),
                 )
             elif set(self.keys()).isdisjoint(other.keys()) and self.__instrument == other.__instrument:
                 if set(self.keys()).intersection(other.keys()):
-                    raise ValueError('Keys must be disjoint')
+                    raise ValueError("Keys must be disjoint")
 
                 return MultipleRiskMeasureResult(self.__instrument, chain(self.items(), other.items()))
             else:
-                raise ValueError('Can only add where risk_measures match or instrument identical &' +
-                                 'risk_measures disjoint')
+                raise ValueError(
+                    "Can only add where risk_measures match or instrument identical &" + "risk_measures disjoint"
+                )
         else:
-            raise ValueError('Can only add instances of MultipleRiskMeasureResult or int, float')
+            raise ValueError("Can only add instances of MultipleRiskMeasureResult or int, float")
 
     def __op(self, operator, operand):
         values = {}
@@ -195,16 +207,25 @@ class MultipleRiskMeasureResult(dict):
 
 
 class MultipleRiskMeasureFuture(CompositeResultFuture):
-
-    def __init__(self, instrument: InstrumentBase, measures_to_futures: Mapping[RiskMeasure, PricingFuture]):
+    def __init__(
+        self,
+        instrument: InstrumentBase,
+        measures_to_futures: Mapping[RiskMeasure, PricingFuture],
+    ):
         self.__measures_to_futures = measures_to_futures
         self.__instrument = instrument
         super().__init__(measures_to_futures.values())
 
     def _set_result(self):
-        self.set_result(MultipleRiskMeasureResult(self.__instrument,
-                                                  zip(self.__measures_to_futures.keys(),
-                                                      (f.result() for f in self.futures))))
+        self.set_result(
+            MultipleRiskMeasureResult(
+                self.__instrument,
+                zip(
+                    self.__measures_to_futures.keys(),
+                    (f.result() for f in self.futures),
+                ),
+            )
+        )
 
     @property
     def measures_to_futures(self) -> Mapping[RiskMeasure, PricingFuture]:
@@ -212,23 +233,26 @@ class MultipleRiskMeasureFuture(CompositeResultFuture):
 
 
 class HistoricalPricingFuture(CompositeResultFuture):
-
     def _set_result(self):
         results = [f.result() for f in self.futures]
         base = next((r for r in results if not isinstance(r, (ErrorValue, Exception))), None)
 
         if base is None:
-            _logger.error(f'Historical pricing failed: {results[0]}')
+            _logger.error(f"Historical pricing failed: {results[0]}")
             self.set_result(results[0])
         else:
-            result = MultipleRiskMeasureResult(base.instrument,
-                                               {k: base[k].compose(r[k] for r in results) for k in base.keys()}) \
-                if isinstance(base, MultipleRiskMeasureResult) else base.compose(results)
+            result = (
+                MultipleRiskMeasureResult(
+                    base.instrument,
+                    {k: base[k].compose(r[k] for r in results) for k in base.keys()},
+                )
+                if isinstance(base, MultipleRiskMeasureResult)
+                else base.compose(results)
+            )
             self.set_result(result)
 
 
 class PortfolioPath:
-
     def __init__(self, path):
         self.__path = (path,) if isinstance(path, int) else path
 
@@ -262,7 +286,7 @@ class PortfolioPath:
             if isinstance(target, PricingFuture) and path:
                 target = target.result()
 
-        if rename_to_parent and parent and getattr(parent, 'name', None):
+        if rename_to_parent and parent and getattr(parent, "name", None):
             target = copy.copy(target)
             target.name = parent.name
 
@@ -270,11 +294,12 @@ class PortfolioPath:
 
 
 class PortfolioRiskResult(CompositeResultFuture):
-
-    def __init__(self,
-                 portfolio,
-                 risk_measures: Iterable[RiskMeasure],
-                 futures: Iterable[PricingFuture]):
+    def __init__(
+        self,
+        portfolio,
+        risk_measures: Iterable[RiskMeasure],
+        futures: Iterable[PricingFuture],
+    ):
         super().__init__(futures)
         self.__portfolio = portfolio
         self.__risk_measures = tuple(risk_measures)
@@ -282,7 +307,7 @@ class PortfolioRiskResult(CompositeResultFuture):
     def __getitem__(self, item):
         if isinstance(item, RiskMeasure):
             if item not in self.risk_measures:
-                raise ValueError('{} not computed'.format(item))
+                raise ValueError("{} not computed".format(item))
 
             if len(self.risk_measures) == 1:
                 return self
@@ -296,7 +321,7 @@ class PortfolioRiskResult(CompositeResultFuture):
                 elif isinstance(result, (DataFrameWithInfo, SeriesWithInfo)):
                     futures.append(PricingFuture(_value_for_date(result, item)))
                 else:
-                    raise RuntimeError('Can only index by date on historical results')
+                    raise RuntimeError("Can only index by date on historical results")
 
             return PortfolioRiskResult(self.__portfolio, self.risk_measures, futures)
         else:
@@ -318,23 +343,28 @@ class PortfolioRiskResult(CompositeResultFuture):
 
     def __mul__(self, other):
         if isinstance(other, (int, float)):
-            futures = [f + other if isinstance(f, PortfolioRiskResult) else PricingFuture(f.result() * other)
-                       for f in self.futures]
+            futures = [
+                f + other if isinstance(f, PortfolioRiskResult) else PricingFuture(f.result() * other)
+                for f in self.futures
+            ]
             return PortfolioRiskResult(self.__portfolio, self.__risk_measures, futures)
         else:
-            return ValueError('Can only multiply by an int or float')
+            return ValueError("Can only multiply by an int or float")
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
-            futures = [f + other if isinstance(f, PortfolioRiskResult) else PricingFuture(f.result() + other)
-                       for f in self.futures]
+            futures = [
+                f + other if isinstance(f, PortfolioRiskResult) else PricingFuture(f.result() + other)
+                for f in self.futures
+            ]
             return PortfolioRiskResult(self.__portfolio, self.__risk_measures, futures)
         elif isinstance(other, PortfolioRiskResult):
             if sorted(self.__risk_measures) == sorted(other.__risk_measures):
                 return PortfolioRiskResult(
                     self.__portfolio + other.__portfolio,
                     self.__risk_measures,
-                    self.futures + other.futures)
+                    self.futures + other.futures,
+                )
             elif set(self.__risk_measures).isdisjoint(other.__risk_measures) and self.__portfolio == other.__portfolio:
                 futures = []
                 risk_measures = self.__risk_measures + other.__risk_measures
@@ -351,17 +381,24 @@ class PortfolioRiskResult(CompositeResultFuture):
                         if other_measure:
                             other_future = MultipleRiskMeasureFuture(priceable, {other_measure: other_future})
 
-                        risk_measure_futures = [future.measures_to_futures.get(m) or other_future.measures_to_futures[m]
-                                                for m in risk_measures]
-                        futures.append(MultipleRiskMeasureFuture(priceable,
-                                                                 dict(zip(risk_measures, risk_measure_futures))))
+                        risk_measure_futures = [
+                            future.measures_to_futures.get(m) or other_future.measures_to_futures[m]
+                            for m in risk_measures
+                        ]
+                        futures.append(
+                            MultipleRiskMeasureFuture(
+                                priceable,
+                                dict(zip(risk_measures, risk_measure_futures)),
+                            )
+                        )
 
                 return PortfolioRiskResult(self.__portfolio, risk_measures, futures)
             else:
-                raise ValueError('Can only add where risk_measures match or portfolios identical &' +
-                                 'risk_measures disjoint')
+                raise ValueError(
+                    "Can only add where risk_measures match or portfolios identical &" + "risk_measures disjoint"
+                )
         else:
-            raise ValueError('Can only add instances of PortfolioRiskResult or int, float')
+            raise ValueError("Can only add instances of PortfolioRiskResult or int, float")
 
     @property
     def portfolio(self):
@@ -402,14 +439,14 @@ class PortfolioRiskResult(CompositeResultFuture):
                 for i in p.portfolios:
                     return len(i) * multiple(i)
 
-        '''Populate index labels'''
+        """Populate index labels"""
+
         def pop_idx_labels(p, level, idx_label):
             if len(p.portfolios) == 0:
                 for idx, r in enumerate(p.all_instruments):
-                    r.name = f'{r.type.name}_{idx}' if r.name is None else r.name
+                    r.name = f"{r.type.name}_{idx}" if r.name is None else r.name
                 if dates and len(self.risk_measures) > 1:
-                    idx_label[0].append(
-                        [str(r) for r in self.risk_measures] * len(p.all_instruments))
+                    idx_label[0].append([str(r) for r in self.risk_measures] * len(p.all_instruments))
                     if len(idx_label) > 1:
                         idx_label[1].append([[r.name] * len(self.risk_measures) for r in p.all_instruments])
                     return idx_label
@@ -419,13 +456,13 @@ class PortfolioRiskResult(CompositeResultFuture):
             if level > 1:
                 curr_level_arr = idx_label[level - 1]
                 for idx, r in enumerate(p.all_portfolios):
-                    r.name = f'Portfolio_{idx}' if r.name is None else r.name
+                    r.name = f"Portfolio_{idx}" if r.name is None else r.name
                 [curr_level_arr.append([r.name] * multiple(r)) for r in p.portfolios]
                 for r in p.portfolios:
                     pop_idx_labels(r, level - 1, idx_label)
             return idx_label
 
-        '''Extract risk values'''
+        """Extract risk values"""
         record = to_records(self)
         port_depth = len(max(self.portfolio.all_paths, key=len))
         port_depth = port_depth + 1 if (dates and len(self.risk_measures) > 1) else port_depth
@@ -435,41 +472,57 @@ class PortfolioRiskResult(CompositeResultFuture):
             idx_labels[1] = flatten_list(idx_labels[1]) if (dates and len(self.risk_measures) > 1) else idx_labels[1]
             flat_list = [flatten_list(idx_labels[i]) for i in range(len(idx_labels))]
             flat_list.reverse()
-            '''Get list of tuples for multiindex'''
+            """Get list of tuples for multiindex"""
             index_multi = list(zip(*flat_list))
         else:
             index_multi = None
-        '''Case with risk values calculated over a range of dates'''
+        """Case with risk values calculated over a range of dates"""
         if dates:
-            '''Base case with 1 (unnested) portfolio and 1 risk measure'''
+            """Base case with 1 (unnested) portfolio and 1 risk measure"""
             if len(self.risk_measures) == 1:
                 df = pd.DataFrame(record)
             else:
                 df = pd.concat([pd.DataFrame(rec) for rec in record], axis=1)
-            '''Ensure dates are always the index'''
+            """Ensure dates are always the index"""
             check_date = [idx for idx in dates]
             check_date.reverse()
             df = df.transpose() if [idx for idx in df.index] != check_date else df
-            df.columns = pd.MultiIndex.from_tuples(index_multi) if index_multi else [r.name for r in
-                                                                                     self.portfolio.all_instruments]
+            df.columns = (
+                pd.MultiIndex.from_tuples(index_multi)
+                if index_multi
+                else [r.name for r in self.portfolio.all_instruments]
+            )
             return df
 
         else:
             if len(self.portfolio.all_portfolios) == 0:
-                return pd.DataFrame(record, columns=self.risk_measures, index=[p.name for p in self.portfolio])
+                return pd.DataFrame(
+                    record,
+                    columns=self.risk_measures,
+                    index=[p.name for p in self.portfolio],
+                )
             else:
                 df = pd.DataFrame(record)
-                df.index = pd.MultiIndex.from_tuples(index_multi) if index_multi else [r.name for r in
-                                                                                       self.portfolio.all_instruments]
+                df.index = (
+                    pd.MultiIndex.from_tuples(index_multi)
+                    if index_multi
+                    else [r.name for r in self.portfolio.all_instruments]
+                )
                 df.columns = self.risk_measures
                 return df
 
-    def subset(self, items: Iterable[Union[int, str, PortfolioPath, Priceable]], name: Optional[str] = None):
+    def subset(
+        self,
+        items: Iterable[Union[int, str, PortfolioPath, Priceable]],
+        name: Optional[str] = None,
+    ):
         paths = tuple(chain.from_iterable((i,) if isinstance(i, PortfolioPath) else self.__paths(i) for i in items))
         sub_portfolio = self.__portfolio.subset(paths, name=name)
         return PortfolioRiskResult(sub_portfolio, self.risk_measures, [p(self.futures) for p in paths])
 
-    def aggregate(self) -> Union[float, pd.DataFrame, pd.Series, MultipleRiskMeasureResult]:
+    def aggregate(
+        self,
+    ) -> Union[float, pd.DataFrame, pd.Series, MultipleRiskMeasureResult]:
         if len(self.__risk_measures) > 1:
             return MultipleRiskMeasureResult(self.portfolio, ((r, self[r].aggregate()) for r in self.__risk_measures))
         else:
@@ -477,7 +530,7 @@ class PortfolioRiskResult(CompositeResultFuture):
 
     def __paths(self, items: Union[int, slice, str, Priceable]) -> Tuple[PortfolioPath, ...]:
         if isinstance(items, int):
-            return PortfolioPath(items),
+            return (PortfolioPath(items),)
         elif isinstance(items, slice):
             return tuple(PortfolioPath(i) for i in range(len(self.__portfolio))[items])
         elif isinstance(items, (str, Priceable)):
@@ -488,7 +541,7 @@ class PortfolioRiskResult(CompositeResultFuture):
                 paths = tuple(p for p in paths if self.__result(p, self.risk_measures[0]).risk_key.ex_measure == key)
 
                 if not paths:
-                    raise KeyError(f'{items} not in portfolio')
+                    raise KeyError(f"{items} not in portfolio")
 
             return paths
 
@@ -505,5 +558,8 @@ class PortfolioRiskResult(CompositeResultFuture):
         if len(self.risk_measures) == 1 and not risk_measure:
             risk_measure = self.risk_measures[0]
 
-        return res[risk_measure]\
-            if risk_measure and isinstance(res, (MultipleRiskMeasureResult, PortfolioRiskResult)) else res
+        return (
+            res[risk_measure]
+            if risk_measure and isinstance(res, (MultipleRiskMeasureResult, PortfolioRiskResult))
+            else res
+        )

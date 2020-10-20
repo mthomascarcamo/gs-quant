@@ -14,60 +14,55 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
-from typing import Tuple, Union
 from enum import Enum
+from typing import Tuple, Union
+
 from gs_quant.base import Base, EnumBase, InstrumentBase, camel_case_translate, get_enum_value
+from gs_quant.target.common import *
 
 
-class OptimizationStatus(EnumBase, Enum):    
-    
+class OptimizationStatus(EnumBase, Enum):
+
     """Optimization status."""
 
-    Running = 'Running'
-    Completed = 'Completed'
-    
+    Running = "Running"
+    Completed = "Completed"
+
     def __repr__(self):
         return self.value
 
 
-class OptimizationType(EnumBase, Enum):    
-    
+class OptimizationType(EnumBase, Enum):
+
     """Pretrade optimization algorithm type."""
 
-    APEX = 'APEX'
-    
+    APEX = "APEX"
+
     def __repr__(self):
         return self.value
 
 
-class OptimizationUrgency(EnumBase, Enum):    
-    
-    """Parameter which controls the urgency of executing the basket from very low to
-       very high. Very High urgency tilts the schedule towards the benchmark,
-       whereas Very Low would minimise cost, carrying a relatively higher risk
-       to the benchmark."""
+class OptimizationUrgency(EnumBase, Enum):
 
-    VERY_LOW = 'VERY_LOW'
-    LOW = 'LOW'
-    MEDIUM = 'MEDIUM'
-    HIGH = 'HIGH'
-    VERY_HIGH = 'VERY_HIGH'
-    
+    """Parameter which controls the urgency of executing the basket from very low to
+    very high. Very High urgency tilts the schedule towards the benchmark,
+    whereas Very Low would minimise cost, carrying a relatively higher risk
+    to the benchmark."""
+
+    VERY_LOW = "VERY_LOW"
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    VERY_HIGH = "VERY_HIGH"
+
     def __repr__(self):
         return self.value
 
 
 class AdvCurveTick(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        date: datetime.date = None,
-        value: float = None,
-        name: str = None
-    ):        
+    def __init__(self, date: datetime.date = None, value: float = None, name: str = None):
         super().__init__()
         self.date = date
         self.value = value
@@ -80,8 +75,8 @@ class AdvCurveTick(Base):
 
     @date.setter
     def date(self, value: datetime.date):
-        self._property_changed('date')
-        self.__date = value        
+        self._property_changed("date")
+        self.__date = value
 
     @property
     def value(self) -> float:
@@ -90,12 +85,11 @@ class AdvCurveTick(Base):
 
     @value.setter
     def value(self, value: float):
-        self._property_changed('value')
-        self.__value = value        
+        self._property_changed("value")
+        self.__value = value
 
 
 class ExecutionCostForHorizon(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -103,8 +97,8 @@ class ExecutionCostForHorizon(Base):
         execution_cost: float = None,
         execution_cost_long: float = None,
         execution_cost_short: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.minutes_expired = minutes_expired
         self.execution_cost = execution_cost
@@ -119,8 +113,8 @@ class ExecutionCostForHorizon(Base):
 
     @minutes_expired.setter
     def minutes_expired(self, value: int):
-        self._property_changed('minutes_expired')
-        self.__minutes_expired = value        
+        self._property_changed("minutes_expired")
+        self.__minutes_expired = value
 
     @property
     def execution_cost(self) -> float:
@@ -129,8 +123,8 @@ class ExecutionCostForHorizon(Base):
 
     @execution_cost.setter
     def execution_cost(self, value: float):
-        self._property_changed('execution_cost')
-        self.__execution_cost = value        
+        self._property_changed("execution_cost")
+        self.__execution_cost = value
 
     @property
     def execution_cost_long(self) -> float:
@@ -139,8 +133,8 @@ class ExecutionCostForHorizon(Base):
 
     @execution_cost_long.setter
     def execution_cost_long(self, value: float):
-        self._property_changed('execution_cost_long')
-        self.__execution_cost_long = value        
+        self._property_changed("execution_cost_long")
+        self.__execution_cost_long = value
 
     @property
     def execution_cost_short(self) -> float:
@@ -149,12 +143,12 @@ class ExecutionCostForHorizon(Base):
 
     @execution_cost_short.setter
     def execution_cost_short(self, value: float):
-        self._property_changed('execution_cost_short')
-        self.__execution_cost_short = value        
+        self._property_changed("execution_cost_short")
+        self.__execution_cost_short = value
 
 
 class LiquidityBucket(Base):
-        
+
     """Positions bucketed by a certain characteristic."""
 
     @camel_case_translate
@@ -184,8 +178,8 @@ class LiquidityBucket(Base):
         short_marginal_cost: float = None,
         short_adv22_day_pct: float = None,
         short_number_of_positions: float = None,
-        short_beta_adjusted_exposure: float = None
-    ):        
+        short_beta_adjusted_exposure: float = None,
+    ):
         super().__init__()
         self.name = name
         self.description = description
@@ -220,8 +214,8 @@ class LiquidityBucket(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def description(self) -> str:
@@ -230,8 +224,8 @@ class LiquidityBucket(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def net_exposure(self) -> float:
@@ -240,8 +234,8 @@ class LiquidityBucket(Base):
 
     @net_exposure.setter
     def net_exposure(self, value: float):
-        self._property_changed('net_exposure')
-        self.__net_exposure = value        
+        self._property_changed("net_exposure")
+        self.__net_exposure = value
 
     @property
     def gross_exposure(self) -> float:
@@ -250,8 +244,8 @@ class LiquidityBucket(Base):
 
     @gross_exposure.setter
     def gross_exposure(self, value: float):
-        self._property_changed('gross_exposure')
-        self.__gross_exposure = value        
+        self._property_changed("gross_exposure")
+        self.__gross_exposure = value
 
     @property
     def net_weight(self) -> float:
@@ -260,8 +254,8 @@ class LiquidityBucket(Base):
 
     @net_weight.setter
     def net_weight(self, value: float):
-        self._property_changed('net_weight')
-        self.__net_weight = value        
+        self._property_changed("net_weight")
+        self.__net_weight = value
 
     @property
     def gross_weight(self) -> float:
@@ -270,8 +264,8 @@ class LiquidityBucket(Base):
 
     @gross_weight.setter
     def gross_weight(self, value: float):
-        self._property_changed('gross_weight')
-        self.__gross_weight = value        
+        self._property_changed("gross_weight")
+        self.__gross_weight = value
 
     @property
     def transaction_cost(self) -> float:
@@ -280,19 +274,19 @@ class LiquidityBucket(Base):
 
     @transaction_cost.setter
     def transaction_cost(self, value: float):
-        self._property_changed('transaction_cost')
-        self.__transaction_cost = value        
+        self._property_changed("transaction_cost")
+        self.__transaction_cost = value
 
     @property
     def marginal_cost(self) -> float:
         """The average estimated transaction cost of the positions in this bucket
-           multiplied by the bucket's gross weight in the portfolio."""
+        multiplied by the bucket's gross weight in the portfolio."""
         return self.__marginal_cost
 
     @marginal_cost.setter
     def marginal_cost(self, value: float):
-        self._property_changed('marginal_cost')
-        self.__marginal_cost = value        
+        self._property_changed("marginal_cost")
+        self.__marginal_cost = value
 
     @property
     def adv22_day_pct(self) -> float:
@@ -301,8 +295,8 @@ class LiquidityBucket(Base):
 
     @adv22_day_pct.setter
     def adv22_day_pct(self, value: float):
-        self._property_changed('adv22_day_pct')
-        self.__adv22_day_pct = value        
+        self._property_changed("adv22_day_pct")
+        self.__adv22_day_pct = value
 
     @property
     def number_of_positions(self) -> float:
@@ -311,8 +305,8 @@ class LiquidityBucket(Base):
 
     @number_of_positions.setter
     def number_of_positions(self, value: float):
-        self._property_changed('number_of_positions')
-        self.__number_of_positions = value        
+        self._property_changed("number_of_positions")
+        self.__number_of_positions = value
 
     @property
     def beta_adjusted_exposure(self) -> float:
@@ -321,8 +315,8 @@ class LiquidityBucket(Base):
 
     @beta_adjusted_exposure.setter
     def beta_adjusted_exposure(self, value: float):
-        self._property_changed('beta_adjusted_exposure')
-        self.__beta_adjusted_exposure = value        
+        self._property_changed("beta_adjusted_exposure")
+        self.__beta_adjusted_exposure = value
 
     @property
     def long_weight(self) -> float:
@@ -331,8 +325,8 @@ class LiquidityBucket(Base):
 
     @long_weight.setter
     def long_weight(self, value: float):
-        self._property_changed('long_weight')
-        self.__long_weight = value        
+        self._property_changed("long_weight")
+        self.__long_weight = value
 
     @property
     def long_exposure(self) -> float:
@@ -341,8 +335,8 @@ class LiquidityBucket(Base):
 
     @long_exposure.setter
     def long_exposure(self, value: float):
-        self._property_changed('long_exposure')
-        self.__long_exposure = value        
+        self._property_changed("long_exposure")
+        self.__long_exposure = value
 
     @property
     def long_transaction_cost(self) -> float:
@@ -351,20 +345,20 @@ class LiquidityBucket(Base):
 
     @long_transaction_cost.setter
     def long_transaction_cost(self, value: float):
-        self._property_changed('long_transaction_cost')
-        self.__long_transaction_cost = value        
+        self._property_changed("long_transaction_cost")
+        self.__long_transaction_cost = value
 
     @property
     def long_marginal_cost(self) -> float:
         """The estimated transaction cost of the long positions in this bucket multiplied
-           by the sum of these positions' normalized weight with respect to all
-           long positions in the portfolio."""
+        by the sum of these positions' normalized weight with respect to all
+        long positions in the portfolio."""
         return self.__long_marginal_cost
 
     @long_marginal_cost.setter
     def long_marginal_cost(self, value: float):
-        self._property_changed('long_marginal_cost')
-        self.__long_marginal_cost = value        
+        self._property_changed("long_marginal_cost")
+        self.__long_marginal_cost = value
 
     @property
     def long_adv22_day_pct(self) -> float:
@@ -373,8 +367,8 @@ class LiquidityBucket(Base):
 
     @long_adv22_day_pct.setter
     def long_adv22_day_pct(self, value: float):
-        self._property_changed('long_adv22_day_pct')
-        self.__long_adv22_day_pct = value        
+        self._property_changed("long_adv22_day_pct")
+        self.__long_adv22_day_pct = value
 
     @property
     def long_number_of_positions(self) -> float:
@@ -383,8 +377,8 @@ class LiquidityBucket(Base):
 
     @long_number_of_positions.setter
     def long_number_of_positions(self, value: float):
-        self._property_changed('long_number_of_positions')
-        self.__long_number_of_positions = value        
+        self._property_changed("long_number_of_positions")
+        self.__long_number_of_positions = value
 
     @property
     def long_beta_adjusted_exposure(self) -> float:
@@ -393,8 +387,8 @@ class LiquidityBucket(Base):
 
     @long_beta_adjusted_exposure.setter
     def long_beta_adjusted_exposure(self, value: float):
-        self._property_changed('long_beta_adjusted_exposure')
-        self.__long_beta_adjusted_exposure = value        
+        self._property_changed("long_beta_adjusted_exposure")
+        self.__long_beta_adjusted_exposure = value
 
     @property
     def short_weight(self) -> float:
@@ -403,8 +397,8 @@ class LiquidityBucket(Base):
 
     @short_weight.setter
     def short_weight(self, value: float):
-        self._property_changed('short_weight')
-        self.__short_weight = value        
+        self._property_changed("short_weight")
+        self.__short_weight = value
 
     @property
     def short_exposure(self) -> float:
@@ -413,8 +407,8 @@ class LiquidityBucket(Base):
 
     @short_exposure.setter
     def short_exposure(self, value: float):
-        self._property_changed('short_exposure')
-        self.__short_exposure = value        
+        self._property_changed("short_exposure")
+        self.__short_exposure = value
 
     @property
     def short_transaction_cost(self) -> float:
@@ -423,20 +417,20 @@ class LiquidityBucket(Base):
 
     @short_transaction_cost.setter
     def short_transaction_cost(self, value: float):
-        self._property_changed('short_transaction_cost')
-        self.__short_transaction_cost = value        
+        self._property_changed("short_transaction_cost")
+        self.__short_transaction_cost = value
 
     @property
     def short_marginal_cost(self) -> float:
         """The estimated transaction cost of the short positions in this bucket multiplied
-           by the sum of these positions' normalized weight with respect to all
-           short positions in the portfolio."""
+        by the sum of these positions' normalized weight with respect to all
+        short positions in the portfolio."""
         return self.__short_marginal_cost
 
     @short_marginal_cost.setter
     def short_marginal_cost(self, value: float):
-        self._property_changed('short_marginal_cost')
-        self.__short_marginal_cost = value        
+        self._property_changed("short_marginal_cost")
+        self.__short_marginal_cost = value
 
     @property
     def short_adv22_day_pct(self) -> float:
@@ -445,8 +439,8 @@ class LiquidityBucket(Base):
 
     @short_adv22_day_pct.setter
     def short_adv22_day_pct(self, value: float):
-        self._property_changed('short_adv22_day_pct')
-        self.__short_adv22_day_pct = value        
+        self._property_changed("short_adv22_day_pct")
+        self.__short_adv22_day_pct = value
 
     @property
     def short_number_of_positions(self) -> float:
@@ -455,8 +449,8 @@ class LiquidityBucket(Base):
 
     @short_number_of_positions.setter
     def short_number_of_positions(self, value: float):
-        self._property_changed('short_number_of_positions')
-        self.__short_number_of_positions = value        
+        self._property_changed("short_number_of_positions")
+        self.__short_number_of_positions = value
 
     @property
     def short_beta_adjusted_exposure(self) -> float:
@@ -465,14 +459,14 @@ class LiquidityBucket(Base):
 
     @short_beta_adjusted_exposure.setter
     def short_beta_adjusted_exposure(self, value: float):
-        self._property_changed('short_beta_adjusted_exposure')
-        self.__short_beta_adjusted_exposure = value        
+        self._property_changed("short_beta_adjusted_exposure")
+        self.__short_beta_adjusted_exposure = value
 
 
 class LiquidityConstituent(Base):
-        
+
     """A constituent of the portfolio enriched with liquidity and estimated transaction
-       cost information."""
+    cost information."""
 
     @camel_case_translate
     def __init__(
@@ -502,8 +496,8 @@ class LiquidityConstituent(Base):
         one_day_price_change_pct: float = None,
         beta_adjusted_exposure: float = None,
         adv_bucket=None,
-        settlement_date: datetime.date = None
-    ):        
+        settlement_date: datetime.date = None,
+    ):
         super().__init__()
         self.asset_id = asset_id
         self.name = name
@@ -539,8 +533,8 @@ class LiquidityConstituent(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
     @property
     def name(self) -> str:
@@ -549,8 +543,8 @@ class LiquidityConstituent(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def exchange(self) -> str:
@@ -559,8 +553,8 @@ class LiquidityConstituent(Base):
 
     @exchange.setter
     def exchange(self, value: str):
-        self._property_changed('exchange')
-        self.__exchange = value        
+        self._property_changed("exchange")
+        self.__exchange = value
 
     @property
     def quantity(self) -> float:
@@ -569,8 +563,8 @@ class LiquidityConstituent(Base):
 
     @quantity.setter
     def quantity(self, value: float):
-        self._property_changed('quantity')
-        self.__quantity = value        
+        self._property_changed("quantity")
+        self.__quantity = value
 
     @property
     def gross_weight(self) -> float:
@@ -579,8 +573,8 @@ class LiquidityConstituent(Base):
 
     @gross_weight.setter
     def gross_weight(self, value: float):
-        self._property_changed('gross_weight')
-        self.__gross_weight = value        
+        self._property_changed("gross_weight")
+        self.__gross_weight = value
 
     @property
     def net_weight(self) -> float:
@@ -589,8 +583,8 @@ class LiquidityConstituent(Base):
 
     @net_weight.setter
     def net_weight(self, value: float):
-        self._property_changed('net_weight')
-        self.__net_weight = value        
+        self._property_changed("net_weight")
+        self.__net_weight = value
 
     @property
     def currency(self) -> Union[Currency, str]:
@@ -599,8 +593,8 @@ class LiquidityConstituent(Base):
 
     @currency.setter
     def currency(self, value: Union[Currency, str]):
-        self._property_changed('currency')
-        self.__currency = get_enum_value(Currency, value)        
+        self._property_changed("currency")
+        self.__currency = get_enum_value(Currency, value)
 
     @property
     def gross_exposure(self) -> float:
@@ -609,8 +603,8 @@ class LiquidityConstituent(Base):
 
     @gross_exposure.setter
     def gross_exposure(self, value: float):
-        self._property_changed('gross_exposure')
-        self.__gross_exposure = value        
+        self._property_changed("gross_exposure")
+        self.__gross_exposure = value
 
     @property
     def net_exposure(self) -> float:
@@ -619,8 +613,8 @@ class LiquidityConstituent(Base):
 
     @net_exposure.setter
     def net_exposure(self, value: float):
-        self._property_changed('net_exposure')
-        self.__net_exposure = value        
+        self._property_changed("net_exposure")
+        self.__net_exposure = value
 
     @property
     def transaction_cost(self) -> float:
@@ -629,19 +623,19 @@ class LiquidityConstituent(Base):
 
     @transaction_cost.setter
     def transaction_cost(self, value: float):
-        self._property_changed('transaction_cost')
-        self.__transaction_cost = value        
+        self._property_changed("transaction_cost")
+        self.__transaction_cost = value
 
     @property
     def marginal_cost(self) -> float:
         """The estimated transaction cost multiplied by the position's gross weight in the
-           portfolio."""
+        portfolio."""
         return self.__marginal_cost
 
     @marginal_cost.setter
     def marginal_cost(self, value: float):
-        self._property_changed('marginal_cost')
-        self.__marginal_cost = value        
+        self._property_changed("marginal_cost")
+        self.__marginal_cost = value
 
     @property
     def country(self) -> str:
@@ -650,8 +644,8 @@ class LiquidityConstituent(Base):
 
     @country.setter
     def country(self, value: str):
-        self._property_changed('country')
-        self.__country = value        
+        self._property_changed("country")
+        self.__country = value
 
     @property
     def region(self) -> Union[Region, str]:
@@ -660,8 +654,8 @@ class LiquidityConstituent(Base):
 
     @region.setter
     def region(self, value: Union[Region, str]):
-        self._property_changed('region')
-        self.__region = get_enum_value(Region, value)        
+        self._property_changed("region")
+        self.__region = get_enum_value(Region, value)
 
     @property
     def type(self) -> Union[AssetType, str]:
@@ -670,8 +664,8 @@ class LiquidityConstituent(Base):
 
     @type.setter
     def type(self, value: Union[AssetType, str]):
-        self._property_changed('type')
-        self.__type = get_enum_value(AssetType, value)        
+        self._property_changed("type")
+        self.__type = get_enum_value(AssetType, value)
 
     @property
     def market_cap_bucket(self):
@@ -680,8 +674,8 @@ class LiquidityConstituent(Base):
 
     @market_cap_bucket.setter
     def market_cap_bucket(self, value):
-        self._property_changed('market_cap_bucket')
-        self.__market_cap_bucket = value        
+        self._property_changed("market_cap_bucket")
+        self.__market_cap_bucket = value
 
     @property
     def est1_day_complete_pct(self) -> float:
@@ -690,8 +684,8 @@ class LiquidityConstituent(Base):
 
     @est1_day_complete_pct.setter
     def est1_day_complete_pct(self, value: float):
-        self._property_changed('est1_day_complete_pct')
-        self.__est1_day_complete_pct = value        
+        self._property_changed("est1_day_complete_pct")
+        self.__est1_day_complete_pct = value
 
     @property
     def in_benchmark(self) -> bool:
@@ -700,8 +694,8 @@ class LiquidityConstituent(Base):
 
     @in_benchmark.setter
     def in_benchmark(self, value: bool):
-        self._property_changed('in_benchmark')
-        self.__in_benchmark = value        
+        self._property_changed("in_benchmark")
+        self.__in_benchmark = value
 
     @property
     def in_risk_model(self) -> bool:
@@ -710,8 +704,8 @@ class LiquidityConstituent(Base):
 
     @in_risk_model.setter
     def in_risk_model(self, value: bool):
-        self._property_changed('in_risk_model')
-        self.__in_risk_model = value        
+        self._property_changed("in_risk_model")
+        self.__in_risk_model = value
 
     @property
     def in_cost_predict_model(self) -> bool:
@@ -720,8 +714,8 @@ class LiquidityConstituent(Base):
 
     @in_cost_predict_model.setter
     def in_cost_predict_model(self, value: bool):
-        self._property_changed('in_cost_predict_model')
-        self.__in_cost_predict_model = value        
+        self._property_changed("in_cost_predict_model")
+        self.__in_cost_predict_model = value
 
     @property
     def beta(self) -> float:
@@ -730,8 +724,8 @@ class LiquidityConstituent(Base):
 
     @beta.setter
     def beta(self, value: float):
-        self._property_changed('beta')
-        self.__beta = value        
+        self._property_changed("beta")
+        self.__beta = value
 
     @property
     def daily_risk(self) -> float:
@@ -740,8 +734,8 @@ class LiquidityConstituent(Base):
 
     @daily_risk.setter
     def daily_risk(self, value: float):
-        self._property_changed('daily_risk')
-        self.__daily_risk = value        
+        self._property_changed("daily_risk")
+        self.__daily_risk = value
 
     @property
     def annualized_risk(self) -> float:
@@ -750,8 +744,8 @@ class LiquidityConstituent(Base):
 
     @annualized_risk.setter
     def annualized_risk(self, value: float):
-        self._property_changed('annualized_risk')
-        self.__annualized_risk = value        
+        self._property_changed("annualized_risk")
+        self.__annualized_risk = value
 
     @property
     def one_day_price_change_pct(self) -> float:
@@ -760,8 +754,8 @@ class LiquidityConstituent(Base):
 
     @one_day_price_change_pct.setter
     def one_day_price_change_pct(self, value: float):
-        self._property_changed('one_day_price_change_pct')
-        self.__one_day_price_change_pct = value        
+        self._property_changed("one_day_price_change_pct")
+        self.__one_day_price_change_pct = value
 
     @property
     def beta_adjusted_exposure(self) -> float:
@@ -770,8 +764,8 @@ class LiquidityConstituent(Base):
 
     @beta_adjusted_exposure.setter
     def beta_adjusted_exposure(self, value: float):
-        self._property_changed('beta_adjusted_exposure')
-        self.__beta_adjusted_exposure = value        
+        self._property_changed("beta_adjusted_exposure")
+        self.__beta_adjusted_exposure = value
 
     @property
     def adv_bucket(self):
@@ -780,8 +774,8 @@ class LiquidityConstituent(Base):
 
     @adv_bucket.setter
     def adv_bucket(self, value):
-        self._property_changed('adv_bucket')
-        self.__adv_bucket = value        
+        self._property_changed("adv_bucket")
+        self.__adv_bucket = value
 
     @property
     def settlement_date(self) -> datetime.date:
@@ -790,18 +784,13 @@ class LiquidityConstituent(Base):
 
     @settlement_date.setter
     def settlement_date(self, value: datetime.date):
-        self._property_changed('settlement_date')
-        self.__settlement_date = value        
+        self._property_changed("settlement_date")
+        self.__settlement_date = value
 
 
 class LiquidityFactor(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        name: str = None,
-        value: float = None
-    ):        
+    def __init__(self, name: str = None, value: float = None):
         super().__init__()
         self.name = name
         self.value = value
@@ -813,8 +802,8 @@ class LiquidityFactor(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def value(self) -> float:
@@ -823,14 +812,14 @@ class LiquidityFactor(Base):
 
     @value.setter
     def value(self, value: float):
-        self._property_changed('value')
-        self.__value = value        
+        self._property_changed("value")
+        self.__value = value
 
 
 class LiquiditySummarySection(Base):
-        
+
     """Summary of the liquidity metrics for either the total, long, or short side of
-       the portfolio."""
+    the portfolio."""
 
     @camel_case_translate
     def __init__(
@@ -858,8 +847,8 @@ class LiquiditySummarySection(Base):
         percent_in_benchmark=None,
         transaction_cost: float = None,
         weight_of_top_five_positions: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.adv10_day_pct = adv10_day_pct
         self.adv22_day_pct = adv22_day_pct
@@ -892,8 +881,8 @@ class LiquiditySummarySection(Base):
 
     @adv10_day_pct.setter
     def adv10_day_pct(self, value: float):
-        self._property_changed('adv10_day_pct')
-        self.__adv10_day_pct = value        
+        self._property_changed("adv10_day_pct")
+        self.__adv10_day_pct = value
 
     @property
     def adv22_day_pct(self) -> float:
@@ -901,8 +890,8 @@ class LiquiditySummarySection(Base):
 
     @adv22_day_pct.setter
     def adv22_day_pct(self, value: float):
-        self._property_changed('adv22_day_pct')
-        self.__adv22_day_pct = value        
+        self._property_changed("adv22_day_pct")
+        self.__adv22_day_pct = value
 
     @property
     def adv5_day_pct(self) -> float:
@@ -910,8 +899,8 @@ class LiquiditySummarySection(Base):
 
     @adv5_day_pct.setter
     def adv5_day_pct(self, value: float):
-        self._property_changed('adv5_day_pct')
-        self.__adv5_day_pct = value        
+        self._property_changed("adv5_day_pct")
+        self.__adv5_day_pct = value
 
     @property
     def annualized_risk(self) -> float:
@@ -919,8 +908,8 @@ class LiquiditySummarySection(Base):
 
     @annualized_risk.setter
     def annualized_risk(self, value: float):
-        self._property_changed('annualized_risk')
-        self.__annualized_risk = value        
+        self._property_changed("annualized_risk")
+        self.__annualized_risk = value
 
     @property
     def annualized_tracking_error(self) -> float:
@@ -928,8 +917,8 @@ class LiquiditySummarySection(Base):
 
     @annualized_tracking_error.setter
     def annualized_tracking_error(self, value: float):
-        self._property_changed('annualized_tracking_error')
-        self.__annualized_tracking_error = value        
+        self._property_changed("annualized_tracking_error")
+        self.__annualized_tracking_error = value
 
     @property
     def beta(self) -> float:
@@ -937,8 +926,8 @@ class LiquiditySummarySection(Base):
 
     @beta.setter
     def beta(self, value: float):
-        self._property_changed('beta')
-        self.__beta = value        
+        self._property_changed("beta")
+        self.__beta = value
 
     @property
     def beta_adjusted_exposure(self) -> float:
@@ -946,8 +935,8 @@ class LiquiditySummarySection(Base):
 
     @beta_adjusted_exposure.setter
     def beta_adjusted_exposure(self, value: float):
-        self._property_changed('beta_adjusted_exposure')
-        self.__beta_adjusted_exposure = value        
+        self._property_changed("beta_adjusted_exposure")
+        self.__beta_adjusted_exposure = value
 
     @property
     def beta_adjusted_net_exposure(self) -> float:
@@ -955,8 +944,8 @@ class LiquiditySummarySection(Base):
 
     @beta_adjusted_net_exposure.setter
     def beta_adjusted_net_exposure(self, value: float):
-        self._property_changed('beta_adjusted_net_exposure')
-        self.__beta_adjusted_net_exposure = value        
+        self._property_changed("beta_adjusted_net_exposure")
+        self.__beta_adjusted_net_exposure = value
 
     @property
     def bid_ask_spread(self) -> float:
@@ -964,8 +953,8 @@ class LiquiditySummarySection(Base):
 
     @bid_ask_spread.setter
     def bid_ask_spread(self, value: float):
-        self._property_changed('bid_ask_spread')
-        self.__bid_ask_spread = value        
+        self._property_changed("bid_ask_spread")
+        self.__bid_ask_spread = value
 
     @property
     def correlation(self) -> float:
@@ -973,8 +962,8 @@ class LiquiditySummarySection(Base):
 
     @correlation.setter
     def correlation(self, value: float):
-        self._property_changed('correlation')
-        self.__correlation = value        
+        self._property_changed("correlation")
+        self.__correlation = value
 
     @property
     def daily_risk(self) -> float:
@@ -982,8 +971,8 @@ class LiquiditySummarySection(Base):
 
     @daily_risk.setter
     def daily_risk(self, value: float):
-        self._property_changed('daily_risk')
-        self.__daily_risk = value        
+        self._property_changed("daily_risk")
+        self.__daily_risk = value
 
     @property
     def daily_tracking_error(self) -> float:
@@ -991,8 +980,8 @@ class LiquiditySummarySection(Base):
 
     @daily_tracking_error.setter
     def daily_tracking_error(self, value: float):
-        self._property_changed('daily_tracking_error')
-        self.__daily_tracking_error = value        
+        self._property_changed("daily_tracking_error")
+        self.__daily_tracking_error = value
 
     @property
     def est1_day_complete_pct(self) -> float:
@@ -1000,8 +989,8 @@ class LiquiditySummarySection(Base):
 
     @est1_day_complete_pct.setter
     def est1_day_complete_pct(self, value: float):
-        self._property_changed('est1_day_complete_pct')
-        self.__est1_day_complete_pct = value        
+        self._property_changed("est1_day_complete_pct")
+        self.__est1_day_complete_pct = value
 
     @property
     def five_day_price_change_bps(self) -> float:
@@ -1009,8 +998,8 @@ class LiquiditySummarySection(Base):
 
     @five_day_price_change_bps.setter
     def five_day_price_change_bps(self, value: float):
-        self._property_changed('five_day_price_change_bps')
-        self.__five_day_price_change_bps = value        
+        self._property_changed("five_day_price_change_bps")
+        self.__five_day_price_change_bps = value
 
     @property
     def gross_exposure(self) -> float:
@@ -1018,8 +1007,8 @@ class LiquiditySummarySection(Base):
 
     @gross_exposure.setter
     def gross_exposure(self, value: float):
-        self._property_changed('gross_exposure')
-        self.__gross_exposure = value        
+        self._property_changed("gross_exposure")
+        self.__gross_exposure = value
 
     @property
     def marginal_cost(self) -> float:
@@ -1027,19 +1016,19 @@ class LiquiditySummarySection(Base):
 
     @marginal_cost.setter
     def marginal_cost(self, value: float):
-        self._property_changed('marginal_cost')
-        self.__marginal_cost = value        
+        self._property_changed("marginal_cost")
+        self.__marginal_cost = value
 
     @property
     def market_cap(self) -> float:
         """Average market capitalization of the group of asset denominated in the currency
-           given in the liquidity parameters."""
+        given in the liquidity parameters."""
         return self.__market_cap
 
     @market_cap.setter
     def market_cap(self, value: float):
-        self._property_changed('market_cap')
-        self.__market_cap = value        
+        self._property_changed("market_cap")
+        self.__market_cap = value
 
     @property
     def minutes_to_trade100_pct(self) -> float:
@@ -1047,8 +1036,8 @@ class LiquiditySummarySection(Base):
 
     @minutes_to_trade100_pct.setter
     def minutes_to_trade100_pct(self, value: float):
-        self._property_changed('minutes_to_trade100_pct')
-        self.__minutes_to_trade100_pct = value        
+        self._property_changed("minutes_to_trade100_pct")
+        self.__minutes_to_trade100_pct = value
 
     @property
     def net_exposure(self) -> float:
@@ -1056,8 +1045,8 @@ class LiquiditySummarySection(Base):
 
     @net_exposure.setter
     def net_exposure(self, value: float):
-        self._property_changed('net_exposure')
-        self.__net_exposure = value        
+        self._property_changed("net_exposure")
+        self.__net_exposure = value
 
     @property
     def number_of_positions(self) -> float:
@@ -1065,8 +1054,8 @@ class LiquiditySummarySection(Base):
 
     @number_of_positions.setter
     def number_of_positions(self, value: float):
-        self._property_changed('number_of_positions')
-        self.__number_of_positions = value        
+        self._property_changed("number_of_positions")
+        self.__number_of_positions = value
 
     @property
     def percent_in_benchmark(self):
@@ -1074,8 +1063,8 @@ class LiquiditySummarySection(Base):
 
     @percent_in_benchmark.setter
     def percent_in_benchmark(self, value):
-        self._property_changed('percent_in_benchmark')
-        self.__percent_in_benchmark = value        
+        self._property_changed("percent_in_benchmark")
+        self.__percent_in_benchmark = value
 
     @property
     def transaction_cost(self) -> float:
@@ -1083,8 +1072,8 @@ class LiquiditySummarySection(Base):
 
     @transaction_cost.setter
     def transaction_cost(self, value: float):
-        self._property_changed('transaction_cost')
-        self.__transaction_cost = value        
+        self._property_changed("transaction_cost")
+        self.__transaction_cost = value
 
     @property
     def weight_of_top_five_positions(self) -> float:
@@ -1093,12 +1082,11 @@ class LiquiditySummarySection(Base):
 
     @weight_of_top_five_positions.setter
     def weight_of_top_five_positions(self, value: float):
-        self._property_changed('weight_of_top_five_positions')
-        self.__weight_of_top_five_positions = value        
+        self._property_changed("weight_of_top_five_positions")
+        self.__weight_of_top_five_positions = value
 
 
 class LiquidityTableRow(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -1113,8 +1101,8 @@ class LiquidityTableRow(Base):
         transaction_cost: float = None,
         marginal_cost: float = None,
         one_day_price_change_pct: float = None,
-        normalized_performance: Tuple[Tuple[Union[datetime.date, float], ...], ...] = None
-    ):        
+        normalized_performance: Tuple[Tuple[Union[datetime.date, float], ...], ...] = None,
+    ):
         super().__init__()
         self.asset_id = asset_id
         self.name = name
@@ -1136,8 +1124,8 @@ class LiquidityTableRow(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
     @property
     def name(self) -> str:
@@ -1146,19 +1134,19 @@ class LiquidityTableRow(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def adv22_day_pct(self) -> float:
         """Percentage of the constituent's notional to it's 22 day average daily dollar
-           volume."""
+        volume."""
         return self.__adv22_day_pct
 
     @adv22_day_pct.setter
     def adv22_day_pct(self, value: float):
-        self._property_changed('adv22_day_pct')
-        self.__adv22_day_pct = value        
+        self._property_changed("adv22_day_pct")
+        self.__adv22_day_pct = value
 
     @property
     def shares(self) -> float:
@@ -1167,8 +1155,8 @@ class LiquidityTableRow(Base):
 
     @shares.setter
     def shares(self, value: float):
-        self._property_changed('shares')
-        self.__shares = value        
+        self._property_changed("shares")
+        self.__shares = value
 
     @property
     def net_weight(self) -> float:
@@ -1177,8 +1165,8 @@ class LiquidityTableRow(Base):
 
     @net_weight.setter
     def net_weight(self, value: float):
-        self._property_changed('net_weight')
-        self.__net_weight = value        
+        self._property_changed("net_weight")
+        self.__net_weight = value
 
     @property
     def gross_weight(self) -> float:
@@ -1187,8 +1175,8 @@ class LiquidityTableRow(Base):
 
     @gross_weight.setter
     def gross_weight(self, value: float):
-        self._property_changed('gross_weight')
-        self.__gross_weight = value        
+        self._property_changed("gross_weight")
+        self.__gross_weight = value
 
     @property
     def gross_exposure(self) -> float:
@@ -1197,8 +1185,8 @@ class LiquidityTableRow(Base):
 
     @gross_exposure.setter
     def gross_exposure(self, value: float):
-        self._property_changed('gross_exposure')
-        self.__gross_exposure = value        
+        self._property_changed("gross_exposure")
+        self.__gross_exposure = value
 
     @property
     def net_exposure(self) -> float:
@@ -1207,8 +1195,8 @@ class LiquidityTableRow(Base):
 
     @net_exposure.setter
     def net_exposure(self, value: float):
-        self._property_changed('net_exposure')
-        self.__net_exposure = value        
+        self._property_changed("net_exposure")
+        self.__net_exposure = value
 
     @property
     def transaction_cost(self) -> float:
@@ -1217,19 +1205,19 @@ class LiquidityTableRow(Base):
 
     @transaction_cost.setter
     def transaction_cost(self, value: float):
-        self._property_changed('transaction_cost')
-        self.__transaction_cost = value        
+        self._property_changed("transaction_cost")
+        self.__transaction_cost = value
 
     @property
     def marginal_cost(self) -> float:
         """The estimated transaction cost multiplied by the position's gross weight in the
-           portfolio."""
+        portfolio."""
         return self.__marginal_cost
 
     @marginal_cost.setter
     def marginal_cost(self, value: float):
-        self._property_changed('marginal_cost')
-        self.__marginal_cost = value        
+        self._property_changed("marginal_cost")
+        self.__marginal_cost = value
 
     @property
     def one_day_price_change_pct(self) -> float:
@@ -1238,22 +1226,23 @@ class LiquidityTableRow(Base):
 
     @one_day_price_change_pct.setter
     def one_day_price_change_pct(self, value: float):
-        self._property_changed('one_day_price_change_pct')
-        self.__one_day_price_change_pct = value        
+        self._property_changed("one_day_price_change_pct")
+        self.__one_day_price_change_pct = value
 
     @property
-    def normalized_performance(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
+    def normalized_performance(
+        self,
+    ) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
         """Time series of normalized performance."""
         return self.__normalized_performance
 
     @normalized_performance.setter
     def normalized_performance(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('normalized_performance')
-        self.__normalized_performance = value        
+        self._property_changed("normalized_performance")
+        self.__normalized_performance = value
 
 
 class LiquidityTimeSeriesItem(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -1266,8 +1255,8 @@ class LiquidityTimeSeriesItem(Base):
         annualized_tracking_error: Tuple[Tuple[Union[datetime.date, float], ...], ...] = None,
         max_drawdown: Tuple[Tuple[Union[datetime.date, float], ...], ...] = None,
         net_exposure: Tuple[Tuple[Union[datetime.date, float], ...], ...] = None,
-        cumulative_pnl: Tuple[Tuple[Union[datetime.date, float], ...], ...] = None
-    ):        
+        cumulative_pnl: Tuple[Tuple[Union[datetime.date, float], ...], ...] = None,
+    ):
         super().__init__()
         self.name = name
         self.normalized_performance = normalized_performance
@@ -1287,18 +1276,20 @@ class LiquidityTimeSeriesItem(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
-    def normalized_performance(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
+    def normalized_performance(
+        self,
+    ) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
         """Time series of normalized performance."""
         return self.__normalized_performance
 
     @normalized_performance.setter
     def normalized_performance(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('normalized_performance')
-        self.__normalized_performance = value        
+        self._property_changed("normalized_performance")
+        self.__normalized_performance = value
 
     @property
     def annualized_return(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
@@ -1307,48 +1298,56 @@ class LiquidityTimeSeriesItem(Base):
 
     @annualized_return.setter
     def annualized_return(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('annualized_return')
-        self.__annualized_return = value        
+        self._property_changed("annualized_return")
+        self.__annualized_return = value
 
     @property
-    def annualized_correlation(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
+    def annualized_correlation(
+        self,
+    ) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
         """Time series of annualized correlation."""
         return self.__annualized_correlation
 
     @annualized_correlation.setter
     def annualized_correlation(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('annualized_correlation')
-        self.__annualized_correlation = value        
+        self._property_changed("annualized_correlation")
+        self.__annualized_correlation = value
 
     @property
-    def annualized_volatility(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
+    def annualized_volatility(
+        self,
+    ) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
         """Time series of annualized volatility."""
         return self.__annualized_volatility
 
     @annualized_volatility.setter
     def annualized_volatility(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('annualized_volatility')
-        self.__annualized_volatility = value        
+        self._property_changed("annualized_volatility")
+        self.__annualized_volatility = value
 
     @property
-    def annualized_sharp_ratio(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
+    def annualized_sharp_ratio(
+        self,
+    ) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
         """Time series of annualized sharp ratio."""
         return self.__annualized_sharp_ratio
 
     @annualized_sharp_ratio.setter
     def annualized_sharp_ratio(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('annualized_sharp_ratio')
-        self.__annualized_sharp_ratio = value        
+        self._property_changed("annualized_sharp_ratio")
+        self.__annualized_sharp_ratio = value
 
     @property
-    def annualized_tracking_error(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
+    def annualized_tracking_error(
+        self,
+    ) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
         """Time series of annualized tracking error."""
         return self.__annualized_tracking_error
 
     @annualized_tracking_error.setter
     def annualized_tracking_error(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('annualized_tracking_error')
-        self.__annualized_tracking_error = value        
+        self._property_changed("annualized_tracking_error")
+        self.__annualized_tracking_error = value
 
     @property
     def max_drawdown(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
@@ -1357,8 +1356,8 @@ class LiquidityTimeSeriesItem(Base):
 
     @max_drawdown.setter
     def max_drawdown(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('max_drawdown')
-        self.__max_drawdown = value        
+        self._property_changed("max_drawdown")
+        self.__max_drawdown = value
 
     @property
     def net_exposure(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
@@ -1367,8 +1366,8 @@ class LiquidityTimeSeriesItem(Base):
 
     @net_exposure.setter
     def net_exposure(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('net_exposure')
-        self.__net_exposure = value        
+        self._property_changed("net_exposure")
+        self.__net_exposure = value
 
     @property
     def cumulative_pnl(self) -> Tuple[Tuple[Union[datetime.date, float], ...], ...]:
@@ -1377,12 +1376,12 @@ class LiquidityTimeSeriesItem(Base):
 
     @cumulative_pnl.setter
     def cumulative_pnl(self, value: Tuple[Tuple[Union[datetime.date, float], ...], ...]):
-        self._property_changed('cumulative_pnl')
-        self.__cumulative_pnl = value        
+        self._property_changed("cumulative_pnl")
+        self.__cumulative_pnl = value
 
 
 class OptimizationAssetAnalyticsDaily(Base):
-        
+
     """Asset level analytics, per day."""
 
     @camel_case_translate
@@ -1398,8 +1397,8 @@ class OptimizationAssetAnalyticsDaily(Base):
         adv: float,
         cluster_id: int,
         cluster_label: str,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.asset_id = asset_id
         self.trade_day_number = trade_day_number
@@ -1420,8 +1419,8 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
     @property
     def trade_day_number(self) -> int:
@@ -1430,8 +1429,8 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @trade_day_number.setter
     def trade_day_number(self, value: int):
-        self._property_changed('trade_day_number')
-        self.__trade_day_number = value        
+        self._property_changed("trade_day_number")
+        self.__trade_day_number = value
 
     @property
     def total_cost(self) -> float:
@@ -1440,8 +1439,8 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @total_cost.setter
     def total_cost(self, value: float):
-        self._property_changed('total_cost')
-        self.__total_cost = value        
+        self._property_changed("total_cost")
+        self.__total_cost = value
 
     @property
     def total_variance_contribution(self) -> float:
@@ -1450,8 +1449,8 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @total_variance_contribution.setter
     def total_variance_contribution(self, value: float):
-        self._property_changed('total_variance_contribution')
-        self.__total_variance_contribution = value        
+        self._property_changed("total_variance_contribution")
+        self.__total_variance_contribution = value
 
     @property
     def total_portfolio_risk_on_day(self) -> float:
@@ -1460,8 +1459,8 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @total_portfolio_risk_on_day.setter
     def total_portfolio_risk_on_day(self, value: float):
-        self._property_changed('total_portfolio_risk_on_day')
-        self.__total_portfolio_risk_on_day = value        
+        self._property_changed("total_portfolio_risk_on_day")
+        self.__total_portfolio_risk_on_day = value
 
     @property
     def total_risk(self) -> float:
@@ -1470,19 +1469,19 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @total_risk.setter
     def total_risk(self, value: float):
-        self._property_changed('total_risk')
-        self.__total_risk = value        
+        self._property_changed("total_risk")
+        self.__total_risk = value
 
     @property
     def cratos(self) -> float:
         """Cost, risk adjusted trade optimised schedule - APEX per-asset estimated cost,
-           per day, in USD."""
+        per day, in USD."""
         return self.__cratos
 
     @cratos.setter
     def cratos(self, value: float):
-        self._property_changed('cratos')
-        self.__cratos = value        
+        self._property_changed("cratos")
+        self.__cratos = value
 
     @property
     def adv(self) -> float:
@@ -1491,8 +1490,8 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @adv.setter
     def adv(self, value: float):
-        self._property_changed('adv')
-        self.__adv = value        
+        self._property_changed("adv")
+        self.__adv = value
 
     @property
     def cluster_id(self) -> int:
@@ -1501,8 +1500,8 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @cluster_id.setter
     def cluster_id(self, value: int):
-        self._property_changed('cluster_id')
-        self.__cluster_id = value        
+        self._property_changed("cluster_id")
+        self.__cluster_id = value
 
     @property
     def cluster_label(self) -> str:
@@ -1511,12 +1510,12 @@ class OptimizationAssetAnalyticsDaily(Base):
 
     @cluster_label.setter
     def cluster_label(self, value: str):
-        self._property_changed('cluster_label')
-        self.__cluster_label = value        
+        self._property_changed("cluster_label")
+        self.__cluster_label = value
 
 
 class OptimizationAssetAnalyticsDayOne(Base):
-        
+
     """Per asset analytics for day one."""
 
     @camel_case_translate
@@ -1525,8 +1524,8 @@ class OptimizationAssetAnalyticsDayOne(Base):
         asset_id: str,
         auction_trade_percentage: float,
         auction_pov_percentage: float,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.asset_id = asset_id
         self.auction_trade_percentage = auction_trade_percentage
@@ -1540,8 +1539,8 @@ class OptimizationAssetAnalyticsDayOne(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
     @property
     def auction_trade_percentage(self) -> float:
@@ -1550,8 +1549,8 @@ class OptimizationAssetAnalyticsDayOne(Base):
 
     @auction_trade_percentage.setter
     def auction_trade_percentage(self, value: float):
-        self._property_changed('auction_trade_percentage')
-        self.__auction_trade_percentage = value        
+        self._property_changed("auction_trade_percentage")
+        self.__auction_trade_percentage = value
 
     @property
     def auction_pov_percentage(self) -> float:
@@ -1560,12 +1559,12 @@ class OptimizationAssetAnalyticsDayOne(Base):
 
     @auction_pov_percentage.setter
     def auction_pov_percentage(self, value: float):
-        self._property_changed('auction_pov_percentage')
-        self.__auction_pov_percentage = value        
+        self._property_changed("auction_pov_percentage")
+        self.__auction_pov_percentage = value
 
 
 class OptimizationAssetAnalyticsIntraday(Base):
-        
+
     """Asset  level analytics, per intraday interval"""
 
     @camel_case_translate
@@ -1601,8 +1600,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
         region: str,
         region_minor: str,
         quantity: int,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.period_number = period_number
         self.trade_day_number = trade_day_number
@@ -1643,8 +1642,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @period_number.setter
     def period_number(self, value: int):
-        self._property_changed('period_number')
-        self.__period_number = value        
+        self._property_changed("period_number")
+        self.__period_number = value
 
     @property
     def trade_day_number(self) -> int:
@@ -1653,8 +1652,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @trade_day_number.setter
     def trade_day_number(self, value: int):
-        self._property_changed('trade_day_number')
-        self.__trade_day_number = value        
+        self._property_changed("trade_day_number")
+        self.__trade_day_number = value
 
     @property
     def period_start_time(self) -> datetime.datetime:
@@ -1663,8 +1662,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @period_start_time.setter
     def period_start_time(self, value: datetime.datetime):
-        self._property_changed('period_start_time')
-        self.__period_start_time = value        
+        self._property_changed("period_start_time")
+        self.__period_start_time = value
 
     @property
     def period_end_time(self) -> datetime.datetime:
@@ -1673,8 +1672,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @period_end_time.setter
     def period_end_time(self, value: datetime.datetime):
-        self._property_changed('period_end_time')
-        self.__period_end_time = value        
+        self._property_changed("period_end_time")
+        self.__period_end_time = value
 
     @property
     def is_trading(self) -> bool:
@@ -1683,8 +1682,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @is_trading.setter
     def is_trading(self, value: bool):
-        self._property_changed('is_trading')
-        self.__is_trading = value        
+        self._property_changed("is_trading")
+        self.__is_trading = value
 
     @property
     def buy(self) -> float:
@@ -1693,8 +1692,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @buy.setter
     def buy(self, value: float):
-        self._property_changed('buy')
-        self.__buy = value        
+        self._property_changed("buy")
+        self.__buy = value
 
     @property
     def sell(self) -> float:
@@ -1703,8 +1702,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @sell.setter
     def sell(self, value: float):
-        self._property_changed('sell')
-        self.__sell = value        
+        self._property_changed("sell")
+        self.__sell = value
 
     @property
     def gross(self) -> float:
@@ -1713,8 +1712,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @gross.setter
     def gross(self, value: float):
-        self._property_changed('gross')
-        self.__gross = value        
+        self._property_changed("gross")
+        self.__gross = value
 
     @property
     def net(self) -> float:
@@ -1723,8 +1722,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @net.setter
     def net(self, value: float):
-        self._property_changed('net')
-        self.__net = value        
+        self._property_changed("net")
+        self.__net = value
 
     @property
     def trade_absolute(self) -> float:
@@ -1733,8 +1732,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @trade_absolute.setter
     def trade_absolute(self, value: float):
-        self._property_changed('trade_absolute')
-        self.__trade_absolute = value        
+        self._property_changed("trade_absolute")
+        self.__trade_absolute = value
 
     @property
     def asset_id(self) -> str:
@@ -1743,8 +1742,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
     @property
     def volume(self) -> float:
@@ -1753,8 +1752,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @volume.setter
     def volume(self, value: float):
-        self._property_changed('volume')
-        self.__volume = value        
+        self._property_changed("volume")
+        self.__volume = value
 
     @property
     def volatility(self) -> float:
@@ -1763,8 +1762,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @volatility.setter
     def volatility(self, value: float):
-        self._property_changed('volatility')
-        self.__volatility = value        
+        self._property_changed("volatility")
+        self.__volatility = value
 
     @property
     def fx(self) -> float:
@@ -1773,8 +1772,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @fx.setter
     def fx(self, value: float):
-        self._property_changed('fx')
-        self.__fx = value        
+        self._property_changed("fx")
+        self.__fx = value
 
     @property
     def price_local(self) -> float:
@@ -1783,8 +1782,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @price_local.setter
     def price_local(self, value: float):
-        self._property_changed('price_local')
-        self.__price_local = value        
+        self._property_changed("price_local")
+        self.__price_local = value
 
     @property
     def currency(self) -> str:
@@ -1793,41 +1792,41 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @currency.setter
     def currency(self, value: str):
-        self._property_changed('currency')
-        self.__currency = value        
+        self._property_changed("currency")
+        self.__currency = value
 
     @property
     def total_cost_spread(self) -> float:
         """Total Avg Spread contribution to overall Market impact Cost of trades, per
-           asset, per period, in USD."""
+        asset, per period, in USD."""
         return self.__total_cost_spread
 
     @total_cost_spread.setter
     def total_cost_spread(self, value: float):
-        self._property_changed('total_cost_spread')
-        self.__total_cost_spread = value        
+        self._property_changed("total_cost_spread")
+        self.__total_cost_spread = value
 
     @property
     def total_cost_volatility(self) -> float:
         """Total Volatility contribution to overall Market impact Cost of trades,  per
-           asset, per period, in USD."""
+        asset, per period, in USD."""
         return self.__total_cost_volatility
 
     @total_cost_volatility.setter
     def total_cost_volatility(self, value: float):
-        self._property_changed('total_cost_volatility')
-        self.__total_cost_volatility = value        
+        self._property_changed("total_cost_volatility")
+        self.__total_cost_volatility = value
 
     @property
     def total_cost_permanent(self) -> float:
         """Total Permanent contribution to overall Market impact Cost of trades,  per
-           asset, per period, in USD."""
+        asset, per period, in USD."""
         return self.__total_cost_permanent
 
     @total_cost_permanent.setter
     def total_cost_permanent(self, value: float):
-        self._property_changed('total_cost_permanent')
-        self.__total_cost_permanent = value        
+        self._property_changed("total_cost_permanent")
+        self.__total_cost_permanent = value
 
     @property
     def beta_historical(self) -> float:
@@ -1836,8 +1835,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @beta_historical.setter
     def beta_historical(self, value: float):
-        self._property_changed('beta_historical')
-        self.__beta_historical = value        
+        self._property_changed("beta_historical")
+        self.__beta_historical = value
 
     @property
     def mcr(self) -> float:
@@ -1846,8 +1845,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @mcr.setter
     def mcr(self, value: float):
-        self._property_changed('mcr')
-        self.__mcr = value        
+        self._property_changed("mcr")
+        self.__mcr = value
 
     @property
     def total_cost(self) -> float:
@@ -1856,8 +1855,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @total_cost.setter
     def total_cost(self, value: float):
-        self._property_changed('total_cost')
-        self.__total_cost = value        
+        self._property_changed("total_cost")
+        self.__total_cost = value
 
     @property
     def adv_percentage(self) -> float:
@@ -1866,8 +1865,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @adv_percentage.setter
     def adv_percentage(self, value: float):
-        self._property_changed('adv_percentage')
-        self.__adv_percentage = value        
+        self._property_changed("adv_percentage")
+        self.__adv_percentage = value
 
     @property
     def country(self) -> str:
@@ -1876,8 +1875,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @country.setter
     def country(self, value: str):
-        self._property_changed('country')
-        self.__country = value        
+        self._property_changed("country")
+        self.__country = value
 
     @property
     def industry(self) -> str:
@@ -1886,8 +1885,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @industry.setter
     def industry(self, value: str):
-        self._property_changed('industry')
-        self.__industry = value        
+        self._property_changed("industry")
+        self.__industry = value
 
     @property
     def sector(self) -> str:
@@ -1896,8 +1895,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @sector.setter
     def sector(self, value: str):
-        self._property_changed('sector')
-        self.__sector = value        
+        self._property_changed("sector")
+        self.__sector = value
 
     @property
     def spread(self) -> float:
@@ -1906,8 +1905,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @spread.setter
     def spread(self, value: float):
-        self._property_changed('spread')
-        self.__spread = value        
+        self._property_changed("spread")
+        self.__spread = value
 
     @property
     def region(self) -> str:
@@ -1916,8 +1915,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @region.setter
     def region(self, value: str):
-        self._property_changed('region')
-        self.__region = value        
+        self._property_changed("region")
+        self.__region = value
 
     @property
     def region_minor(self) -> str:
@@ -1926,8 +1925,8 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @region_minor.setter
     def region_minor(self, value: str):
-        self._property_changed('region_minor')
-        self.__region_minor = value        
+        self._property_changed("region_minor")
+        self.__region_minor = value
 
     @property
     def quantity(self) -> int:
@@ -1936,12 +1935,12 @@ class OptimizationAssetAnalyticsIntraday(Base):
 
     @quantity.setter
     def quantity(self, value: int):
-        self._property_changed('quantity')
-        self.__quantity = value        
+        self._property_changed("quantity")
+        self.__quantity = value
 
 
 class OptimizationCloseAuctionAnalytics(Base):
-        
+
     """Per exchange analytics at auction close."""
 
     @camel_case_translate
@@ -1956,8 +1955,8 @@ class OptimizationCloseAuctionAnalytics(Base):
         close_auction_start_time: datetime.datetime,
         number_of_assets: int,
         close_auction_trade_percentage: float,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.exchange_city = exchange_city
         self.trade_absolute = trade_absolute
@@ -1977,8 +1976,8 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @exchange_city.setter
     def exchange_city(self, value: str):
-        self._property_changed('exchange_city')
-        self.__exchange_city = value        
+        self._property_changed("exchange_city")
+        self.__exchange_city = value
 
     @property
     def trade_absolute(self) -> float:
@@ -1987,8 +1986,8 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @trade_absolute.setter
     def trade_absolute(self, value: float):
-        self._property_changed('trade_absolute')
-        self.__trade_absolute = value        
+        self._property_changed("trade_absolute")
+        self.__trade_absolute = value
 
     @property
     def trade_net(self) -> float:
@@ -1997,8 +1996,8 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @trade_net.setter
     def trade_net(self, value: float):
-        self._property_changed('trade_net')
-        self.__trade_net = value        
+        self._property_changed("trade_net")
+        self.__trade_net = value
 
     @property
     def gross(self) -> float:
@@ -2007,8 +2006,8 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @gross.setter
     def gross(self, value: float):
-        self._property_changed('gross')
-        self.__gross = value        
+        self._property_changed("gross")
+        self.__gross = value
 
     @property
     def net(self) -> float:
@@ -2017,8 +2016,8 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @net.setter
     def net(self, value: float):
-        self._property_changed('net')
-        self.__net = value        
+        self._property_changed("net")
+        self.__net = value
 
     @property
     def auction_pov_percentage(self) -> float:
@@ -2027,8 +2026,8 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @auction_pov_percentage.setter
     def auction_pov_percentage(self, value: float):
-        self._property_changed('auction_pov_percentage')
-        self.__auction_pov_percentage = value        
+        self._property_changed("auction_pov_percentage")
+        self.__auction_pov_percentage = value
 
     @property
     def close_auction_start_time(self) -> datetime.datetime:
@@ -2037,8 +2036,8 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @close_auction_start_time.setter
     def close_auction_start_time(self, value: datetime.datetime):
-        self._property_changed('close_auction_start_time')
-        self.__close_auction_start_time = value        
+        self._property_changed("close_auction_start_time")
+        self.__close_auction_start_time = value
 
     @property
     def number_of_assets(self) -> int:
@@ -2047,8 +2046,8 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @number_of_assets.setter
     def number_of_assets(self, value: int):
-        self._property_changed('number_of_assets')
-        self.__number_of_assets = value        
+        self._property_changed("number_of_assets")
+        self.__number_of_assets = value
 
     @property
     def close_auction_trade_percentage(self) -> float:
@@ -2057,12 +2056,12 @@ class OptimizationCloseAuctionAnalytics(Base):
 
     @close_auction_trade_percentage.setter
     def close_auction_trade_percentage(self, value: float):
-        self._property_changed('close_auction_trade_percentage')
-        self.__close_auction_trade_percentage = value        
+        self._property_changed("close_auction_trade_percentage")
+        self.__close_auction_trade_percentage = value
 
 
 class OptimizationClusterAnalytics(Base):
-        
+
     """Cluster analytics."""
 
     @camel_case_translate
@@ -2073,8 +2072,8 @@ class OptimizationClusterAnalytics(Base):
         gross: float,
         total_cost_bps: float,
         total_risk_bps: float,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.cluster_id = cluster_id
         self.cluster_label = cluster_label
@@ -2090,8 +2089,8 @@ class OptimizationClusterAnalytics(Base):
 
     @cluster_id.setter
     def cluster_id(self, value: int):
-        self._property_changed('cluster_id')
-        self.__cluster_id = value        
+        self._property_changed("cluster_id")
+        self.__cluster_id = value
 
     @property
     def cluster_label(self) -> str:
@@ -2100,8 +2099,8 @@ class OptimizationClusterAnalytics(Base):
 
     @cluster_label.setter
     def cluster_label(self, value: str):
-        self._property_changed('cluster_label')
-        self.__cluster_label = value        
+        self._property_changed("cluster_label")
+        self.__cluster_label = value
 
     @property
     def gross(self) -> float:
@@ -2110,8 +2109,8 @@ class OptimizationClusterAnalytics(Base):
 
     @gross.setter
     def gross(self, value: float):
-        self._property_changed('gross')
-        self.__gross = value        
+        self._property_changed("gross")
+        self.__gross = value
 
     @property
     def total_cost_bps(self) -> float:
@@ -2120,8 +2119,8 @@ class OptimizationClusterAnalytics(Base):
 
     @total_cost_bps.setter
     def total_cost_bps(self, value: float):
-        self._property_changed('total_cost_bps')
-        self.__total_cost_bps = value        
+        self._property_changed("total_cost_bps")
+        self.__total_cost_bps = value
 
     @property
     def total_risk_bps(self) -> float:
@@ -2130,12 +2129,11 @@ class OptimizationClusterAnalytics(Base):
 
     @total_risk_bps.setter
     def total_risk_bps(self, value: float):
-        self._property_changed('total_risk_bps')
-        self.__total_risk_bps = value        
+        self._property_changed("total_risk_bps")
+        self.__total_risk_bps = value
 
 
 class OptimizationClusterAnalyticsIntradayItem(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -2143,8 +2141,8 @@ class OptimizationClusterAnalyticsIntradayItem(Base):
         cluster_label: str,
         adv_percentage: float,
         gross_percentage: float,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.cluster_id = cluster_id
         self.cluster_label = cluster_label
@@ -2159,8 +2157,8 @@ class OptimizationClusterAnalyticsIntradayItem(Base):
 
     @cluster_id.setter
     def cluster_id(self, value: int):
-        self._property_changed('cluster_id')
-        self.__cluster_id = value        
+        self._property_changed("cluster_id")
+        self.__cluster_id = value
 
     @property
     def cluster_label(self) -> str:
@@ -2169,8 +2167,8 @@ class OptimizationClusterAnalyticsIntradayItem(Base):
 
     @cluster_label.setter
     def cluster_label(self, value: str):
-        self._property_changed('cluster_label')
-        self.__cluster_label = value        
+        self._property_changed("cluster_label")
+        self.__cluster_label = value
 
     @property
     def adv_percentage(self) -> float:
@@ -2179,8 +2177,8 @@ class OptimizationClusterAnalyticsIntradayItem(Base):
 
     @adv_percentage.setter
     def adv_percentage(self, value: float):
-        self._property_changed('adv_percentage')
-        self.__adv_percentage = value        
+        self._property_changed("adv_percentage")
+        self.__adv_percentage = value
 
     @property
     def gross_percentage(self) -> float:
@@ -2189,19 +2187,13 @@ class OptimizationClusterAnalyticsIntradayItem(Base):
 
     @gross_percentage.setter
     def gross_percentage(self, value: float):
-        self._property_changed('gross_percentage')
-        self.__gross_percentage = value        
+        self._property_changed("gross_percentage")
+        self.__gross_percentage = value
 
 
 class OptimizationEodCashPositionsItem(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        trade_day_num: str,
-        net: float = None,
-        name: str = None
-    ):        
+    def __init__(self, trade_day_num: str, net: float = None, name: str = None):
         super().__init__()
         self.trade_day_num = trade_day_num
         self.net = net
@@ -2214,8 +2206,8 @@ class OptimizationEodCashPositionsItem(Base):
 
     @trade_day_num.setter
     def trade_day_num(self, value: str):
-        self._property_changed('trade_day_num')
-        self.__trade_day_num = value        
+        self._property_changed("trade_day_num")
+        self.__trade_day_num = value
 
     @property
     def net(self) -> float:
@@ -2224,12 +2216,12 @@ class OptimizationEodCashPositionsItem(Base):
 
     @net.setter
     def net(self, value: float):
-        self._property_changed('net')
-        self.__net = value        
+        self._property_changed("net")
+        self.__net = value
 
 
 class OptimizationExcludedAsset(Base):
-        
+
     """Assets that are excluded from the optimization and analytics, with a reason"""
 
     @camel_case_translate
@@ -2239,8 +2231,8 @@ class OptimizationExcludedAsset(Base):
         security_type: str,
         quantity: int,
         reason: str,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.asset_id = asset_id
         self.security_type = security_type
@@ -2255,8 +2247,8 @@ class OptimizationExcludedAsset(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
     @property
     def security_type(self) -> str:
@@ -2265,8 +2257,8 @@ class OptimizationExcludedAsset(Base):
 
     @security_type.setter
     def security_type(self, value: str):
-        self._property_changed('security_type')
-        self.__security_type = value        
+        self._property_changed("security_type")
+        self.__security_type = value
 
     @property
     def quantity(self) -> int:
@@ -2275,8 +2267,8 @@ class OptimizationExcludedAsset(Base):
 
     @quantity.setter
     def quantity(self, value: int):
-        self._property_changed('quantity')
-        self.__quantity = value        
+        self._property_changed("quantity")
+        self.__quantity = value
 
     @property
     def reason(self) -> str:
@@ -2285,12 +2277,11 @@ class OptimizationExcludedAsset(Base):
 
     @reason.setter
     def reason(self, value: str):
-        self._property_changed('reason')
-        self.__reason = value        
+        self._property_changed("reason")
+        self.__reason = value
 
 
 class OptimizationFactorAnalyticsItem(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -2300,8 +2291,8 @@ class OptimizationFactorAnalyticsItem(Base):
         period_end_time: datetime.datetime,
         factors: Tuple[dict, ...],
         time: datetime.datetime = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.period_number = period_number
         self.trade_day_number = trade_day_number
@@ -2318,8 +2309,8 @@ class OptimizationFactorAnalyticsItem(Base):
 
     @period_number.setter
     def period_number(self, value: int):
-        self._property_changed('period_number')
-        self.__period_number = value        
+        self._property_changed("period_number")
+        self.__period_number = value
 
     @property
     def trade_day_number(self) -> int:
@@ -2328,8 +2319,8 @@ class OptimizationFactorAnalyticsItem(Base):
 
     @trade_day_number.setter
     def trade_day_number(self, value: int):
-        self._property_changed('trade_day_number')
-        self.__trade_day_number = value        
+        self._property_changed("trade_day_number")
+        self.__trade_day_number = value
 
     @property
     def period_start_time(self) -> datetime.datetime:
@@ -2338,8 +2329,8 @@ class OptimizationFactorAnalyticsItem(Base):
 
     @period_start_time.setter
     def period_start_time(self, value: datetime.datetime):
-        self._property_changed('period_start_time')
-        self.__period_start_time = value        
+        self._property_changed("period_start_time")
+        self.__period_start_time = value
 
     @property
     def period_end_time(self) -> datetime.datetime:
@@ -2348,8 +2339,8 @@ class OptimizationFactorAnalyticsItem(Base):
 
     @period_end_time.setter
     def period_end_time(self, value: datetime.datetime):
-        self._property_changed('period_end_time')
-        self.__period_end_time = value        
+        self._property_changed("period_end_time")
+        self.__period_end_time = value
 
     @property
     def time(self) -> datetime.datetime:
@@ -2358,8 +2349,8 @@ class OptimizationFactorAnalyticsItem(Base):
 
     @time.setter
     def time(self, value: datetime.datetime):
-        self._property_changed('time')
-        self.__time = value        
+        self._property_changed("time")
+        self.__time = value
 
     @property
     def factors(self) -> Tuple[dict, ...]:
@@ -2368,12 +2359,12 @@ class OptimizationFactorAnalyticsItem(Base):
 
     @factors.setter
     def factors(self, value: Tuple[dict, ...]):
-        self._property_changed('factors')
-        self.__factors = value        
+        self._property_changed("factors")
+        self.__factors = value
 
 
 class OptimizationPortfolioAnalyticsDaily(Base):
-        
+
     """Portfolio level analytics, per day."""
 
     @camel_case_translate
@@ -2383,8 +2374,8 @@ class OptimizationPortfolioAnalyticsDaily(Base):
         estimated_cost_bps: float,
         completion_rate_percent: float,
         mean_expected_cost_versus_benchmark: float,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.trade_day_number = trade_day_number
         self.estimated_cost_bps = estimated_cost_bps
@@ -2399,19 +2390,19 @@ class OptimizationPortfolioAnalyticsDaily(Base):
 
     @trade_day_number.setter
     def trade_day_number(self, value: int):
-        self._property_changed('trade_day_number')
-        self.__trade_day_number = value        
+        self._property_changed("trade_day_number")
+        self.__trade_day_number = value
 
     @property
     def estimated_cost_bps(self) -> float:
         """The theoretical mean cost of trading, plus 1 standard deviation of residual
-           risk, with respect to initial gross, per day."""
+        risk, with respect to initial gross, per day."""
         return self.__estimated_cost_bps
 
     @estimated_cost_bps.setter
     def estimated_cost_bps(self, value: float):
-        self._property_changed('estimated_cost_bps')
-        self.__estimated_cost_bps = value        
+        self._property_changed("estimated_cost_bps")
+        self.__estimated_cost_bps = value
 
     @property
     def completion_rate_percent(self) -> float:
@@ -2420,8 +2411,8 @@ class OptimizationPortfolioAnalyticsDaily(Base):
 
     @completion_rate_percent.setter
     def completion_rate_percent(self, value: float):
-        self._property_changed('completion_rate_percent')
-        self.__completion_rate_percent = value        
+        self._property_changed("completion_rate_percent")
+        self.__completion_rate_percent = value
 
     @property
     def mean_expected_cost_versus_benchmark(self) -> float:
@@ -2430,12 +2421,12 @@ class OptimizationPortfolioAnalyticsDaily(Base):
 
     @mean_expected_cost_versus_benchmark.setter
     def mean_expected_cost_versus_benchmark(self, value: float):
-        self._property_changed('mean_expected_cost_versus_benchmark')
-        self.__mean_expected_cost_versus_benchmark = value        
+        self._property_changed("mean_expected_cost_versus_benchmark")
+        self.__mean_expected_cost_versus_benchmark = value
 
 
 class OptimizationPortfolioAnalyticsIntraday(Base):
-        
+
     """Portfolio level analytics, per intraday interval."""
 
     @camel_case_translate
@@ -2469,8 +2460,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
         net_period_percentage: float,
         total_cost_budget_percentage: float,
         total_risk_percentage: float,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.period_number = period_number
         self.trade_day_number = trade_day_number
@@ -2509,8 +2500,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @period_number.setter
     def period_number(self, value: int):
-        self._property_changed('period_number')
-        self.__period_number = value        
+        self._property_changed("period_number")
+        self.__period_number = value
 
     @property
     def trade_day_number(self) -> int:
@@ -2519,8 +2510,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @trade_day_number.setter
     def trade_day_number(self, value: int):
-        self._property_changed('trade_day_number')
-        self.__trade_day_number = value        
+        self._property_changed("trade_day_number")
+        self.__trade_day_number = value
 
     @property
     def period_start_time(self) -> datetime.datetime:
@@ -2529,8 +2520,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @period_start_time.setter
     def period_start_time(self, value: datetime.datetime):
-        self._property_changed('period_start_time')
-        self.__period_start_time = value        
+        self._property_changed("period_start_time")
+        self.__period_start_time = value
 
     @property
     def period_end_time(self) -> datetime.datetime:
@@ -2539,8 +2530,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @period_end_time.setter
     def period_end_time(self, value: datetime.datetime):
-        self._property_changed('period_end_time')
-        self.__period_end_time = value        
+        self._property_changed("period_end_time")
+        self.__period_end_time = value
 
     @property
     def time(self) -> datetime.datetime:
@@ -2549,8 +2540,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @time.setter
     def time(self, value: datetime.datetime):
-        self._property_changed('time')
-        self.__time = value        
+        self._property_changed("time")
+        self.__time = value
 
     @property
     def sell(self) -> float:
@@ -2559,8 +2550,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @sell.setter
     def sell(self, value: float):
-        self._property_changed('sell')
-        self.__sell = value        
+        self._property_changed("sell")
+        self.__sell = value
 
     @property
     def buy(self) -> float:
@@ -2569,8 +2560,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @buy.setter
     def buy(self, value: float):
-        self._property_changed('buy')
-        self.__buy = value        
+        self._property_changed("buy")
+        self.__buy = value
 
     @property
     def gross(self) -> float:
@@ -2579,8 +2570,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @gross.setter
     def gross(self, value: float):
-        self._property_changed('gross')
-        self.__gross = value        
+        self._property_changed("gross")
+        self.__gross = value
 
     @property
     def net(self) -> float:
@@ -2589,8 +2580,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @net.setter
     def net(self, value: float):
-        self._property_changed('net')
-        self.__net = value        
+        self._property_changed("net")
+        self.__net = value
 
     @property
     def trade_absolute(self) -> float:
@@ -2599,41 +2590,41 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @trade_absolute.setter
     def trade_absolute(self, value: float):
-        self._property_changed('trade_absolute')
-        self.__trade_absolute = value        
+        self._property_changed("trade_absolute")
+        self.__trade_absolute = value
 
     @property
     def total_cost_spread(self) -> float:
         """Total Avg Spread contribution to overall Market impact Cost of trades, per
-           period, in USD."""
+        period, in USD."""
         return self.__total_cost_spread
 
     @total_cost_spread.setter
     def total_cost_spread(self, value: float):
-        self._property_changed('total_cost_spread')
-        self.__total_cost_spread = value        
+        self._property_changed("total_cost_spread")
+        self.__total_cost_spread = value
 
     @property
     def total_cost_volatility(self) -> float:
         """Total Volatility contribution to overall Market impact Cost of trades, per
-           period, in USD."""
+        period, in USD."""
         return self.__total_cost_volatility
 
     @total_cost_volatility.setter
     def total_cost_volatility(self, value: float):
-        self._property_changed('total_cost_volatility')
-        self.__total_cost_volatility = value        
+        self._property_changed("total_cost_volatility")
+        self.__total_cost_volatility = value
 
     @property
     def total_cost_permanent(self) -> float:
         """Total Permanent contribution to overall Market impact Cost of trades, per
-           period, in USD."""
+        period, in USD."""
         return self.__total_cost_permanent
 
     @total_cost_permanent.setter
     def total_cost_permanent(self, value: float):
-        self._property_changed('total_cost_permanent')
-        self.__total_cost_permanent = value        
+        self._property_changed("total_cost_permanent")
+        self.__total_cost_permanent = value
 
     @property
     def total_cost(self) -> float:
@@ -2642,19 +2633,19 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @total_cost.setter
     def total_cost(self, value: float):
-        self._property_changed('total_cost')
-        self.__total_cost = value        
+        self._property_changed("total_cost")
+        self.__total_cost = value
 
     @property
     def adv_average_percentage(self) -> float:
         """Cross-sectional, notionally weighted average percent of daily volume, per
-           account."""
+        account."""
         return self.__adv_average_percentage
 
     @adv_average_percentage.setter
     def adv_average_percentage(self, value: float):
-        self._property_changed('adv_average_percentage')
-        self.__adv_average_percentage = value        
+        self._property_changed("adv_average_percentage")
+        self.__adv_average_percentage = value
 
     @property
     def total_risk(self) -> float:
@@ -2663,8 +2654,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @total_risk.setter
     def total_risk(self, value: float):
-        self._property_changed('total_risk')
-        self.__total_risk = value        
+        self._property_changed("total_risk")
+        self.__total_risk = value
 
     @property
     def factor_risk(self) -> float:
@@ -2673,19 +2664,19 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @factor_risk.setter
     def factor_risk(self, value: float):
-        self._property_changed('factor_risk')
-        self.__factor_risk = value        
+        self._property_changed("factor_risk")
+        self.__factor_risk = value
 
     @property
     def specific_risk(self) -> float:
         """Total idiosyncratic risk of the trade residual, in daily scale, per period, in
-           USD."""
+        USD."""
         return self.__specific_risk
 
     @specific_risk.setter
     def specific_risk(self, value: float):
-        self._property_changed('specific_risk')
-        self.__specific_risk = value        
+        self._property_changed("specific_risk")
+        self.__specific_risk = value
 
     @property
     def diagonal_risk(self) -> float:
@@ -2694,8 +2685,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @diagonal_risk.setter
     def diagonal_risk(self, value: float):
-        self._property_changed('diagonal_risk')
-        self.__diagonal_risk = value        
+        self._property_changed("diagonal_risk")
+        self.__diagonal_risk = value
 
     @property
     def total_risk_objective(self) -> float:
@@ -2704,8 +2695,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @total_risk_objective.setter
     def total_risk_objective(self, value: float):
-        self._property_changed('total_risk_objective')
-        self.__total_risk_objective = value        
+        self._property_changed("total_risk_objective")
+        self.__total_risk_objective = value
 
     @property
     def factor_risk_objective(self) -> float:
@@ -2714,19 +2705,19 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @factor_risk_objective.setter
     def factor_risk_objective(self, value: float):
-        self._property_changed('factor_risk_objective')
-        self.__factor_risk_objective = value        
+        self._property_changed("factor_risk_objective")
+        self.__factor_risk_objective = value
 
     @property
     def specific_risk_objective(self) -> float:
         """Total idiosyncratic risk of the trade residual, in period scale, per period, in
-           USD."""
+        USD."""
         return self.__specific_risk_objective
 
     @specific_risk_objective.setter
     def specific_risk_objective(self, value: float):
-        self._property_changed('specific_risk_objective')
-        self.__specific_risk_objective = value        
+        self._property_changed("specific_risk_objective")
+        self.__specific_risk_objective = value
 
     @property
     def diagonal_risk_objective(self) -> float:
@@ -2735,8 +2726,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @diagonal_risk_objective.setter
     def diagonal_risk_objective(self, value: float):
-        self._property_changed('diagonal_risk_objective')
-        self.__diagonal_risk_objective = value        
+        self._property_changed("diagonal_risk_objective")
+        self.__diagonal_risk_objective = value
 
     @property
     def total_risk_bps(self) -> float:
@@ -2745,8 +2736,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @total_risk_bps.setter
     def total_risk_bps(self, value: float):
-        self._property_changed('total_risk_bps')
-        self.__total_risk_bps = value        
+        self._property_changed("total_risk_bps")
+        self.__total_risk_bps = value
 
     @property
     def trade_percentage_cumulative_sum(self) -> float:
@@ -2755,8 +2746,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @trade_percentage_cumulative_sum.setter
     def trade_percentage_cumulative_sum(self, value: float):
-        self._property_changed('trade_percentage_cumulative_sum')
-        self.__trade_percentage_cumulative_sum = value        
+        self._property_changed("trade_percentage_cumulative_sum")
+        self.__trade_percentage_cumulative_sum = value
 
     @property
     def net_period_percentage(self) -> float:
@@ -2765,8 +2756,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @net_period_percentage.setter
     def net_period_percentage(self, value: float):
-        self._property_changed('net_period_percentage')
-        self.__net_period_percentage = value        
+        self._property_changed("net_period_percentage")
+        self.__net_period_percentage = value
 
     @property
     def total_cost_budget_percentage(self) -> float:
@@ -2775,8 +2766,8 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @total_cost_budget_percentage.setter
     def total_cost_budget_percentage(self, value: float):
-        self._property_changed('total_cost_budget_percentage')
-        self.__total_cost_budget_percentage = value        
+        self._property_changed("total_cost_budget_percentage")
+        self.__total_cost_budget_percentage = value
 
     @property
     def total_risk_percentage(self) -> float:
@@ -2785,12 +2776,12 @@ class OptimizationPortfolioAnalyticsIntraday(Base):
 
     @total_risk_percentage.setter
     def total_risk_percentage(self, value: float):
-        self._property_changed('total_risk_percentage')
-        self.__total_risk_percentage = value        
+        self._property_changed("total_risk_percentage")
+        self.__total_risk_percentage = value
 
 
 class OptimizationPortfolioSummarySection(Base):
-        
+
     """Initial portfolio view before optimization."""
 
     @camel_case_translate
@@ -2807,8 +2798,8 @@ class OptimizationPortfolioSummarySection(Base):
         total_risk_bps: float,
         adv_average_percentage: float,
         adv_max_percentage: float,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.position = position
         self.number_of_assets = number_of_assets
@@ -2830,8 +2821,8 @@ class OptimizationPortfolioSummarySection(Base):
 
     @position.setter
     def position(self, value: float):
-        self._property_changed('position')
-        self.__position = value        
+        self._property_changed("position")
+        self.__position = value
 
     @property
     def number_of_assets(self) -> int:
@@ -2840,8 +2831,8 @@ class OptimizationPortfolioSummarySection(Base):
 
     @number_of_assets.setter
     def number_of_assets(self, value: int):
-        self._property_changed('number_of_assets')
-        self.__number_of_assets = value        
+        self._property_changed("number_of_assets")
+        self.__number_of_assets = value
 
     @property
     def diagonal_risk(self) -> float:
@@ -2850,8 +2841,8 @@ class OptimizationPortfolioSummarySection(Base):
 
     @diagonal_risk.setter
     def diagonal_risk(self, value: float):
-        self._property_changed('diagonal_risk')
-        self.__diagonal_risk = value        
+        self._property_changed("diagonal_risk")
+        self.__diagonal_risk = value
 
     @property
     def total_risk(self) -> float:
@@ -2860,8 +2851,8 @@ class OptimizationPortfolioSummarySection(Base):
 
     @total_risk.setter
     def total_risk(self, value: float):
-        self._property_changed('total_risk')
-        self.__total_risk = value        
+        self._property_changed("total_risk")
+        self.__total_risk = value
 
     @property
     def factor_risk(self) -> float:
@@ -2870,8 +2861,8 @@ class OptimizationPortfolioSummarySection(Base):
 
     @factor_risk.setter
     def factor_risk(self, value: float):
-        self._property_changed('factor_risk')
-        self.__factor_risk = value        
+        self._property_changed("factor_risk")
+        self.__factor_risk = value
 
     @property
     def specific_risk(self) -> float:
@@ -2880,8 +2871,8 @@ class OptimizationPortfolioSummarySection(Base):
 
     @specific_risk.setter
     def specific_risk(self, value: float):
-        self._property_changed('specific_risk')
-        self.__specific_risk = value        
+        self._property_changed("specific_risk")
+        self.__specific_risk = value
 
     @property
     def historical_beta(self) -> float:
@@ -2890,8 +2881,8 @@ class OptimizationPortfolioSummarySection(Base):
 
     @historical_beta.setter
     def historical_beta(self, value: float):
-        self._property_changed('historical_beta')
-        self.__historical_beta = value        
+        self._property_changed("historical_beta")
+        self.__historical_beta = value
 
     @property
     def spread(self) -> float:
@@ -2900,53 +2891,46 @@ class OptimizationPortfolioSummarySection(Base):
 
     @spread.setter
     def spread(self, value: float):
-        self._property_changed('spread')
-        self.__spread = value        
+        self._property_changed("spread")
+        self.__spread = value
 
     @property
     def total_risk_bps(self) -> float:
         """Total risk of the portfolio with respect to initial positions, in daily form, in
-           bps."""
+        bps."""
         return self.__total_risk_bps
 
     @total_risk_bps.setter
     def total_risk_bps(self, value: float):
-        self._property_changed('total_risk_bps')
-        self.__total_risk_bps = value        
+        self._property_changed("total_risk_bps")
+        self.__total_risk_bps = value
 
     @property
     def adv_average_percentage(self) -> float:
         """Cross-sectional, notionally weighted average percent of daily volume, per
-           account."""
+        account."""
         return self.__adv_average_percentage
 
     @adv_average_percentage.setter
     def adv_average_percentage(self, value: float):
-        self._property_changed('adv_average_percentage')
-        self.__adv_average_percentage = value        
+        self._property_changed("adv_average_percentage")
+        self.__adv_average_percentage = value
 
     @property
     def adv_max_percentage(self) -> float:
         """Cross-sectional, notionally weighted maximum percent of daily volume, per
-           account."""
+        account."""
         return self.__adv_max_percentage
 
     @adv_max_percentage.setter
     def adv_max_percentage(self, value: float):
-        self._property_changed('adv_max_percentage')
-        self.__adv_max_percentage = value        
+        self._property_changed("adv_max_percentage")
+        self.__adv_max_percentage = value
 
 
 class OptimizationTradedPosition(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        asset_id: str,
-        quantity: int,
-        position: int,
-        name: str = None
-    ):        
+    def __init__(self, asset_id: str, quantity: int, position: int, name: str = None):
         super().__init__()
         self.asset_id = asset_id
         self.quantity = quantity
@@ -2960,34 +2944,33 @@ class OptimizationTradedPosition(Base):
 
     @asset_id.setter
     def asset_id(self, value: str):
-        self._property_changed('asset_id')
-        self.__asset_id = value        
+        self._property_changed("asset_id")
+        self.__asset_id = value
 
     @property
     def quantity(self) -> int:
         """Quantity to be traded for the given asset in the given period. Quantity is
-           signed (+X for buy, -X for sell)."""
+        signed (+X for buy, -X for sell)."""
         return self.__quantity
 
     @quantity.setter
     def quantity(self, value: int):
-        self._property_changed('quantity')
-        self.__quantity = value        
+        self._property_changed("quantity")
+        self.__quantity = value
 
     @property
     def position(self) -> int:
         """The residual position expected at the end of the period. Position is signed (-X
-           for short, +X for long)."""
+        for short, +X for long)."""
         return self.__position
 
     @position.setter
     def position(self, value: int):
-        self._property_changed('position')
-        self.__position = value        
+        self._property_changed("position")
+        self.__position = value
 
 
 class PRateForHorizon(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -2995,8 +2978,8 @@ class PRateForHorizon(Base):
         participation_rate: float = None,
         participation_rate_long: float = None,
         participation_rate_short: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.minutes_expired = minutes_expired
         self.participation_rate = participation_rate
@@ -3011,8 +2994,8 @@ class PRateForHorizon(Base):
 
     @minutes_expired.setter
     def minutes_expired(self, value: int):
-        self._property_changed('minutes_expired')
-        self.__minutes_expired = value        
+        self._property_changed("minutes_expired")
+        self.__minutes_expired = value
 
     @property
     def participation_rate(self) -> float:
@@ -3021,8 +3004,8 @@ class PRateForHorizon(Base):
 
     @participation_rate.setter
     def participation_rate(self, value: float):
-        self._property_changed('participation_rate')
-        self.__participation_rate = value        
+        self._property_changed("participation_rate")
+        self.__participation_rate = value
 
     @property
     def participation_rate_long(self) -> float:
@@ -3031,8 +3014,8 @@ class PRateForHorizon(Base):
 
     @participation_rate_long.setter
     def participation_rate_long(self, value: float):
-        self._property_changed('participation_rate_long')
-        self.__participation_rate_long = value        
+        self._property_changed("participation_rate_long")
+        self.__participation_rate_long = value
 
     @property
     def participation_rate_short(self) -> float:
@@ -3041,12 +3024,11 @@ class PRateForHorizon(Base):
 
     @participation_rate_short.setter
     def participation_rate_short(self, value: float):
-        self._property_changed('participation_rate_short')
-        self.__participation_rate_short = value        
+        self._property_changed("participation_rate_short")
+        self.__participation_rate_short = value
 
 
 class RiskAtHorizon(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -3054,8 +3036,8 @@ class RiskAtHorizon(Base):
         risk: int = None,
         risk_long: float = None,
         risk_short: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.minutes_expired = minutes_expired
         self.risk = risk
@@ -3070,8 +3052,8 @@ class RiskAtHorizon(Base):
 
     @minutes_expired.setter
     def minutes_expired(self, value: int):
-        self._property_changed('minutes_expired')
-        self.__minutes_expired = value        
+        self._property_changed("minutes_expired")
+        self.__minutes_expired = value
 
     @property
     def risk(self) -> int:
@@ -3080,8 +3062,8 @@ class RiskAtHorizon(Base):
 
     @risk.setter
     def risk(self, value: int):
-        self._property_changed('risk')
-        self.__risk = value        
+        self._property_changed("risk")
+        self.__risk = value
 
     @property
     def risk_long(self) -> float:
@@ -3090,8 +3072,8 @@ class RiskAtHorizon(Base):
 
     @risk_long.setter
     def risk_long(self, value: float):
-        self._property_changed('risk_long')
-        self.__risk_long = value        
+        self._property_changed("risk_long")
+        self.__risk_long = value
 
     @property
     def risk_short(self) -> float:
@@ -3100,12 +3082,11 @@ class RiskAtHorizon(Base):
 
     @risk_short.setter
     def risk_short(self, value: float):
-        self._property_changed('risk_short')
-        self.__risk_short = value        
+        self._property_changed("risk_short")
+        self.__risk_short = value
 
 
 class TradeCompleteAtHorizon(Base):
-        
     @camel_case_translate
     def __init__(
         self,
@@ -3113,8 +3094,8 @@ class TradeCompleteAtHorizon(Base):
         positions_complete: int = None,
         positions_complete_pct: float = None,
         notional_complete_pct: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.minutes_expired = minutes_expired
         self.positions_complete = positions_complete
@@ -3129,8 +3110,8 @@ class TradeCompleteAtHorizon(Base):
 
     @minutes_expired.setter
     def minutes_expired(self, value: int):
-        self._property_changed('minutes_expired')
-        self.__minutes_expired = value        
+        self._property_changed("minutes_expired")
+        self.__minutes_expired = value
 
     @property
     def positions_complete(self) -> int:
@@ -3139,8 +3120,8 @@ class TradeCompleteAtHorizon(Base):
 
     @positions_complete.setter
     def positions_complete(self, value: int):
-        self._property_changed('positions_complete')
-        self.__positions_complete = value        
+        self._property_changed("positions_complete")
+        self.__positions_complete = value
 
     @property
     def positions_complete_pct(self) -> float:
@@ -3149,8 +3130,8 @@ class TradeCompleteAtHorizon(Base):
 
     @positions_complete_pct.setter
     def positions_complete_pct(self, value: float):
-        self._property_changed('positions_complete_pct')
-        self.__positions_complete_pct = value        
+        self._property_changed("positions_complete_pct")
+        self.__positions_complete_pct = value
 
     @property
     def notional_complete_pct(self) -> float:
@@ -3159,18 +3140,13 @@ class TradeCompleteAtHorizon(Base):
 
     @notional_complete_pct.setter
     def notional_complete_pct(self, value: float):
-        self._property_changed('notional_complete_pct')
-        self.__notional_complete_pct = value        
+        self._property_changed("notional_complete_pct")
+        self.__notional_complete_pct = value
 
 
 class LiquidityFactorCategory(Base):
-        
     @camel_case_translate
-    def __init__(
-        self,
-        name: str = None,
-        sub_factors: Tuple[LiquidityFactor, ...] = None
-    ):        
+    def __init__(self, name: str = None, sub_factors: Tuple[LiquidityFactor, ...] = None):
         super().__init__()
         self.name = name
         self.sub_factors = sub_factors
@@ -3182,8 +3158,8 @@ class LiquidityFactorCategory(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def sub_factors(self) -> Tuple[LiquidityFactor, ...]:
@@ -3191,12 +3167,12 @@ class LiquidityFactorCategory(Base):
 
     @sub_factors.setter
     def sub_factors(self, value: Tuple[LiquidityFactor, ...]):
-        self._property_changed('sub_factors')
-        self.__sub_factors = value        
+        self._property_changed("sub_factors")
+        self.__sub_factors = value
 
 
 class LiquiditySummary(Base):
-        
+
     """Summary of the liquidity analytics data."""
 
     @camel_case_translate
@@ -3206,8 +3182,8 @@ class LiquiditySummary(Base):
         long: LiquiditySummarySection = None,
         short: LiquiditySummarySection = None,
         long_vs_short: LiquiditySummarySection = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.total = total
         self.long = long
@@ -3218,50 +3194,50 @@ class LiquiditySummary(Base):
     @property
     def total(self) -> LiquiditySummarySection:
         """Summary of the liquidity metrics for either the total, long, or short side of
-           the portfolio."""
+        the portfolio."""
         return self.__total
 
     @total.setter
     def total(self, value: LiquiditySummarySection):
-        self._property_changed('total')
-        self.__total = value        
+        self._property_changed("total")
+        self.__total = value
 
     @property
     def long(self) -> LiquiditySummarySection:
         """Summary of the liquidity metrics for either the total, long, or short side of
-           the portfolio."""
+        the portfolio."""
         return self.__long
 
     @long.setter
     def long(self, value: LiquiditySummarySection):
-        self._property_changed('long')
-        self.__long = value        
+        self._property_changed("long")
+        self.__long = value
 
     @property
     def short(self) -> LiquiditySummarySection:
         """Summary of the liquidity metrics for either the total, long, or short side of
-           the portfolio."""
+        the portfolio."""
         return self.__short
 
     @short.setter
     def short(self, value: LiquiditySummarySection):
-        self._property_changed('short')
-        self.__short = value        
+        self._property_changed("short")
+        self.__short = value
 
     @property
     def long_vs_short(self) -> LiquiditySummarySection:
         """Summary of the liquidity metrics for either the total, long, or short side of
-           the portfolio."""
+        the portfolio."""
         return self.__long_vs_short
 
     @long_vs_short.setter
     def long_vs_short(self, value: LiquiditySummarySection):
-        self._property_changed('long_vs_short')
-        self.__long_vs_short = value        
+        self._property_changed("long_vs_short")
+        self.__long_vs_short = value
 
 
 class OptimizationClusterAnalyticsIntraday(Base):
-        
+
     """Cluster analytics, per intraday interval."""
 
     @camel_case_translate
@@ -3271,8 +3247,8 @@ class OptimizationClusterAnalyticsIntraday(Base):
         period_number: int,
         trade_day_number: int,
         clusters: Tuple[OptimizationClusterAnalyticsIntradayItem, ...],
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.time = time
         self.period_number = period_number
@@ -3287,8 +3263,8 @@ class OptimizationClusterAnalyticsIntraday(Base):
 
     @time.setter
     def time(self, value: datetime.datetime):
-        self._property_changed('time')
-        self.__time = value        
+        self._property_changed("time")
+        self.__time = value
 
     @property
     def period_number(self) -> int:
@@ -3297,8 +3273,8 @@ class OptimizationClusterAnalyticsIntraday(Base):
 
     @period_number.setter
     def period_number(self, value: int):
-        self._property_changed('period_number')
-        self.__period_number = value        
+        self._property_changed("period_number")
+        self.__period_number = value
 
     @property
     def trade_day_number(self) -> int:
@@ -3307,8 +3283,8 @@ class OptimizationClusterAnalyticsIntraday(Base):
 
     @trade_day_number.setter
     def trade_day_number(self, value: int):
-        self._property_changed('trade_day_number')
-        self.__trade_day_number = value        
+        self._property_changed("trade_day_number")
+        self.__trade_day_number = value
 
     @property
     def clusters(self) -> Tuple[OptimizationClusterAnalyticsIntradayItem, ...]:
@@ -3317,12 +3293,12 @@ class OptimizationClusterAnalyticsIntraday(Base):
 
     @clusters.setter
     def clusters(self, value: Tuple[OptimizationClusterAnalyticsIntradayItem, ...]):
-        self._property_changed('clusters')
-        self.__clusters = value        
+        self._property_changed("clusters")
+        self.__clusters = value
 
 
 class OptimizationEodCashPositions(Base):
-        
+
     """Eod of day cash positions in different currencies"""
 
     @camel_case_translate
@@ -3330,8 +3306,8 @@ class OptimizationEodCashPositions(Base):
         self,
         currency: str,
         positions: Tuple[OptimizationEodCashPositionsItem, ...],
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.currency = currency
         self.positions = positions
@@ -3344,8 +3320,8 @@ class OptimizationEodCashPositions(Base):
 
     @currency.setter
     def currency(self, value: str):
-        self._property_changed('currency')
-        self.__currency = value        
+        self._property_changed("currency")
+        self.__currency = value
 
     @property
     def positions(self) -> Tuple[OptimizationEodCashPositionsItem, ...]:
@@ -3354,12 +3330,12 @@ class OptimizationEodCashPositions(Base):
 
     @positions.setter
     def positions(self, value: Tuple[OptimizationEodCashPositionsItem, ...]):
-        self._property_changed('positions')
-        self.__positions = value        
+        self._property_changed("positions")
+        self.__positions = value
 
 
 class OptimizationPortfolioCharacteristics(Base):
-        
+
     """Initial portfolio view, pre-optimization."""
 
     @camel_case_translate
@@ -3369,8 +3345,8 @@ class OptimizationPortfolioCharacteristics(Base):
         buy: OptimizationPortfolioSummarySection,
         net: OptimizationPortfolioSummarySection,
         gross: OptimizationPortfolioSummarySection,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.sell = sell
         self.buy = buy
@@ -3385,8 +3361,8 @@ class OptimizationPortfolioCharacteristics(Base):
 
     @sell.setter
     def sell(self, value: OptimizationPortfolioSummarySection):
-        self._property_changed('sell')
-        self.__sell = value        
+        self._property_changed("sell")
+        self.__sell = value
 
     @property
     def buy(self) -> OptimizationPortfolioSummarySection:
@@ -3395,8 +3371,8 @@ class OptimizationPortfolioCharacteristics(Base):
 
     @buy.setter
     def buy(self, value: OptimizationPortfolioSummarySection):
-        self._property_changed('buy')
-        self.__buy = value        
+        self._property_changed("buy")
+        self.__buy = value
 
     @property
     def net(self) -> OptimizationPortfolioSummarySection:
@@ -3405,8 +3381,8 @@ class OptimizationPortfolioCharacteristics(Base):
 
     @net.setter
     def net(self, value: OptimizationPortfolioSummarySection):
-        self._property_changed('net')
-        self.__net = value        
+        self._property_changed("net")
+        self.__net = value
 
     @property
     def gross(self) -> OptimizationPortfolioSummarySection:
@@ -3415,14 +3391,14 @@ class OptimizationPortfolioCharacteristics(Base):
 
     @gross.setter
     def gross(self, value: OptimizationPortfolioSummarySection):
-        self._property_changed('gross')
-        self.__gross = value        
+        self._property_changed("gross")
+        self.__gross = value
 
 
 class OptimizationRequest(Base):
-        
+
     """Required payload in order to get optimization and analytics information given a
-       set of positions."""
+    set of positions."""
 
     @camel_case_translate
     def __init__(
@@ -3441,8 +3417,8 @@ class OptimizationRequest(Base):
         last_updated_time: datetime.datetime = None,
         owner_id: str = None,
         wait_for_results: bool = False,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.created_by_id = created_by_id
         self.created_time = created_time
@@ -3467,8 +3443,8 @@ class OptimizationRequest(Base):
 
     @created_by_id.setter
     def created_by_id(self, value: str):
-        self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self._property_changed("created_by_id")
+        self.__created_by_id = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -3477,8 +3453,8 @@ class OptimizationRequest(Base):
 
     @created_time.setter
     def created_time(self, value: datetime.datetime):
-        self._property_changed('created_time')
-        self.__created_time = value        
+        self._property_changed("created_time")
+        self.__created_time = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -3487,8 +3463,8 @@ class OptimizationRequest(Base):
 
     @entitlements.setter
     def entitlements(self, value: Entitlements):
-        self._property_changed('entitlements')
-        self.__entitlements = value        
+        self._property_changed("entitlements")
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -3497,8 +3473,8 @@ class OptimizationRequest(Base):
 
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
-        self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self._property_changed("entitlement_exclusions")
+        self.__entitlement_exclusions = value
 
     @property
     def id(self) -> str:
@@ -3507,8 +3483,8 @@ class OptimizationRequest(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -3517,8 +3493,8 @@ class OptimizationRequest(Base):
 
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
-        self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self._property_changed("last_updated_by_id")
+        self.__last_updated_by_id = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -3527,8 +3503,8 @@ class OptimizationRequest(Base):
 
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
-        self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self._property_changed("last_updated_time")
+        self.__last_updated_time = value
 
     @property
     def owner_id(self) -> str:
@@ -3537,8 +3513,8 @@ class OptimizationRequest(Base):
 
     @owner_id.setter
     def owner_id(self, value: str):
-        self._property_changed('owner_id')
-        self.__owner_id = value        
+        self._property_changed("owner_id")
+        self.__owner_id = value
 
     @property
     def positions(self) -> Tuple[Position, ...]:
@@ -3547,30 +3523,30 @@ class OptimizationRequest(Base):
 
     @positions.setter
     def positions(self, value: Tuple[Position, ...]):
-        self._property_changed('positions')
-        self.__positions = value        
+        self._property_changed("positions")
+        self.__positions = value
 
     @property
     def execution_start_time(self) -> datetime.datetime:
         """Start time of a pretrade schedule. Currently only a timestamp of current
-           business date is supported."""
+        business date is supported."""
         return self.__execution_start_time
 
     @execution_start_time.setter
     def execution_start_time(self, value: datetime.datetime):
-        self._property_changed('execution_start_time')
-        self.__execution_start_time = value        
+        self._property_changed("execution_start_time")
+        self.__execution_start_time = value
 
     @property
     def execution_end_time(self) -> datetime.datetime:
         """End time of a pretrade schedule. Currently only a timestamp of current business
-           date is supported."""
+        date is supported."""
         return self.__execution_end_time
 
     @execution_end_time.setter
     def execution_end_time(self, value: datetime.datetime):
-        self._property_changed('execution_end_time')
-        self.__execution_end_time = value        
+        self._property_changed("execution_end_time")
+        self.__execution_end_time = value
 
     @property
     def type(self) -> Union[OptimizationType, str]:
@@ -3579,20 +3555,20 @@ class OptimizationRequest(Base):
 
     @type.setter
     def type(self, value: Union[OptimizationType, str]):
-        self._property_changed('type')
-        self.__type = get_enum_value(OptimizationType, value)        
+        self._property_changed("type")
+        self.__type = get_enum_value(OptimizationType, value)
 
     @property
     def wait_for_results(self) -> bool:
         """For short-running requests this may be set to true and the results will be
-           returned directly. If false, the response will contain the
-           optimizationId for retrieving the results."""
+        returned directly. If false, the response will contain the
+        optimizationId for retrieving the results."""
         return self.__wait_for_results
 
     @wait_for_results.setter
     def wait_for_results(self, value: bool):
-        self._property_changed('wait_for_results')
-        self.__wait_for_results = value        
+        self._property_changed("wait_for_results")
+        self.__wait_for_results = value
 
     @property
     def parameters(self) -> dict:
@@ -3601,12 +3577,12 @@ class OptimizationRequest(Base):
 
     @parameters.setter
     def parameters(self, value: dict):
-        self._property_changed('parameters')
-        self.__parameters = value        
+        self._property_changed("parameters")
+        self.__parameters = value
 
 
 class LiquidityResponse(Base):
-        
+
     """Liquidity information for a set of weighted positions."""
 
     @camel_case_translate
@@ -3642,8 +3618,8 @@ class LiquidityResponse(Base):
         assets_not_in_cost_predict_model: Tuple[str, ...] = None,
         assets_without_compositions: Tuple[str, ...] = None,
         error_message: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.as_of_date = as_of_date
         self.risk_model = risk_model
@@ -3684,8 +3660,8 @@ class LiquidityResponse(Base):
 
     @as_of_date.setter
     def as_of_date(self, value: datetime.date):
-        self._property_changed('as_of_date')
-        self.__as_of_date = value        
+        self._property_changed("as_of_date")
+        self.__as_of_date = value
 
     @property
     def risk_model(self) -> str:
@@ -3694,8 +3670,8 @@ class LiquidityResponse(Base):
 
     @risk_model.setter
     def risk_model(self, value: str):
-        self._property_changed('risk_model')
-        self.__risk_model = value        
+        self._property_changed("risk_model")
+        self.__risk_model = value
 
     @property
     def notional(self) -> float:
@@ -3704,8 +3680,8 @@ class LiquidityResponse(Base):
 
     @notional.setter
     def notional(self, value: float):
-        self._property_changed('notional')
-        self.__notional = value        
+        self._property_changed("notional")
+        self.__notional = value
 
     @property
     def currency(self) -> Union[Currency, str]:
@@ -3714,8 +3690,8 @@ class LiquidityResponse(Base):
 
     @currency.setter
     def currency(self, value: Union[Currency, str]):
-        self._property_changed('currency')
-        self.__currency = get_enum_value(Currency, value)        
+        self._property_changed("currency")
+        self.__currency = get_enum_value(Currency, value)
 
     @property
     def report(self) -> str:
@@ -3723,8 +3699,8 @@ class LiquidityResponse(Base):
 
     @report.setter
     def report(self, value: str):
-        self._property_changed('report')
-        self.__report = value        
+        self._property_changed("report")
+        self.__report = value
 
     @property
     def summary(self) -> LiquiditySummary:
@@ -3733,8 +3709,8 @@ class LiquidityResponse(Base):
 
     @summary.setter
     def summary(self, value: LiquiditySummary):
-        self._property_changed('summary')
-        self.__summary = value        
+        self._property_changed("summary")
+        self.__summary = value
 
     @property
     def constituent_transaction_costs(self) -> Tuple[LiquidityConstituent, ...]:
@@ -3743,19 +3719,19 @@ class LiquidityResponse(Base):
 
     @constituent_transaction_costs.setter
     def constituent_transaction_costs(self, value: Tuple[LiquidityConstituent, ...]):
-        self._property_changed('constituent_transaction_costs')
-        self.__constituent_transaction_costs = value        
+        self._property_changed("constituent_transaction_costs")
+        self.__constituent_transaction_costs = value
 
     @property
     def constituents(self) -> Tuple[LiquidityConstituent, ...]:
         """Constituents of the portfolio enriched with liquidity and estimated transaction
-           cost information."""
+        cost information."""
         return self.__constituents
 
     @constituents.setter
     def constituents(self, value: Tuple[LiquidityConstituent, ...]):
-        self._property_changed('constituents')
-        self.__constituents = value        
+        self._property_changed("constituents")
+        self.__constituents = value
 
     @property
     def largest_holdings_by_weight(self) -> Tuple[LiquidityTableRow, ...]:
@@ -3764,8 +3740,8 @@ class LiquidityResponse(Base):
 
     @largest_holdings_by_weight.setter
     def largest_holdings_by_weight(self, value: Tuple[LiquidityTableRow, ...]):
-        self._property_changed('largest_holdings_by_weight')
-        self.__largest_holdings_by_weight = value        
+        self._property_changed("largest_holdings_by_weight")
+        self.__largest_holdings_by_weight = value
 
     @property
     def least_liquid_holdings(self) -> Tuple[LiquidityTableRow, ...]:
@@ -3774,8 +3750,8 @@ class LiquidityResponse(Base):
 
     @least_liquid_holdings.setter
     def least_liquid_holdings(self, value: Tuple[LiquidityTableRow, ...]):
-        self._property_changed('least_liquid_holdings')
-        self.__least_liquid_holdings = value        
+        self._property_changed("least_liquid_holdings")
+        self.__least_liquid_holdings = value
 
     @property
     def adv_buckets(self) -> Tuple[LiquidityBucket, ...]:
@@ -3784,8 +3760,8 @@ class LiquidityResponse(Base):
 
     @adv_buckets.setter
     def adv_buckets(self, value: Tuple[LiquidityBucket, ...]):
-        self._property_changed('adv_buckets')
-        self.__adv_buckets = value        
+        self._property_changed("adv_buckets")
+        self.__adv_buckets = value
 
     @property
     def region_buckets(self) -> Tuple[LiquidityBucket, ...]:
@@ -3794,8 +3770,8 @@ class LiquidityResponse(Base):
 
     @region_buckets.setter
     def region_buckets(self, value: Tuple[LiquidityBucket, ...]):
-        self._property_changed('region_buckets')
-        self.__region_buckets = value        
+        self._property_changed("region_buckets")
+        self.__region_buckets = value
 
     @property
     def country_buckets(self) -> Tuple[LiquidityBucket, ...]:
@@ -3804,8 +3780,8 @@ class LiquidityResponse(Base):
 
     @country_buckets.setter
     def country_buckets(self, value: Tuple[LiquidityBucket, ...]):
-        self._property_changed('country_buckets')
-        self.__country_buckets = value        
+        self._property_changed("country_buckets")
+        self.__country_buckets = value
 
     @property
     def sector_buckets(self) -> Tuple[LiquidityBucket, ...]:
@@ -3814,8 +3790,8 @@ class LiquidityResponse(Base):
 
     @sector_buckets.setter
     def sector_buckets(self, value: Tuple[LiquidityBucket, ...]):
-        self._property_changed('sector_buckets')
-        self.__sector_buckets = value        
+        self._property_changed("sector_buckets")
+        self.__sector_buckets = value
 
     @property
     def industry_buckets(self) -> Tuple[LiquidityBucket, ...]:
@@ -3824,8 +3800,8 @@ class LiquidityResponse(Base):
 
     @industry_buckets.setter
     def industry_buckets(self, value: Tuple[LiquidityBucket, ...]):
-        self._property_changed('industry_buckets')
-        self.__industry_buckets = value        
+        self._property_changed("industry_buckets")
+        self.__industry_buckets = value
 
     @property
     def market_cap_buckets(self) -> Tuple[LiquidityBucket, ...]:
@@ -3834,28 +3810,32 @@ class LiquidityResponse(Base):
 
     @market_cap_buckets.setter
     def market_cap_buckets(self, value: Tuple[LiquidityBucket, ...]):
-        self._property_changed('market_cap_buckets')
-        self.__market_cap_buckets = value        
+        self._property_changed("market_cap_buckets")
+        self.__market_cap_buckets = value
 
     @property
-    def execution_costs_with_different_time_horizons(self) -> Tuple[ExecutionCostForHorizon, ...]:
+    def execution_costs_with_different_time_horizons(
+        self,
+    ) -> Tuple[ExecutionCostForHorizon, ...]:
         """Execution costs at different time horizons."""
         return self.__execution_costs_with_different_time_horizons
 
     @execution_costs_with_different_time_horizons.setter
     def execution_costs_with_different_time_horizons(self, value: Tuple[ExecutionCostForHorizon, ...]):
-        self._property_changed('execution_costs_with_different_time_horizons')
-        self.__execution_costs_with_different_time_horizons = value        
+        self._property_changed("execution_costs_with_different_time_horizons")
+        self.__execution_costs_with_different_time_horizons = value
 
     @property
-    def time_to_trade_with_different_participation_rates(self) -> Tuple[PRateForHorizon, ...]:
+    def time_to_trade_with_different_participation_rates(
+        self,
+    ) -> Tuple[PRateForHorizon, ...]:
         """Participation rates required at different time horizons."""
         return self.__time_to_trade_with_different_participation_rates
 
     @time_to_trade_with_different_participation_rates.setter
     def time_to_trade_with_different_participation_rates(self, value: Tuple[PRateForHorizon, ...]):
-        self._property_changed('time_to_trade_with_different_participation_rates')
-        self.__time_to_trade_with_different_participation_rates = value        
+        self._property_changed("time_to_trade_with_different_participation_rates")
+        self.__time_to_trade_with_different_participation_rates = value
 
     @property
     def risk_over_time(self) -> Tuple[RiskAtHorizon, ...]:
@@ -3864,8 +3844,8 @@ class LiquidityResponse(Base):
 
     @risk_over_time.setter
     def risk_over_time(self, value: Tuple[RiskAtHorizon, ...]):
-        self._property_changed('risk_over_time')
-        self.__risk_over_time = value        
+        self._property_changed("risk_over_time")
+        self.__risk_over_time = value
 
     @property
     def trade_complete_percent_over_time(self) -> Tuple[TradeCompleteAtHorizon, ...]:
@@ -3874,8 +3854,8 @@ class LiquidityResponse(Base):
 
     @trade_complete_percent_over_time.setter
     def trade_complete_percent_over_time(self, value: Tuple[TradeCompleteAtHorizon, ...]):
-        self._property_changed('trade_complete_percent_over_time')
-        self.__trade_complete_percent_over_time = value        
+        self._property_changed("trade_complete_percent_over_time")
+        self.__trade_complete_percent_over_time = value
 
     @property
     def adv_percent_over_time(self) -> Tuple[AdvCurveTick, ...]:
@@ -3884,8 +3864,8 @@ class LiquidityResponse(Base):
 
     @adv_percent_over_time.setter
     def adv_percent_over_time(self, value: Tuple[AdvCurveTick, ...]):
-        self._property_changed('adv_percent_over_time')
-        self.__adv_percent_over_time = value        
+        self._property_changed("adv_percent_over_time")
+        self.__adv_percent_over_time = value
 
     @property
     def risk_buckets(self) -> Tuple[LiquidityFactor, ...]:
@@ -3894,8 +3874,8 @@ class LiquidityResponse(Base):
 
     @risk_buckets.setter
     def risk_buckets(self, value: Tuple[LiquidityFactor, ...]):
-        self._property_changed('risk_buckets')
-        self.__risk_buckets = value        
+        self._property_changed("risk_buckets")
+        self.__risk_buckets = value
 
     @property
     def factor_risk_buckets(self) -> Tuple[LiquidityFactorCategory, ...]:
@@ -3904,8 +3884,8 @@ class LiquidityResponse(Base):
 
     @factor_risk_buckets.setter
     def factor_risk_buckets(self, value: Tuple[LiquidityFactorCategory, ...]):
-        self._property_changed('factor_risk_buckets')
-        self.__factor_risk_buckets = value        
+        self._property_changed("factor_risk_buckets")
+        self.__factor_risk_buckets = value
 
     @property
     def exposure_buckets(self) -> Tuple[LiquidityFactor, ...]:
@@ -3914,8 +3894,8 @@ class LiquidityResponse(Base):
 
     @exposure_buckets.setter
     def exposure_buckets(self, value: Tuple[LiquidityFactor, ...]):
-        self._property_changed('exposure_buckets')
-        self.__exposure_buckets = value        
+        self._property_changed("exposure_buckets")
+        self.__exposure_buckets = value
 
     @property
     def factor_exposure_buckets(self) -> Tuple[LiquidityFactorCategory, ...]:
@@ -3924,8 +3904,8 @@ class LiquidityResponse(Base):
 
     @factor_exposure_buckets.setter
     def factor_exposure_buckets(self, value: Tuple[LiquidityFactorCategory, ...]):
-        self._property_changed('factor_exposure_buckets')
-        self.__factor_exposure_buckets = value        
+        self._property_changed("factor_exposure_buckets")
+        self.__factor_exposure_buckets = value
 
     @property
     def timeseries_data(self) -> Tuple[LiquidityTimeSeriesItem, ...]:
@@ -3934,8 +3914,8 @@ class LiquidityResponse(Base):
 
     @timeseries_data.setter
     def timeseries_data(self, value: Tuple[LiquidityTimeSeriesItem, ...]):
-        self._property_changed('timeseries_data')
-        self.__timeseries_data = value        
+        self._property_changed("timeseries_data")
+        self.__timeseries_data = value
 
     @property
     def assets_not_in_risk_model(self) -> Tuple[str, ...]:
@@ -3944,8 +3924,8 @@ class LiquidityResponse(Base):
 
     @assets_not_in_risk_model.setter
     def assets_not_in_risk_model(self, value: Tuple[str, ...]):
-        self._property_changed('assets_not_in_risk_model')
-        self.__assets_not_in_risk_model = value        
+        self._property_changed("assets_not_in_risk_model")
+        self.__assets_not_in_risk_model = value
 
     @property
     def assets_not_in_cost_predict_model(self) -> Tuple[str, ...]:
@@ -3954,19 +3934,19 @@ class LiquidityResponse(Base):
 
     @assets_not_in_cost_predict_model.setter
     def assets_not_in_cost_predict_model(self, value: Tuple[str, ...]):
-        self._property_changed('assets_not_in_cost_predict_model')
-        self.__assets_not_in_cost_predict_model = value        
+        self._property_changed("assets_not_in_cost_predict_model")
+        self.__assets_not_in_cost_predict_model = value
 
     @property
     def assets_without_compositions(self) -> Tuple[str, ...]:
         """Assets in the portfolio that do not have composition info needed for certain
-           statistics."""
+        statistics."""
         return self.__assets_without_compositions
 
     @assets_without_compositions.setter
     def assets_without_compositions(self, value: Tuple[str, ...]):
-        self._property_changed('assets_without_compositions')
-        self.__assets_without_compositions = value        
+        self._property_changed("assets_without_compositions")
+        self.__assets_without_compositions = value
 
     @property
     def error_message(self) -> str:
@@ -3975,12 +3955,12 @@ class LiquidityResponse(Base):
 
     @error_message.setter
     def error_message(self, value: str):
-        self._property_changed('error_message')
-        self.__error_message = value        
+        self._property_changed("error_message")
+        self.__error_message = value
 
 
 class OptimizationFactorAnalyticsIntraday(Base):
-        
+
     """Residual factor exposures, per asset."""
 
     @camel_case_translate
@@ -3994,8 +3974,8 @@ class OptimizationFactorAnalyticsIntraday(Base):
         industry: Tuple[OptimizationFactorAnalyticsItem, ...],
         risk: Tuple[OptimizationFactorAnalyticsItem, ...],
         cluster_classification: Tuple[OptimizationFactorAnalyticsItem, ...],
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.country = country
         self.sector = sector
@@ -4014,8 +3994,8 @@ class OptimizationFactorAnalyticsIntraday(Base):
 
     @country.setter
     def country(self, value: Tuple[OptimizationFactorAnalyticsItem, ...]):
-        self._property_changed('country')
-        self.__country = value        
+        self._property_changed("country")
+        self.__country = value
 
     @property
     def sector(self) -> Tuple[OptimizationFactorAnalyticsItem, ...]:
@@ -4024,8 +4004,8 @@ class OptimizationFactorAnalyticsIntraday(Base):
 
     @sector.setter
     def sector(self, value: Tuple[OptimizationFactorAnalyticsItem, ...]):
-        self._property_changed('sector')
-        self.__sector = value        
+        self._property_changed("sector")
+        self.__sector = value
 
     @property
     def domestic_china(self) -> Tuple[OptimizationFactorAnalyticsItem, ...]:
@@ -4034,8 +4014,8 @@ class OptimizationFactorAnalyticsIntraday(Base):
 
     @domestic_china.setter
     def domestic_china(self, value: Tuple[OptimizationFactorAnalyticsItem, ...]):
-        self._property_changed('domestic_china')
-        self.__domestic_china = value        
+        self._property_changed("domestic_china")
+        self.__domestic_china = value
 
     @property
     def market(self) -> Tuple[OptimizationFactorAnalyticsItem, ...]:
@@ -4044,8 +4024,8 @@ class OptimizationFactorAnalyticsIntraday(Base):
 
     @market.setter
     def market(self, value: Tuple[OptimizationFactorAnalyticsItem, ...]):
-        self._property_changed('market')
-        self.__market = value        
+        self._property_changed("market")
+        self.__market = value
 
     @property
     def currency(self) -> Tuple[OptimizationFactorAnalyticsItem, ...]:
@@ -4054,8 +4034,8 @@ class OptimizationFactorAnalyticsIntraday(Base):
 
     @currency.setter
     def currency(self, value: Tuple[OptimizationFactorAnalyticsItem, ...]):
-        self._property_changed('currency')
-        self.__currency = value        
+        self._property_changed("currency")
+        self.__currency = value
 
     @property
     def industry(self) -> Tuple[OptimizationFactorAnalyticsItem, ...]:
@@ -4064,8 +4044,8 @@ class OptimizationFactorAnalyticsIntraday(Base):
 
     @industry.setter
     def industry(self, value: Tuple[OptimizationFactorAnalyticsItem, ...]):
-        self._property_changed('industry')
-        self.__industry = value        
+        self._property_changed("industry")
+        self.__industry = value
 
     @property
     def risk(self) -> Tuple[OptimizationFactorAnalyticsItem, ...]:
@@ -4074,8 +4054,8 @@ class OptimizationFactorAnalyticsIntraday(Base):
 
     @risk.setter
     def risk(self, value: Tuple[OptimizationFactorAnalyticsItem, ...]):
-        self._property_changed('risk')
-        self.__risk = value        
+        self._property_changed("risk")
+        self.__risk = value
 
     @property
     def cluster_classification(self) -> Tuple[OptimizationFactorAnalyticsItem, ...]:
@@ -4084,12 +4064,12 @@ class OptimizationFactorAnalyticsIntraday(Base):
 
     @cluster_classification.setter
     def cluster_classification(self, value: Tuple[OptimizationFactorAnalyticsItem, ...]):
-        self._property_changed('cluster_classification')
-        self.__cluster_classification = value        
+        self._property_changed("cluster_classification")
+        self.__cluster_classification = value
 
 
 class OptimizationTradeSchedule(Base):
-        
+
     """Quantity to trade and residual per asset, in each intraday interval."""
 
     @camel_case_translate
@@ -4100,8 +4080,8 @@ class OptimizationTradeSchedule(Base):
         period_start_time: datetime.datetime,
         period_end_time: datetime.datetime,
         traded_positions: Tuple[OptimizationTradedPosition, ...],
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.period_number = period_number
         self.trade_day_number = trade_day_number
@@ -4117,8 +4097,8 @@ class OptimizationTradeSchedule(Base):
 
     @period_number.setter
     def period_number(self, value: int):
-        self._property_changed('period_number')
-        self.__period_number = value        
+        self._property_changed("period_number")
+        self.__period_number = value
 
     @property
     def trade_day_number(self) -> int:
@@ -4127,8 +4107,8 @@ class OptimizationTradeSchedule(Base):
 
     @trade_day_number.setter
     def trade_day_number(self, value: int):
-        self._property_changed('trade_day_number')
-        self.__trade_day_number = value        
+        self._property_changed("trade_day_number")
+        self.__trade_day_number = value
 
     @property
     def period_start_time(self) -> datetime.datetime:
@@ -4137,8 +4117,8 @@ class OptimizationTradeSchedule(Base):
 
     @period_start_time.setter
     def period_start_time(self, value: datetime.datetime):
-        self._property_changed('period_start_time')
-        self.__period_start_time = value        
+        self._property_changed("period_start_time")
+        self.__period_start_time = value
 
     @property
     def period_end_time(self) -> datetime.datetime:
@@ -4147,8 +4127,8 @@ class OptimizationTradeSchedule(Base):
 
     @period_end_time.setter
     def period_end_time(self, value: datetime.datetime):
-        self._property_changed('period_end_time')
-        self.__period_end_time = value        
+        self._property_changed("period_end_time")
+        self.__period_end_time = value
 
     @property
     def traded_positions(self) -> Tuple[OptimizationTradedPosition, ...]:
@@ -4157,12 +4137,12 @@ class OptimizationTradeSchedule(Base):
 
     @traded_positions.setter
     def traded_positions(self, value: Tuple[OptimizationTradedPosition, ...]):
-        self._property_changed('traded_positions')
-        self.__traded_positions = value        
+        self._property_changed("traded_positions")
+        self.__traded_positions = value
 
 
 class OptimizationAnalytics(Base):
-        
+
     """Optimization and analytics information for the portfolio."""
 
     @camel_case_translate
@@ -4181,8 +4161,8 @@ class OptimizationAnalytics(Base):
         eod_cash_positions: Tuple[OptimizationEodCashPositions, ...],
         asset_analytics_day_one: Tuple[OptimizationAssetAnalyticsDayOne, ...] = None,
         close_auction_analytics: Tuple[OptimizationCloseAuctionAnalytics, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.portfolio_characteristics = portfolio_characteristics
         self.asset_analytics_daily = asset_analytics_daily
@@ -4206,8 +4186,8 @@ class OptimizationAnalytics(Base):
 
     @portfolio_characteristics.setter
     def portfolio_characteristics(self, value: OptimizationPortfolioCharacteristics):
-        self._property_changed('portfolio_characteristics')
-        self.__portfolio_characteristics = value        
+        self._property_changed("portfolio_characteristics")
+        self.__portfolio_characteristics = value
 
     @property
     def asset_analytics_daily(self) -> Tuple[OptimizationAssetAnalyticsDaily, ...]:
@@ -4216,18 +4196,20 @@ class OptimizationAnalytics(Base):
 
     @asset_analytics_daily.setter
     def asset_analytics_daily(self, value: Tuple[OptimizationAssetAnalyticsDaily, ...]):
-        self._property_changed('asset_analytics_daily')
-        self.__asset_analytics_daily = value        
+        self._property_changed("asset_analytics_daily")
+        self.__asset_analytics_daily = value
 
     @property
-    def portfolio_analytics_daily(self) -> Tuple[OptimizationPortfolioAnalyticsDaily, ...]:
+    def portfolio_analytics_daily(
+        self,
+    ) -> Tuple[OptimizationPortfolioAnalyticsDaily, ...]:
         """Portfolio level analytics, per day."""
         return self.__portfolio_analytics_daily
 
     @portfolio_analytics_daily.setter
     def portfolio_analytics_daily(self, value: Tuple[OptimizationPortfolioAnalyticsDaily, ...]):
-        self._property_changed('portfolio_analytics_daily')
-        self.__portfolio_analytics_daily = value        
+        self._property_changed("portfolio_analytics_daily")
+        self.__portfolio_analytics_daily = value
 
     @property
     def assets_excluded(self) -> Tuple[OptimizationExcludedAsset, ...]:
@@ -4236,20 +4218,20 @@ class OptimizationAnalytics(Base):
 
     @assets_excluded.setter
     def assets_excluded(self, value: Tuple[OptimizationExcludedAsset, ...]):
-        self._property_changed('assets_excluded')
-        self.__assets_excluded = value        
+        self._property_changed("assets_excluded")
+        self.__assets_excluded = value
 
     @property
     def constraints_consultations(self) -> Tuple[dict, ...]:
         """An array describing the evolution of the optimization process, in case some
-           constraints had to be dropped or softened (relaxed), due to
-           conflicts."""
+        constraints had to be dropped or softened (relaxed), due to
+        conflicts."""
         return self.__constraints_consultations
 
     @constraints_consultations.setter
     def constraints_consultations(self, value: Tuple[dict, ...]):
-        self._property_changed('constraints_consultations')
-        self.__constraints_consultations = value        
+        self._property_changed("constraints_consultations")
+        self.__constraints_consultations = value
 
     @property
     def factor_analytics_intraday(self) -> OptimizationFactorAnalyticsIntraday:
@@ -4258,38 +4240,44 @@ class OptimizationAnalytics(Base):
 
     @factor_analytics_intraday.setter
     def factor_analytics_intraday(self, value: OptimizationFactorAnalyticsIntraday):
-        self._property_changed('factor_analytics_intraday')
-        self.__factor_analytics_intraday = value        
+        self._property_changed("factor_analytics_intraday")
+        self.__factor_analytics_intraday = value
 
     @property
-    def asset_analytics_intraday(self) -> Tuple[OptimizationAssetAnalyticsIntraday, ...]:
+    def asset_analytics_intraday(
+        self,
+    ) -> Tuple[OptimizationAssetAnalyticsIntraday, ...]:
         """Asset level analytics, per intraday interval."""
         return self.__asset_analytics_intraday
 
     @asset_analytics_intraday.setter
     def asset_analytics_intraday(self, value: Tuple[OptimizationAssetAnalyticsIntraday, ...]):
-        self._property_changed('asset_analytics_intraday')
-        self.__asset_analytics_intraday = value        
+        self._property_changed("asset_analytics_intraday")
+        self.__asset_analytics_intraday = value
 
     @property
-    def portfolio_analytics_intraday(self) -> Tuple[OptimizationPortfolioAnalyticsIntraday, ...]:
+    def portfolio_analytics_intraday(
+        self,
+    ) -> Tuple[OptimizationPortfolioAnalyticsIntraday, ...]:
         """Portfolio level analytics, per intraday interval."""
         return self.__portfolio_analytics_intraday
 
     @portfolio_analytics_intraday.setter
     def portfolio_analytics_intraday(self, value: Tuple[OptimizationPortfolioAnalyticsIntraday, ...]):
-        self._property_changed('portfolio_analytics_intraday')
-        self.__portfolio_analytics_intraday = value        
+        self._property_changed("portfolio_analytics_intraday")
+        self.__portfolio_analytics_intraday = value
 
     @property
-    def cluster_analytics_intraday(self) -> Tuple[OptimizationClusterAnalyticsIntraday, ...]:
+    def cluster_analytics_intraday(
+        self,
+    ) -> Tuple[OptimizationClusterAnalyticsIntraday, ...]:
         """Cluster analytics, per intraday interval."""
         return self.__cluster_analytics_intraday
 
     @cluster_analytics_intraday.setter
     def cluster_analytics_intraday(self, value: Tuple[OptimizationClusterAnalyticsIntraday, ...]):
-        self._property_changed('cluster_analytics_intraday')
-        self.__cluster_analytics_intraday = value        
+        self._property_changed("cluster_analytics_intraday")
+        self.__cluster_analytics_intraday = value
 
     @property
     def cluster_analytics(self) -> Tuple[OptimizationClusterAnalytics, ...]:
@@ -4298,8 +4286,8 @@ class OptimizationAnalytics(Base):
 
     @cluster_analytics.setter
     def cluster_analytics(self, value: Tuple[OptimizationClusterAnalytics, ...]):
-        self._property_changed('cluster_analytics')
-        self.__cluster_analytics = value        
+        self._property_changed("cluster_analytics")
+        self.__cluster_analytics = value
 
     @property
     def eod_cash_positions(self) -> Tuple[OptimizationEodCashPositions, ...]:
@@ -4308,8 +4296,8 @@ class OptimizationAnalytics(Base):
 
     @eod_cash_positions.setter
     def eod_cash_positions(self, value: Tuple[OptimizationEodCashPositions, ...]):
-        self._property_changed('eod_cash_positions')
-        self.__eod_cash_positions = value        
+        self._property_changed("eod_cash_positions")
+        self.__eod_cash_positions = value
 
     @property
     def asset_analytics_day_one(self) -> Tuple[OptimizationAssetAnalyticsDayOne, ...]:
@@ -4318,8 +4306,8 @@ class OptimizationAnalytics(Base):
 
     @asset_analytics_day_one.setter
     def asset_analytics_day_one(self, value: Tuple[OptimizationAssetAnalyticsDayOne, ...]):
-        self._property_changed('asset_analytics_day_one')
-        self.__asset_analytics_day_one = value        
+        self._property_changed("asset_analytics_day_one")
+        self.__asset_analytics_day_one = value
 
     @property
     def close_auction_analytics(self) -> Tuple[OptimizationCloseAuctionAnalytics, ...]:
@@ -4328,12 +4316,12 @@ class OptimizationAnalytics(Base):
 
     @close_auction_analytics.setter
     def close_auction_analytics(self, value: Tuple[OptimizationCloseAuctionAnalytics, ...]):
-        self._property_changed('close_auction_analytics')
-        self.__close_auction_analytics = value        
+        self._property_changed("close_auction_analytics")
+        self.__close_auction_analytics = value
 
 
 class OptimizationResult(Base):
-        
+
     """Result for a portfolio optimization and analytics."""
 
     @camel_case_translate
@@ -4350,8 +4338,8 @@ class OptimizationResult(Base):
         analytics: OptimizationAnalytics,
         status: Union[OptimizationStatus, str],
         trade_schedule: Tuple[OptimizationTradeSchedule, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.created_by_id = created_by_id
         self.created_time = created_time
@@ -4373,8 +4361,8 @@ class OptimizationResult(Base):
 
     @created_by_id.setter
     def created_by_id(self, value: str):
-        self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self._property_changed("created_by_id")
+        self.__created_by_id = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -4383,8 +4371,8 @@ class OptimizationResult(Base):
 
     @created_time.setter
     def created_time(self, value: datetime.datetime):
-        self._property_changed('created_time')
-        self.__created_time = value        
+        self._property_changed("created_time")
+        self.__created_time = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -4393,8 +4381,8 @@ class OptimizationResult(Base):
 
     @entitlements.setter
     def entitlements(self, value: Entitlements):
-        self._property_changed('entitlements')
-        self.__entitlements = value        
+        self._property_changed("entitlements")
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -4403,8 +4391,8 @@ class OptimizationResult(Base):
 
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
-        self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self._property_changed("entitlement_exclusions")
+        self.__entitlement_exclusions = value
 
     @property
     def id(self) -> str:
@@ -4413,8 +4401,8 @@ class OptimizationResult(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -4423,8 +4411,8 @@ class OptimizationResult(Base):
 
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
-        self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self._property_changed("last_updated_by_id")
+        self.__last_updated_by_id = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -4433,8 +4421,8 @@ class OptimizationResult(Base):
 
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
-        self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self._property_changed("last_updated_time")
+        self.__last_updated_time = value
 
     @property
     def owner_id(self) -> str:
@@ -4443,8 +4431,8 @@ class OptimizationResult(Base):
 
     @owner_id.setter
     def owner_id(self, value: str):
-        self._property_changed('owner_id')
-        self.__owner_id = value        
+        self._property_changed("owner_id")
+        self.__owner_id = value
 
     @property
     def analytics(self) -> OptimizationAnalytics:
@@ -4453,8 +4441,8 @@ class OptimizationResult(Base):
 
     @analytics.setter
     def analytics(self, value: OptimizationAnalytics):
-        self._property_changed('analytics')
-        self.__analytics = value        
+        self._property_changed("analytics")
+        self.__analytics = value
 
     @property
     def trade_schedule(self) -> Tuple[OptimizationTradeSchedule, ...]:
@@ -4463,8 +4451,8 @@ class OptimizationResult(Base):
 
     @trade_schedule.setter
     def trade_schedule(self, value: Tuple[OptimizationTradeSchedule, ...]):
-        self._property_changed('trade_schedule')
-        self.__trade_schedule = value        
+        self._property_changed("trade_schedule")
+        self.__trade_schedule = value
 
     @property
     def status(self) -> Union[OptimizationStatus, str]:
@@ -4473,5 +4461,5 @@ class OptimizationResult(Base):
 
     @status.setter
     def status(self, value: Union[OptimizationStatus, str]):
-        self._property_changed('status')
-        self.__status = get_enum_value(OptimizationStatus, value)        
+        self._property_changed("status")
+        self.__status = get_enum_value(OptimizationStatus, value)

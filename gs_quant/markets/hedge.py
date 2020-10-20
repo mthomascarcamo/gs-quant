@@ -13,15 +13,16 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
-from collections import defaultdict
-
-from gs_quant.api.gs.hedges import GsHedgeApi
 import logging
-from typing import Union, List
+from collections import defaultdict
+from typing import List, Union
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+from gs_quant.api.gs.hedges import GsHedgeApi
 
 _logger = logging.getLogger(__name__)
 
@@ -32,8 +33,7 @@ class Hedge:
     """
 
     @staticmethod
-    def find_optimal_hedge(hedge_query: dict, hyperparams: dict, metric: str) -> \
-            Union[dict, float]:
+    def find_optimal_hedge(hedge_query: dict, hyperparams: dict, metric: str) -> Union[dict, float]:
         """
         This function is designed to find the 'best' hedge from a list of hedges that are computed using a grid
         search over all hyperparameters passed in - where 'best' is defined by the metric argument passed in and
@@ -49,20 +49,24 @@ class Hedge:
         hedge_results = {}
         opt_map = Hedge.create_optimization_mappings()
         optimization_type = opt_map[metric]
-        _logger.info(f'We are trying to {optimization_type} {metric} and will return the optimized hedge & '
-                     f'metric value...')
-        hyperparam_grid = [(x, y) for x in hyperparams['Concentration'] for y in hyperparams['Diversity']]
+        _logger.info(
+            f"We are trying to {optimization_type} {metric} and will return the optimized hedge & " f"metric value..."
+        )
+        hyperparam_grid = [(x, y) for x in hyperparams["Concentration"] for y in hyperparams["Diversity"]]
         for pair in hyperparam_grid:
-            hedge_params = hedge_query['parameters']
+            hedge_params = hedge_query["parameters"]
             hedge_params.lasso_weight, hedge_params.ridge_weight = pair[0], pair[1]
-            hedge_query['parameters'] = hedge_params
+            hedge_query["parameters"] = hedge_params
             results = GsHedgeApi.calculate_hedge(hedge_query)
-            _logger.info(f'Current Hedge is using the following values for Concentration/Diversity: {pair}')
-            curr_results, curr_pair = results['result']['hedge'], pair
+            _logger.info(f"Current Hedge is using the following values for Concentration/Diversity: {pair}")
+            curr_results, curr_pair = results["result"]["hedge"], pair
             hedge_results[curr_results[metric]] = (curr_results, curr_pair)
-            _logger.info(f'Current Hedge value for {metric}: {curr_results[metric]*100:.3}%')
-        optimized_metric = min(hedge_results.keys()) if optimization_type == 'minimize' else max(hedge_results.keys())
-        optimized_hedge, optimized_hyperparams = hedge_results[optimized_metric][0], hedge_results[optimized_metric][1]
+            _logger.info(f"Current Hedge value for {metric}: {curr_results[metric]*100:.3}%")
+        optimized_metric = min(hedge_results.keys()) if optimization_type == "minimize" else max(hedge_results.keys())
+        optimized_hedge, optimized_hyperparams = (
+            hedge_results[optimized_metric][0],
+            hedge_results[optimized_metric][1],
+        )
         return optimized_hedge, optimized_metric, optimized_hyperparams
 
     @staticmethod
@@ -74,12 +78,20 @@ class Hedge:
         :param none:
         :return: dict, the dictionary containing a mapping between metrics to optimize and how they should be optimized
         """
-        opt_dict = {'rSquared': 'maximize', 'correlation': 'maximize', 'holdingError': 'minimize',
-                    'trackingError': 'minimize', 'transactionCost': 'minimize', 'annualizedReturn': 'maximize'}
+        opt_dict = {
+            "rSquared": "maximize",
+            "correlation": "maximize",
+            "holdingError": "minimize",
+            "trackingError": "minimize",
+            "transactionCost": "minimize",
+            "annualizedReturn": "maximize",
+        }
         return opt_dict
 
     @staticmethod
-    def construct_portfolio_weights_and_asset_numbers(results: dict) -> Union[dict, List]:
+    def construct_portfolio_weights_and_asset_numbers(
+        results: dict,
+    ) -> Union[dict, List]:
         """
         Function used to retrieve the constructed portfolio from a performance hedge, sort it, then calculate the
         weights for all assets and total number of assets and return these results.
@@ -88,14 +100,15 @@ class Hedge:
         :return: dict, list, list - the portfolio, portfolio weights, and number of assets
         """
         portfolio = results["result"]["hedge"]["constituents"]
-        portfolio.sort(key=lambda x: x['weight'], reverse=True)
-        weights = [asset['weight'] for asset in portfolio]
+        portfolio.sort(key=lambda x: x["weight"], reverse=True)
+        weights = [asset["weight"] for asset in portfolio]
         asset_numbers = list(range(len(portfolio)))
         return portfolio, weights, asset_numbers
 
     @staticmethod
-    def plot_weights_against_number_of_assets(hedge_query: dict, hyperparams: dict, figsize: tuple = (18, 9)) -> \
-            matplotlib.figure.Figure:
+    def plot_weights_against_number_of_assets(
+        hedge_query: dict, hyperparams: dict, figsize: tuple = (18, 9)
+    ) -> matplotlib.figure.Figure:
         """
         Function used to plot the effects that a particular hyperparameter (Concentration or Diversity) has
         on the results of a new performance hedge done through the Marquee API.
@@ -111,34 +124,46 @@ class Hedge:
                                             all the plot elements)
         """
         lines = []
-        hyperparam_to_plot = 'Concentration' if hyperparams['Concentration'] else 'Diversity'
+        hyperparam_to_plot = "Concentration" if hyperparams["Concentration"] else "Diversity"
         f, ax = plt.subplots(figsize=figsize)
         try:
             for i in range(len(hyperparams[hyperparam_to_plot])):
-                hedge_params = hedge_query['parameters']
-                if hyperparam_to_plot == 'Concentration':
+                hedge_params = hedge_query["parameters"]
+                if hyperparam_to_plot == "Concentration":
                     hedge_params.lasso_weight = hyperparams[hyperparam_to_plot][i]
                 else:
                     hedge_params.lasso_weight = 0
-                if hyperparam_to_plot == 'Diversity':
+                if hyperparam_to_plot == "Diversity":
                     hedge_params.ridge_weight = hyperparams[hyperparam_to_plot][i]
                 else:
                     hedge_params.ridge_weight = 0
-                hedge_query['parameters'] = hedge_params
+                hedge_query["parameters"] = hedge_params
                 results = GsHedgeApi.calculate_hedge(hedge_query)
-                portfolio, weights, asset_numbers = Hedge.construct_portfolio_weights_and_asset_numbers(results)
+                (
+                    portfolio,
+                    weights,
+                    asset_numbers,
+                ) = Hedge.construct_portfolio_weights_and_asset_numbers(results)
                 x_ind = np.arange(len(asset_numbers))
-                bar = ax.bar(x_ind, weights, align='center', alpha=0.6)
+                bar = ax.bar(x_ind, weights, align="center", alpha=0.6)
                 lines.append(bar)
-            plt.legend(lines, [hyperparam_to_plot + ' Percentage: ' + str(i) for i in
-                               hyperparams[hyperparam_to_plot]], prop={'size': 18})
-            plt.xlabel('Number of Assets', size=13)
-            plt.ylabel('Weights', size=13)
-            plt.title('Analyzing the effects of the ' + hyperparam_to_plot + ' hyperparameter on a hedge', size=22)
+            plt.legend(
+                lines,
+                [hyperparam_to_plot + " Percentage: " + str(i) for i in hyperparams[hyperparam_to_plot]],
+                prop={"size": 18},
+            )
+            plt.xlabel("Number of Assets", size=13)
+            plt.ylabel("Weights", size=13)
+            plt.title(
+                "Analyzing the effects of the " + hyperparam_to_plot + " hyperparameter on a hedge",
+                size=22,
+            )
             plt.show()
         except Exception as err:
-            _logger.warning(f'Constructing portfolio, weights, or asset numbers failed with {err} ... \
-                  returning empty plot.')
+            _logger.warning(
+                f"Constructing portfolio, weights, or asset numbers failed with {err} ... \
+                  returning empty plot."
+            )
         return f
 
     @staticmethod
@@ -158,8 +183,12 @@ class Hedge:
         return diffs
 
     @staticmethod
-    def create_transaction_cost_data_structures(portfolio_asset_ids, portfolio_quantities, thomson_reuters_eod_data,
-                                                backtest_dates):
+    def create_transaction_cost_data_structures(
+        portfolio_asset_ids,
+        portfolio_quantities,
+        thomson_reuters_eod_data,
+        backtest_dates,
+    ):
         """
         Function designed to create the data structures necessary to compute transaction costs based on rebalancing a
         portfolio of assets.
@@ -174,8 +203,12 @@ class Hedge:
                                      for)
         :return: Union[list, dict, ...], the data structures necessary for computing transaction (rebalance) costs
         """
-        thomson_reuters_asset_ids = [asset_id for asset_id in thomson_reuters_eod_data.get_data(
-            backtest_dates[-1], backtest_dates[-1], assetId=portfolio_asset_ids)['assetId']]
+        thomson_reuters_asset_ids = [
+            asset_id
+            for asset_id in thomson_reuters_eod_data.get_data(
+                backtest_dates[-1], backtest_dates[-1], assetId=portfolio_asset_ids
+            )["assetId"]
+        ]
         diffs = Hedge.asset_id_diffs(portfolio_asset_ids, thomson_reuters_asset_ids)
         for diff in diffs:
             portfolio_asset_ids.remove(diff)
@@ -187,20 +220,22 @@ class Hedge:
             if asset_id not in diffs:
                 id_quantity_map[asset_id] = portfolio_quantities[idx]
 
-        # Map asset_id to list of prices of that asset over the transaction_cost_dates we want
+        # Map asset_id to list of prices of that asset over the
+        # transaction_cost_dates we want
         id_prices_map = defaultdict(lambda: list())
         prices_df = pd.DataFrame()
         for date in backtest_dates:
             data = thomson_reuters_eod_data.get_data(date, date, assetId=portfolio_asset_ids)
             prices_df = prices_df.append(data)
         for asset_id in portfolio_asset_ids:
-            id_prices_map[asset_id] = list(prices_df.loc[prices_df['assetId'] == asset_id]['closePrice'])
+            id_prices_map[asset_id] = list(prices_df.loc[prices_df["assetId"] == asset_id]["closePrice"])
 
         # Create list representing notional of each day in transaction_cost_days and map asset_ids to notional of each
         # asset on each day
         id_to_notional_map = {}
-        notionals_assets = [abs(np.asarray(id_prices_map[asset_id]) * id_quantity_map[asset_id]) for asset_id in
-                            portfolio_asset_ids]
+        notionals_assets = [
+            abs(np.asarray(id_prices_map[asset_id]) * id_quantity_map[asset_id]) for asset_id in portfolio_asset_ids
+        ]
         # Mapping asset_id to notionals of each day of that asset_id
         for idx, asset_id in enumerate(portfolio_asset_ids):
             id_to_notional_map[asset_id] = list(notionals_assets[idx])
@@ -209,8 +244,13 @@ class Hedge:
         # Create map of asset_ids to weights of total portfolio on each day
         id_to_weight_map = {}
         for idx, asset_id in enumerate(portfolio_asset_ids):
-            id_to_weight_map[asset_id] = [i / j for i, j in
-                                          zip(id_to_notional_map[portfolio_asset_ids[idx]], total_notionals_each_day)]
+            id_to_weight_map[asset_id] = [
+                i / j
+                for i, j in zip(
+                    id_to_notional_map[portfolio_asset_ids[idx]],
+                    total_notionals_each_day,
+                )
+            ]
         return id_quantity_map, id_prices_map, id_to_notional_map, id_to_weight_map
 
     @staticmethod
@@ -242,7 +282,13 @@ class Hedge:
         return sum([np.abs(curr_weight - prev_weight) * notional_on_the_day])
 
     @staticmethod
-    def compute_tcosts(basis_points, asset_weights, asset_notionals, backtest_dates, portfolio_asset_ids):
+    def compute_tcosts(
+        basis_points,
+        asset_weights,
+        asset_notionals,
+        backtest_dates,
+        portfolio_asset_ids,
+    ):
         """
         Function to compute cumulative transaction costs associated with rebalancing a portfolio. In particular, for
         each day on which we compute the cumulative the rebalancing costs (USD), the weights of the constituents of the
@@ -270,7 +316,10 @@ class Hedge:
             tcost_today = 0
             for asset_id in portfolio_asset_ids:
                 prev_weights = asset_weights[asset_id][0] if idx == 0 else asset_weights[asset_id][idx - 1]
-                notional_on_the_day, curr_weights = asset_notionals[asset_id][idx], asset_weights[asset_id][idx]
+                notional_on_the_day, curr_weights = (
+                    asset_notionals[asset_id][idx],
+                    asset_weights[asset_id][idx],
+                )
                 notional_to_trade = Hedge.compute_notional_traded(notional_on_the_day, prev_weights, curr_weights)
                 transaction_cost = Hedge.t_cost(basis_points, notional_to_trade)
                 tcost_today += transaction_cost
@@ -292,9 +341,9 @@ class Hedge:
         """
         indices = [x for x in range(len(backtest_dates))]
         ax_costs = cumulative_transaction_costs.plot(figsize=figsize, linewidth=3)
-        ax_costs.legend(['Weights-Based Performance Hedger'])
-        plt.ylabel('Cumulative Costs (USD)', size=13)
-        plt.xlabel('Backtest Period', size=13)
-        plt.xticks(indices, backtest_dates, rotation='vertical', size=13)
-        plt.title('Cumulative Costs to Rebalance Weights-Based Performance Hedger', size=22)
-        plt.legend(labels=['Weights-Based Performance Hedger'], prop={'size': 18})
+        ax_costs.legend(["Weights-Based Performance Hedger"])
+        plt.ylabel("Cumulative Costs (USD)", size=13)
+        plt.xlabel("Backtest Period", size=13)
+        plt.xticks(indices, backtest_dates, rotation="vertical", size=13)
+        plt.title("Cumulative Costs to Rebalance Weights-Based Performance Hedger", size=22)
+        plt.legend(labels=["Weights-Based Performance Hedger"], prop={"size": 18})

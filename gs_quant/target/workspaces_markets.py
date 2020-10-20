@@ -14,55 +14,56 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
-from typing import Tuple, Union
 from enum import Enum
+from typing import Tuple, Union
+
 from gs_quant.base import Base, EnumBase, InstrumentBase, camel_case_translate, get_enum_value
+from gs_quant.target.common import *
 
 
-class ComponentType(EnumBase, Enum):    
-    
+class ComponentType(EnumBase, Enum):
+
     """Enum listing supported component types"""
 
-    article = 'article'
-    assetPlot = 'assetPlot'
-    chart = 'chart'
-    barChart = 'barChart'
-    commentary = 'commentary'
-    commentaryPromo = 'commentaryPromo'
-    container = 'container'
-    legend = 'legend'
-    market = 'market'
-    monitor = 'monitor'
-    plot = 'plot'
-    promo = 'promo'
-    rates = 'rates'
-    relatedLinks = 'relatedLinks'
-    research = 'research'
-    selector = 'selector'
-    separator = 'separator'
-    stackedBarChart = 'stackedBarChart'
-    video = 'video'
-    webinar = 'webinar'
-    
+    article = "article"
+    assetPlot = "assetPlot"
+    chart = "chart"
+    barChart = "barChart"
+    commentary = "commentary"
+    commentaryPromo = "commentaryPromo"
+    container = "container"
+    legend = "legend"
+    market = "market"
+    monitor = "monitor"
+    plot = "plot"
+    promo = "promo"
+    rates = "rates"
+    relatedLinks = "relatedLinks"
+    research = "research"
+    selector = "selector"
+    separator = "separator"
+    stackedBarChart = "stackedBarChart"
+    video = "video"
+    webinar = "webinar"
+
     def __repr__(self):
         return self.value
 
 
-class WorkspaceType(EnumBase, Enum):    
-    
+class WorkspaceType(EnumBase, Enum):
+
     """Enum listing support workspace types"""
 
-    cashboard = 'cashboard'
-    multiplot = 'multiplot'
-    
+    cashboard = "cashboard"
+    multiplot = "multiplot"
+
     def __repr__(self):
         return self.value
 
 
 class ArticleComponentParameters(Base):
-        
+
     """Parameters provided for a article component"""
 
     @camel_case_translate
@@ -72,8 +73,8 @@ class ArticleComponentParameters(Base):
         tooltip: str = None,
         commentary_channels: Tuple[str, ...] = None,
         commentary_to_desktop_link: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -88,8 +89,8 @@ class ArticleComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -98,8 +99,8 @@ class ArticleComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
     @property
     def commentary_channels(self) -> Tuple[str, ...]:
@@ -108,8 +109,8 @@ class ArticleComponentParameters(Base):
 
     @commentary_channels.setter
     def commentary_channels(self, value: Tuple[str, ...]):
-        self._property_changed('commentary_channels')
-        self.__commentary_channels = value        
+        self._property_changed("commentary_channels")
+        self.__commentary_channels = value
 
     @property
     def commentary_to_desktop_link(self) -> bool:
@@ -118,21 +119,16 @@ class ArticleComponentParameters(Base):
 
     @commentary_to_desktop_link.setter
     def commentary_to_desktop_link(self, value: bool):
-        self._property_changed('commentary_to_desktop_link')
-        self.__commentary_to_desktop_link = value        
+        self._property_changed("commentary_to_desktop_link")
+        self.__commentary_to_desktop_link = value
 
 
 class AssetPlotComponentParameters(Base):
-        
+
     """Parameters provided for a asset plot component"""
 
     @camel_case_translate
-    def __init__(
-        self,
-        height: float,
-        tooltip: str = None,
-        name: str = None
-    ):        
+    def __init__(self, height: float, tooltip: str = None, name: str = None):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -145,8 +141,8 @@ class AssetPlotComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -155,12 +151,12 @@ class AssetPlotComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
 
 class BarChartComponentParameters(Base):
-        
+
     """Parameters provided for a bar chart component"""
 
     @camel_case_translate
@@ -169,8 +165,8 @@ class BarChartComponentParameters(Base):
         height: float,
         tooltip: str = None,
         hide_legend: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -184,8 +180,8 @@ class BarChartComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -194,8 +190,8 @@ class BarChartComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
     @property
     def hide_legend(self) -> bool:
@@ -204,12 +200,12 @@ class BarChartComponentParameters(Base):
 
     @hide_legend.setter
     def hide_legend(self, value: bool):
-        self._property_changed('hide_legend')
-        self.__hide_legend = value        
+        self._property_changed("hide_legend")
+        self.__hide_legend = value
 
 
 class ChartComponentParameters(Base):
-        
+
     """Parameters provided for a chart component"""
 
     @camel_case_translate
@@ -219,8 +215,8 @@ class ChartComponentParameters(Base):
         tooltip: str = None,
         hide_legend: bool = None,
         chart_name: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -235,8 +231,8 @@ class ChartComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -245,8 +241,8 @@ class ChartComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
     @property
     def hide_legend(self) -> bool:
@@ -255,8 +251,8 @@ class ChartComponentParameters(Base):
 
     @hide_legend.setter
     def hide_legend(self, value: bool):
-        self._property_changed('hide_legend')
-        self.__hide_legend = value        
+        self._property_changed("hide_legend")
+        self.__hide_legend = value
 
     @property
     def chart_name(self) -> str:
@@ -265,12 +261,12 @@ class ChartComponentParameters(Base):
 
     @chart_name.setter
     def chart_name(self, value: str):
-        self._property_changed('chart_name')
-        self.__chart_name = value        
+        self._property_changed("chart_name")
+        self.__chart_name = value
 
 
 class CommentaryComponentParameters(Base):
-        
+
     """Parameters provided for a commentary component"""
 
     @camel_case_translate
@@ -280,8 +276,8 @@ class CommentaryComponentParameters(Base):
         tooltip: str = None,
         commentary_channels: Tuple[str, ...] = None,
         commentary_to_desktop_link: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -296,8 +292,8 @@ class CommentaryComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -306,8 +302,8 @@ class CommentaryComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
     @property
     def commentary_channels(self) -> Tuple[str, ...]:
@@ -316,8 +312,8 @@ class CommentaryComponentParameters(Base):
 
     @commentary_channels.setter
     def commentary_channels(self, value: Tuple[str, ...]):
-        self._property_changed('commentary_channels')
-        self.__commentary_channels = value        
+        self._property_changed("commentary_channels")
+        self.__commentary_channels = value
 
     @property
     def commentary_to_desktop_link(self) -> bool:
@@ -326,12 +322,12 @@ class CommentaryComponentParameters(Base):
 
     @commentary_to_desktop_link.setter
     def commentary_to_desktop_link(self, value: bool):
-        self._property_changed('commentary_to_desktop_link')
-        self.__commentary_to_desktop_link = value        
+        self._property_changed("commentary_to_desktop_link")
+        self.__commentary_to_desktop_link = value
 
 
 class CommentaryPromoComponentParameters(Base):
-        
+
     """Parameters provided for a commentary promo component"""
 
     @camel_case_translate
@@ -342,8 +338,8 @@ class CommentaryPromoComponentParameters(Base):
         commentary_channels: Tuple[str, ...] = None,
         transparent: bool = None,
         body: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -359,8 +355,8 @@ class CommentaryPromoComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -369,8 +365,8 @@ class CommentaryPromoComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
     @property
     def commentary_channels(self) -> Tuple[str, ...]:
@@ -379,8 +375,8 @@ class CommentaryPromoComponentParameters(Base):
 
     @commentary_channels.setter
     def commentary_channels(self, value: Tuple[str, ...]):
-        self._property_changed('commentary_channels')
-        self.__commentary_channels = value        
+        self._property_changed("commentary_channels")
+        self.__commentary_channels = value
 
     @property
     def transparent(self) -> bool:
@@ -389,8 +385,8 @@ class CommentaryPromoComponentParameters(Base):
 
     @transparent.setter
     def transparent(self, value: bool):
-        self._property_changed('transparent')
-        self.__transparent = value        
+        self._property_changed("transparent")
+        self.__transparent = value
 
     @property
     def body(self) -> str:
@@ -399,20 +395,16 @@ class CommentaryPromoComponentParameters(Base):
 
     @body.setter
     def body(self, value: str):
-        self._property_changed('body')
-        self.__body = value        
+        self._property_changed("body")
+        self.__body = value
 
 
 class ContainerComponentParameters(Base):
-        
+
     """Parameters provided for a container component"""
 
     @camel_case_translate
-    def __init__(
-        self,
-        component_id: str = None,
-        name: str = None
-    ):        
+    def __init__(self, component_id: str = None, name: str = None):
         super().__init__()
         self.component_id = component_id
         self.name = name
@@ -424,22 +416,16 @@ class ContainerComponentParameters(Base):
 
     @component_id.setter
     def component_id(self, value: str):
-        self._property_changed('component_id')
-        self.__component_id = value        
+        self._property_changed("component_id")
+        self.__component_id = value
 
 
 class LegendItem(Base):
-        
+
     """Parameters provided for a legend item"""
 
     @camel_case_translate
-    def __init__(
-        self,
-        color: str,
-        icon: str,
-        name: str,
-        tooltip: str = None
-    ):        
+    def __init__(self, color: str, icon: str, name: str, tooltip: str = None):
         super().__init__()
         self.color = color
         self.icon = icon
@@ -453,8 +439,8 @@ class LegendItem(Base):
 
     @color.setter
     def color(self, value: str):
-        self._property_changed('color')
-        self.__color = value        
+        self._property_changed("color")
+        self.__color = value
 
     @property
     def icon(self) -> str:
@@ -463,8 +449,8 @@ class LegendItem(Base):
 
     @icon.setter
     def icon(self, value: str):
-        self._property_changed('icon')
-        self.__icon = value        
+        self._property_changed("icon")
+        self.__icon = value
 
     @property
     def name(self) -> str:
@@ -473,8 +459,8 @@ class LegendItem(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def tooltip(self) -> str:
@@ -483,20 +469,16 @@ class LegendItem(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
 
 class MarketComponentParameters(Base):
-        
+
     """Parameters provided for a market component."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        height: float,
-        name: str = None
-    ):        
+    def __init__(self, height: float, name: str = None):
         super().__init__()
         self.height = height
         self.name = name
@@ -508,21 +490,16 @@ class MarketComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
 
 class MonitorComponentParameters(Base):
-        
+
     """Parameters provided for a monitor component."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        height: float,
-        tooltip: str = None,
-        name: str = None
-    ):        
+    def __init__(self, height: float, tooltip: str = None, name: str = None):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -535,8 +512,8 @@ class MonitorComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -545,12 +522,12 @@ class MonitorComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
 
 class PlotComponentParameters(Base):
-        
+
     """Parameters provided for a plot component"""
 
     @camel_case_translate
@@ -560,8 +537,8 @@ class PlotComponentParameters(Base):
         tooltip: str = None,
         hide_legend: bool = None,
         plot_frequency_mode: str = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -576,8 +553,8 @@ class PlotComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -586,8 +563,8 @@ class PlotComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
     @property
     def hide_legend(self) -> bool:
@@ -596,8 +573,8 @@ class PlotComponentParameters(Base):
 
     @hide_legend.setter
     def hide_legend(self, value: bool):
-        self._property_changed('hide_legend')
-        self.__hide_legend = value        
+        self._property_changed("hide_legend")
+        self.__hide_legend = value
 
     @property
     def plot_frequency_mode(self) -> str:
@@ -606,12 +583,12 @@ class PlotComponentParameters(Base):
 
     @plot_frequency_mode.setter
     def plot_frequency_mode(self, value: str):
-        self._property_changed('plot_frequency_mode')
-        self.__plot_frequency_mode = value        
+        self._property_changed("plot_frequency_mode")
+        self.__plot_frequency_mode = value
 
 
 class PromoComponentParameters(Base):
-        
+
     """Parameters provided for a promo component"""
 
     @camel_case_translate
@@ -622,8 +599,8 @@ class PromoComponentParameters(Base):
         body: str = None,
         size: str = None,
         hide_border: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.transparent = transparent
@@ -639,8 +616,8 @@ class PromoComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def transparent(self) -> bool:
@@ -649,8 +626,8 @@ class PromoComponentParameters(Base):
 
     @transparent.setter
     def transparent(self, value: bool):
-        self._property_changed('transparent')
-        self.__transparent = value        
+        self._property_changed("transparent")
+        self.__transparent = value
 
     @property
     def body(self) -> str:
@@ -659,8 +636,8 @@ class PromoComponentParameters(Base):
 
     @body.setter
     def body(self, value: str):
-        self._property_changed('body')
-        self.__body = value        
+        self._property_changed("body")
+        self.__body = value
 
     @property
     def size(self) -> str:
@@ -669,8 +646,8 @@ class PromoComponentParameters(Base):
 
     @size.setter
     def size(self, value: str):
-        self._property_changed('size')
-        self.__size = value        
+        self._property_changed("size")
+        self.__size = value
 
     @property
     def hide_border(self) -> bool:
@@ -679,21 +656,16 @@ class PromoComponentParameters(Base):
 
     @hide_border.setter
     def hide_border(self, value: bool):
-        self._property_changed('hide_border')
-        self.__hide_border = value        
+        self._property_changed("hide_border")
+        self.__hide_border = value
 
 
 class RatesComponentParameters(Base):
-        
+
     """Parameters provided for a rates component"""
 
     @camel_case_translate
-    def __init__(
-        self,
-        height: float,
-        tooltip: str = None,
-        name: str = None
-    ):        
+    def __init__(self, height: float, tooltip: str = None, name: str = None):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -706,8 +678,8 @@ class RatesComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -716,22 +688,16 @@ class RatesComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
 
 class RelatedLink(Base):
-        
+
     """Parameters provided for a related link"""
 
     @camel_case_translate
-    def __init__(
-        self,
-        type_: str,
-        name: str,
-        link: str,
-        description: str = None
-    ):        
+    def __init__(self, type_: str, name: str, link: str, description: str = None):
         super().__init__()
         self.__type = type_
         self.name = name
@@ -745,8 +711,8 @@ class RelatedLink(Base):
 
     @type.setter
     def type(self, value: str):
-        self._property_changed('type')
-        self.__type = value        
+        self._property_changed("type")
+        self.__type = value
 
     @property
     def name(self) -> str:
@@ -755,8 +721,8 @@ class RelatedLink(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def description(self) -> str:
@@ -765,8 +731,8 @@ class RelatedLink(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def link(self) -> str:
@@ -775,12 +741,12 @@ class RelatedLink(Base):
 
     @link.setter
     def link(self, value: str):
-        self._property_changed('link')
-        self.__link = value        
+        self._property_changed("link")
+        self.__link = value
 
 
 class ResearchComponentParameters(Base):
-        
+
     """Parameters provided for a research component"""
 
     @camel_case_translate
@@ -790,8 +756,8 @@ class ResearchComponentParameters(Base):
         tooltip: str = None,
         commentary_channels: Tuple[str, ...] = None,
         commentary_to_desktop_link: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.tooltip = tooltip
@@ -806,8 +772,8 @@ class ResearchComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def tooltip(self) -> str:
@@ -816,8 +782,8 @@ class ResearchComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
     @property
     def commentary_channels(self) -> Tuple[str, ...]:
@@ -826,8 +792,8 @@ class ResearchComponentParameters(Base):
 
     @commentary_channels.setter
     def commentary_channels(self, value: Tuple[str, ...]):
-        self._property_changed('commentary_channels')
-        self.__commentary_channels = value        
+        self._property_changed("commentary_channels")
+        self.__commentary_channels = value
 
     @property
     def commentary_to_desktop_link(self) -> bool:
@@ -836,21 +802,16 @@ class ResearchComponentParameters(Base):
 
     @commentary_to_desktop_link.setter
     def commentary_to_desktop_link(self, value: bool):
-        self._property_changed('commentary_to_desktop_link')
-        self.__commentary_to_desktop_link = value        
+        self._property_changed("commentary_to_desktop_link")
+        self.__commentary_to_desktop_link = value
 
 
 class SelectorComponentOption(Base):
-        
+
     """A selector component option."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        id_: str,
-        name: str,
-        tags: Tuple[str, ...]
-    ):        
+    def __init__(self, id_: str, name: str, tags: Tuple[str, ...]):
         super().__init__()
         self.__id = id_
         self.name = name
@@ -863,34 +824,34 @@ class SelectorComponentOption(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def name(self) -> str:
         """Name of the option in the dropdown. This will be the text displayed in the
-           dropdown."""
+        dropdown."""
         return self.__name
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def tags(self) -> Tuple[str, ...]:
         """An array of component tags for this selector option. This should match in length
-           the selector component containerIds length."""
+        the selector component containerIds length."""
         return self.__tags
 
     @tags.setter
     def tags(self, value: Tuple[str, ...]):
-        self._property_changed('tags')
-        self.__tags = value        
+        self._property_changed("tags")
+        self.__tags = value
 
 
 class SeparatorComponentParameters(Base):
-        
+
     """Parameters provided for a separator component"""
 
     @camel_case_translate
@@ -899,8 +860,8 @@ class SeparatorComponentParameters(Base):
         height: float,
         name: str = None,
         size: str = None,
-        show_more_url: str = None
-    ):        
+        show_more_url: str = None,
+    ):
         super().__init__()
         self.height = height
         self.name = name
@@ -914,8 +875,8 @@ class SeparatorComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def name(self) -> str:
@@ -924,8 +885,8 @@ class SeparatorComponentParameters(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def size(self) -> str:
@@ -934,8 +895,8 @@ class SeparatorComponentParameters(Base):
 
     @size.setter
     def size(self, value: str):
-        self._property_changed('size')
-        self.__size = value        
+        self._property_changed("size")
+        self.__size = value
 
     @property
     def show_more_url(self) -> str:
@@ -944,12 +905,12 @@ class SeparatorComponentParameters(Base):
 
     @show_more_url.setter
     def show_more_url(self, value: str):
-        self._property_changed('show_more_url')
-        self.__show_more_url = value        
+        self._property_changed("show_more_url")
+        self.__show_more_url = value
 
 
 class VideoComponentParameters(Base):
-        
+
     """Parameters provided for a video component."""
 
     @camel_case_translate
@@ -961,8 +922,8 @@ class VideoComponentParameters(Base):
         height: float = None,
         title: str = None,
         transparent: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.date = date
         self.description = description
@@ -979,8 +940,8 @@ class VideoComponentParameters(Base):
 
     @date.setter
     def date(self, value: str):
-        self._property_changed('date')
-        self.__date = value        
+        self._property_changed("date")
+        self.__date = value
 
     @property
     def description(self) -> str:
@@ -989,8 +950,8 @@ class VideoComponentParameters(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def height(self) -> float:
@@ -999,8 +960,8 @@ class VideoComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def replay_url(self) -> str:
@@ -1009,8 +970,8 @@ class VideoComponentParameters(Base):
 
     @replay_url.setter
     def replay_url(self, value: str):
-        self._property_changed('replay_url')
-        self.__replay_url = value        
+        self._property_changed("replay_url")
+        self.__replay_url = value
 
     @property
     def title(self) -> str:
@@ -1019,8 +980,8 @@ class VideoComponentParameters(Base):
 
     @title.setter
     def title(self, value: str):
-        self._property_changed('title')
-        self.__title = value        
+        self._property_changed("title")
+        self.__title = value
 
     @property
     def transparent(self) -> bool:
@@ -1029,20 +990,16 @@ class VideoComponentParameters(Base):
 
     @transparent.setter
     def transparent(self, value: bool):
-        self._property_changed('transparent')
-        self.__transparent = value        
+        self._property_changed("transparent")
+        self.__transparent = value
 
 
 class WebinarProvider(Base):
-        
+
     """The provider of the webinar."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        url: str,
-        name: str = None
-    ):        
+    def __init__(self, url: str, name: str = None):
         super().__init__()
         self.url = url
         self.name = name
@@ -1054,21 +1011,16 @@ class WebinarProvider(Base):
 
     @url.setter
     def url(self, value: str):
-        self._property_changed('url')
-        self.__url = value        
+        self._property_changed("url")
+        self.__url = value
 
 
 class WebinarSpeaker(Base):
-        
+
     """A speaker or host of a webinar."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        name: str,
-        title: str,
-        author_url: str = None
-    ):        
+    def __init__(self, name: str, title: str, author_url: str = None):
         super().__init__()
         self.author_url = author_url
         self.name = name
@@ -1081,8 +1033,8 @@ class WebinarSpeaker(Base):
 
     @author_url.setter
     def author_url(self, value: str):
-        self._property_changed('author_url')
-        self.__author_url = value        
+        self._property_changed("author_url")
+        self.__author_url = value
 
     @property
     def name(self) -> str:
@@ -1091,8 +1043,8 @@ class WebinarSpeaker(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def title(self) -> str:
@@ -1101,21 +1053,16 @@ class WebinarSpeaker(Base):
 
     @title.setter
     def title(self, value: str):
-        self._property_changed('title')
-        self.__title = value        
+        self._property_changed("title")
+        self.__title = value
 
 
 class WorkspaceDate(Base):
-        
+
     """Relative date to display at the bottom of the page."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        days: float,
-        text: str,
-        name: str = None
-    ):        
+    def __init__(self, days: float, text: str, name: str = None):
         super().__init__()
         self.days = days
         self.text = text
@@ -1124,13 +1071,13 @@ class WorkspaceDate(Base):
     @property
     def days(self) -> float:
         """Number of days to deduct relative to the current date. For example: 0 days
-           represents today."""
+        represents today."""
         return self.__days
 
     @days.setter
     def days(self, value: float):
-        self._property_changed('days')
-        self.__days = value        
+        self._property_changed("days")
+        self.__days = value
 
     @property
     def text(self) -> str:
@@ -1139,20 +1086,16 @@ class WorkspaceDate(Base):
 
     @text.setter
     def text(self, value: str):
-        self._property_changed('text')
-        self.__text = value        
+        self._property_changed("text")
+        self.__text = value
 
 
 class WorkspaceTab(Base):
-        
+
     """Tab represents another workspace that can be linked to."""
 
     @camel_case_translate
-    def __init__(
-        self,
-        id_: str,
-        name: str
-    ):        
+    def __init__(self, id_: str, name: str):
         super().__init__()
         self.__id = id_
         self.name = name
@@ -1164,8 +1107,8 @@ class WorkspaceTab(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def name(self) -> str:
@@ -1174,12 +1117,12 @@ class WorkspaceTab(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
 
 class LegendComponentParameters(Base):
-        
+
     """Parameters provided for the legend component."""
 
     @camel_case_translate
@@ -1189,8 +1132,8 @@ class LegendComponentParameters(Base):
         items: Tuple[LegendItem, ...],
         position: str = None,
         transparent: bool = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.items = items
@@ -1205,8 +1148,8 @@ class LegendComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def items(self) -> Tuple[LegendItem, ...]:
@@ -1215,8 +1158,8 @@ class LegendComponentParameters(Base):
 
     @items.setter
     def items(self, value: Tuple[LegendItem, ...]):
-        self._property_changed('items')
-        self.__items = value        
+        self._property_changed("items")
+        self.__items = value
 
     @property
     def position(self) -> str:
@@ -1225,8 +1168,8 @@ class LegendComponentParameters(Base):
 
     @position.setter
     def position(self, value: str):
-        self._property_changed('position')
-        self.__position = value        
+        self._property_changed("position")
+        self.__position = value
 
     @property
     def transparent(self) -> bool:
@@ -1235,12 +1178,12 @@ class LegendComponentParameters(Base):
 
     @transparent.setter
     def transparent(self, value: bool):
-        self._property_changed('transparent')
-        self.__transparent = value        
+        self._property_changed("transparent")
+        self.__transparent = value
 
 
 class RelatedLinksComponentParameters(Base):
-        
+
     """Parameters provided for a related link components"""
 
     @camel_case_translate
@@ -1249,8 +1192,8 @@ class RelatedLinksComponentParameters(Base):
         height: float,
         links: Tuple[RelatedLink, ...],
         title: str,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.height = height
         self.links = links
@@ -1264,8 +1207,8 @@ class RelatedLinksComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def links(self) -> Tuple[RelatedLink, ...]:
@@ -1274,8 +1217,8 @@ class RelatedLinksComponentParameters(Base):
 
     @links.setter
     def links(self, value: Tuple[RelatedLink, ...]):
-        self._property_changed('links')
-        self.__links = value        
+        self._property_changed("links")
+        self.__links = value
 
     @property
     def title(self) -> str:
@@ -1284,12 +1227,12 @@ class RelatedLinksComponentParameters(Base):
 
     @title.setter
     def title(self, value: str):
-        self._property_changed('title')
-        self.__title = value        
+        self._property_changed("title")
+        self.__title = value
 
 
 class SelectorComponentParameters(Base):
-        
+
     """Parameters provided for a selector component"""
 
     @camel_case_translate
@@ -1302,8 +1245,8 @@ class SelectorComponentParameters(Base):
         title: str = None,
         tooltip: str = None,
         width: float = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.container_ids = container_ids
         self.default_option_index = default_option_index
@@ -1321,19 +1264,19 @@ class SelectorComponentParameters(Base):
 
     @container_ids.setter
     def container_ids(self, value: Tuple[str, ...]):
-        self._property_changed('container_ids')
-        self.__container_ids = value        
+        self._property_changed("container_ids")
+        self.__container_ids = value
 
     @property
     def default_option_index(self) -> float:
         """The default option for the selector. This references the index in the options
-           array. Defaults to 0."""
+        array. Defaults to 0."""
         return self.__default_option_index
 
     @default_option_index.setter
     def default_option_index(self, value: float):
-        self._property_changed('default_option_index')
-        self.__default_option_index = value        
+        self._property_changed("default_option_index")
+        self.__default_option_index = value
 
     @property
     def height(self) -> float:
@@ -1342,19 +1285,19 @@ class SelectorComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def options(self) -> Tuple[SelectorComponentOption, ...]:
         """A list of options for the selector dropdown. Options references other components
-           in the workspace"""
+        in the workspace"""
         return self.__options
 
     @options.setter
     def options(self, value: Tuple[SelectorComponentOption, ...]):
-        self._property_changed('options')
-        self.__options = value        
+        self._property_changed("options")
+        self.__options = value
 
     @property
     def title(self) -> str:
@@ -1363,8 +1306,8 @@ class SelectorComponentParameters(Base):
 
     @title.setter
     def title(self, value: str):
-        self._property_changed('title')
-        self.__title = value        
+        self._property_changed("title")
+        self.__title = value
 
     @property
     def tooltip(self) -> str:
@@ -1373,23 +1316,23 @@ class SelectorComponentParameters(Base):
 
     @tooltip.setter
     def tooltip(self, value: str):
-        self._property_changed('tooltip')
-        self.__tooltip = value        
+        self._property_changed("tooltip")
+        self.__tooltip = value
 
     @property
     def width(self) -> float:
         """Used for restricting the width in pixels of the component on a workspace.
-           Defaults to 280px."""
+        Defaults to 280px."""
         return self.__width
 
     @width.setter
     def width(self, value: float):
-        self._property_changed('width')
-        self.__width = value        
+        self._property_changed("width")
+        self.__width = value
 
 
 class WebinarComponentParameters(Base):
-        
+
     """Parameters provided for a webinar component."""
 
     @camel_case_translate
@@ -1406,8 +1349,8 @@ class WebinarComponentParameters(Base):
         password: str = None,
         series: str = None,
         speakers: Tuple[WebinarSpeaker, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.date = date
         self.date_text = date_text
@@ -1429,19 +1372,19 @@ class WebinarComponentParameters(Base):
 
     @date.setter
     def date(self, value: str):
-        self._property_changed('date')
-        self.__date = value        
+        self._property_changed("date")
+        self.__date = value
 
     @property
     def date_text(self) -> str:
         """A custom date string to display on the webinar card, for example 01 Oct 2020
-           6:00PM (ET)."""
+        6:00PM (ET)."""
         return self.__date_text
 
     @date_text.setter
     def date_text(self, value: str):
-        self._property_changed('date_text')
-        self.__date_text = value        
+        self._property_changed("date_text")
+        self.__date_text = value
 
     @property
     def description(self) -> str:
@@ -1450,8 +1393,8 @@ class WebinarComponentParameters(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def height(self) -> float:
@@ -1460,8 +1403,8 @@ class WebinarComponentParameters(Base):
 
     @height.setter
     def height(self, value: float):
-        self._property_changed('height')
-        self.__height = value        
+        self._property_changed("height")
+        self.__height = value
 
     @property
     def hosts(self) -> Tuple[WebinarSpeaker, ...]:
@@ -1470,8 +1413,8 @@ class WebinarComponentParameters(Base):
 
     @hosts.setter
     def hosts(self, value: Tuple[WebinarSpeaker, ...]):
-        self._property_changed('hosts')
-        self.__hosts = value        
+        self._property_changed("hosts")
+        self.__hosts = value
 
     @property
     def password(self) -> str:
@@ -1480,8 +1423,8 @@ class WebinarComponentParameters(Base):
 
     @password.setter
     def password(self, value: str):
-        self._property_changed('password')
-        self.__password = value        
+        self._property_changed("password")
+        self.__password = value
 
     @property
     def provider(self) -> WebinarProvider:
@@ -1490,8 +1433,8 @@ class WebinarComponentParameters(Base):
 
     @provider.setter
     def provider(self, value: WebinarProvider):
-        self._property_changed('provider')
-        self.__provider = value        
+        self._property_changed("provider")
+        self.__provider = value
 
     @property
     def replay_url(self) -> str:
@@ -1500,8 +1443,8 @@ class WebinarComponentParameters(Base):
 
     @replay_url.setter
     def replay_url(self, value: str):
-        self._property_changed('replay_url')
-        self.__replay_url = value        
+        self._property_changed("replay_url")
+        self.__replay_url = value
 
     @property
     def series(self) -> str:
@@ -1510,8 +1453,8 @@ class WebinarComponentParameters(Base):
 
     @series.setter
     def series(self, value: str):
-        self._property_changed('series')
-        self.__series = value        
+        self._property_changed("series")
+        self.__series = value
 
     @property
     def speakers(self) -> Tuple[WebinarSpeaker, ...]:
@@ -1520,8 +1463,8 @@ class WebinarComponentParameters(Base):
 
     @speakers.setter
     def speakers(self, value: Tuple[WebinarSpeaker, ...]):
-        self._property_changed('speakers')
-        self.__speakers = value        
+        self._property_changed("speakers")
+        self.__speakers = value
 
     @property
     def title(self) -> str:
@@ -1530,12 +1473,12 @@ class WebinarComponentParameters(Base):
 
     @title.setter
     def title(self, value: str):
-        self._property_changed('title')
-        self.__title = value        
+        self._property_changed("title")
+        self.__title = value
 
 
 class WorkspaceComponent(Base):
-        
+
     """Parameters provided for a market workspace"""
 
     @camel_case_translate
@@ -1546,8 +1489,8 @@ class WorkspaceComponent(Base):
         hide: bool = None,
         tags: Tuple[str, ...] = None,
         parameters: dict = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.__id = id_
         self.hide = hide
@@ -1562,8 +1505,8 @@ class WorkspaceComponent(Base):
 
     @id.setter
     def id(self, value: dict):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def hide(self) -> bool:
@@ -1572,19 +1515,19 @@ class WorkspaceComponent(Base):
 
     @hide.setter
     def hide(self, value: bool):
-        self._property_changed('hide')
-        self.__hide = value        
+        self._property_changed("hide")
+        self.__hide = value
 
     @property
     def tags(self) -> Tuple[str, ...]:
         """An array of component tags for this component. Tags are referenced by other
-           components within the workspace."""
+        components within the workspace."""
         return self.__tags
 
     @tags.setter
     def tags(self, value: Tuple[str, ...]):
-        self._property_changed('tags')
-        self.__tags = value        
+        self._property_changed("tags")
+        self.__tags = value
 
     @property
     def type(self) -> Union[ComponentType, str]:
@@ -1593,8 +1536,8 @@ class WorkspaceComponent(Base):
 
     @type.setter
     def type(self, value: Union[ComponentType, str]):
-        self._property_changed('type')
-        self.__type = get_enum_value(ComponentType, value)        
+        self._property_changed("type")
+        self.__type = get_enum_value(ComponentType, value)
 
     @property
     def parameters(self) -> dict:
@@ -1602,12 +1545,12 @@ class WorkspaceComponent(Base):
 
     @parameters.setter
     def parameters(self, value: dict):
-        self._property_changed('parameters')
-        self.__parameters = value        
+        self._property_changed("parameters")
+        self.__parameters = value
 
 
 class WorkspaceParameters(Base):
-        
+
     """Parameters provided for a market workspace"""
 
     @camel_case_translate
@@ -1620,8 +1563,8 @@ class WorkspaceParameters(Base):
         disclaimer: str = None,
         maintainers: Tuple[str, ...] = None,
         tabs: Tuple[WorkspaceTab, ...] = None,
-        name: str = None
-    ):        
+        name: str = None,
+    ):
         super().__init__()
         self.can_share = can_share
         self.components = components
@@ -1639,8 +1582,8 @@ class WorkspaceParameters(Base):
 
     @can_share.setter
     def can_share(self, value: bool):
-        self._property_changed('can_share')
-        self.__can_share = value        
+        self._property_changed("can_share")
+        self.__can_share = value
 
     @property
     def components(self) -> Tuple[WorkspaceComponent, ...]:
@@ -1649,8 +1592,8 @@ class WorkspaceParameters(Base):
 
     @components.setter
     def components(self, value: Tuple[WorkspaceComponent, ...]):
-        self._property_changed('components')
-        self.__components = value        
+        self._property_changed("components")
+        self.__components = value
 
     @property
     def date(self) -> WorkspaceDate:
@@ -1659,8 +1602,8 @@ class WorkspaceParameters(Base):
 
     @date.setter
     def date(self, value: WorkspaceDate):
-        self._property_changed('date')
-        self.__date = value        
+        self._property_changed("date")
+        self.__date = value
 
     @property
     def disclaimer(self) -> str:
@@ -1669,8 +1612,8 @@ class WorkspaceParameters(Base):
 
     @disclaimer.setter
     def disclaimer(self, value: str):
-        self._property_changed('disclaimer')
-        self.__disclaimer = value        
+        self._property_changed("disclaimer")
+        self.__disclaimer = value
 
     @property
     def layout(self) -> str:
@@ -1679,8 +1622,8 @@ class WorkspaceParameters(Base):
 
     @layout.setter
     def layout(self, value: str):
-        self._property_changed('layout')
-        self.__layout = value        
+        self._property_changed("layout")
+        self.__layout = value
 
     @property
     def maintainers(self) -> Tuple[str, ...]:
@@ -1689,8 +1632,8 @@ class WorkspaceParameters(Base):
 
     @maintainers.setter
     def maintainers(self, value: Tuple[str, ...]):
-        self._property_changed('maintainers')
-        self.__maintainers = value        
+        self._property_changed("maintainers")
+        self.__maintainers = value
 
     @property
     def tabs(self) -> Tuple[WorkspaceTab, ...]:
@@ -1699,12 +1642,12 @@ class WorkspaceParameters(Base):
 
     @tabs.setter
     def tabs(self, value: Tuple[WorkspaceTab, ...]):
-        self._property_changed('tabs')
-        self.__tabs = value        
+        self._property_changed("tabs")
+        self.__tabs = value
 
 
 class Workspace(Base):
-        
+
     """A market workspace object"""
 
     @camel_case_translate
@@ -1724,8 +1667,8 @@ class Workspace(Base):
         entitlements: Entitlements = None,
         folder_name: str = None,
         description: str = None,
-        children_aliases: Tuple[str, ...] = None
-    ):        
+        children_aliases: Tuple[str, ...] = None,
+    ):
         super().__init__()
         self.__id = id_
         self.alias = alias
@@ -1750,8 +1693,8 @@ class Workspace(Base):
 
     @id.setter
     def id(self, value: str):
-        self._property_changed('id')
-        self.__id = value        
+        self._property_changed("id")
+        self.__id = value
 
     @property
     def alias(self) -> str:
@@ -1760,8 +1703,8 @@ class Workspace(Base):
 
     @alias.setter
     def alias(self, value: str):
-        self._property_changed('alias')
-        self.__alias = value        
+        self._property_changed("alias")
+        self.__alias = value
 
     @property
     def name(self) -> str:
@@ -1770,8 +1713,8 @@ class Workspace(Base):
 
     @name.setter
     def name(self, value: str):
-        self._property_changed('name')
-        self.__name = value        
+        self._property_changed("name")
+        self.__name = value
 
     @property
     def type(self) -> Union[WorkspaceType, str]:
@@ -1780,8 +1723,8 @@ class Workspace(Base):
 
     @type.setter
     def type(self, value: Union[WorkspaceType, str]):
-        self._property_changed('type')
-        self.__type = get_enum_value(WorkspaceType, value)        
+        self._property_changed("type")
+        self.__type = get_enum_value(WorkspaceType, value)
 
     @property
     def tags(self) -> Tuple[str, ...]:
@@ -1790,8 +1733,8 @@ class Workspace(Base):
 
     @tags.setter
     def tags(self, value: Tuple[str, ...]):
-        self._property_changed('tags')
-        self.__tags = value        
+        self._property_changed("tags")
+        self.__tags = value
 
     @property
     def parameters(self) -> WorkspaceParameters:
@@ -1800,8 +1743,8 @@ class Workspace(Base):
 
     @parameters.setter
     def parameters(self, value: WorkspaceParameters):
-        self._property_changed('parameters')
-        self.__parameters = value        
+        self._property_changed("parameters")
+        self.__parameters = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -1810,8 +1753,8 @@ class Workspace(Base):
 
     @created_time.setter
     def created_time(self, value: datetime.datetime):
-        self._property_changed('created_time')
-        self.__created_time = value        
+        self._property_changed("created_time")
+        self.__created_time = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -1820,8 +1763,8 @@ class Workspace(Base):
 
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
-        self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self._property_changed("last_updated_time")
+        self.__last_updated_time = value
 
     @property
     def created_by_id(self) -> str:
@@ -1830,8 +1773,8 @@ class Workspace(Base):
 
     @created_by_id.setter
     def created_by_id(self, value: str):
-        self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self._property_changed("created_by_id")
+        self.__created_by_id = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -1840,8 +1783,8 @@ class Workspace(Base):
 
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
-        self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self._property_changed("last_updated_by_id")
+        self.__last_updated_by_id = value
 
     @property
     def owner_id(self) -> str:
@@ -1850,8 +1793,8 @@ class Workspace(Base):
 
     @owner_id.setter
     def owner_id(self, value: str):
-        self._property_changed('owner_id')
-        self.__owner_id = value        
+        self._property_changed("owner_id")
+        self.__owner_id = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -1860,8 +1803,8 @@ class Workspace(Base):
 
     @entitlements.setter
     def entitlements(self, value: Entitlements):
-        self._property_changed('entitlements')
-        self.__entitlements = value        
+        self._property_changed("entitlements")
+        self.__entitlements = value
 
     @property
     def folder_name(self) -> str:
@@ -1870,8 +1813,8 @@ class Workspace(Base):
 
     @folder_name.setter
     def folder_name(self, value: str):
-        self._property_changed('folder_name')
-        self.__folder_name = value        
+        self._property_changed("folder_name")
+        self.__folder_name = value
 
     @property
     def description(self) -> str:
@@ -1880,8 +1823,8 @@ class Workspace(Base):
 
     @description.setter
     def description(self, value: str):
-        self._property_changed('description')
-        self.__description = value        
+        self._property_changed("description")
+        self.__description = value
 
     @property
     def children_aliases(self) -> Tuple[str, ...]:
@@ -1890,5 +1833,5 @@ class Workspace(Base):
 
     @children_aliases.setter
     def children_aliases(self, value: Tuple[str, ...]):
-        self._property_changed('children_aliases')
-        self.__children_aliases = value        
+        self._property_changed("children_aliases")
+        self.__children_aliases = value

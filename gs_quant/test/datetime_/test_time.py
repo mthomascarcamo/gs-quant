@@ -19,10 +19,10 @@ from gs_quant.datetime import *
 
 def test_time_difference_as_string():
     check_map = {
-        '4 Seconds': np.timedelta64(4, 's'),
-        '1 Minute 5 Seconds': np.timedelta64(65, 's'),
-        '1 Year': np.timedelta64(int(SECS_IN_YEAR), 's'),
-        '1 Day 1 Minute 5 Seconds': np.timedelta64(86465, 's')
+        "4 Seconds": np.timedelta64(4, "s"),
+        "1 Minute 5 Seconds": np.timedelta64(65, "s"),
+        "1 Year": np.timedelta64(int(SECS_IN_YEAR), "s"),
+        "1 Day 1 Minute 5 Seconds": np.timedelta64(86465, "s"),
     }
 
     for expected, input in check_map.items():

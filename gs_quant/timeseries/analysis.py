@@ -18,6 +18,7 @@ import re
 
 from gs_quant.datetime import relative_date_add
 from gs_quant.timeseries.datetime import *
+
 from .helper import plot_function
 
 """
@@ -233,7 +234,7 @@ def lag(x: pd.Series, obs: Union[Window, int, str] = 1, mode: LagMode = LagMode.
         end = x.index[-1]
         y = x.copy()  # avoid mutating the provided series
 
-        match = re.fullmatch('(\\d+)y', obs)
+        match = re.fullmatch("(\\d+)y", obs)
         if match:
             y.index += pd.DateOffset(years=int(match.group(1)))
             y = y.groupby(y.index).first()
@@ -244,15 +245,15 @@ def lag(x: pd.Series, obs: Union[Window, int, str] = 1, mode: LagMode = LagMode.
             return y
         return y[:end]
 
-    obs = getattr(obs, 'w', obs)
+    obs = getattr(obs, "w", obs)
     # Determine how we want to handle observations prior to start date
     if mode == LagMode.EXTEND:
-        if x.index.resolution != 'day':
-            raise MqValueError(f'unable to extend index with resolution {x.index.resolution}')
-        kwargs = {'periods': abs(obs) + 1, 'freq': 'D'}
+        if x.index.resolution != "day":
+            raise MqValueError(f"unable to extend index with resolution {x.index.resolution}")
+        kwargs = {"periods": abs(obs) + 1, "freq": "D"}
         if obs > 0:
-            kwargs['start'] = x.index[-1]
+            kwargs["start"] = x.index[-1]
         else:
-            kwargs['end'] = x.index[0]
+            kwargs["end"] = x.index[0]
         x = x.reindex(x.index.union(pd.date_range(**kwargs)))
     return x.shift(obs)

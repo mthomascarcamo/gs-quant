@@ -15,11 +15,10 @@ under the License.
 """
 from typing import Mapping
 
-from gs_quant.target.risk import MarketDataPattern, MarketDataShock,\
-    MarketDataPatternAndShock, MarketDataShockBasedScenario as __MarketDataShockBasedScenario
+from gs_quant.target.risk import MarketDataPattern, MarketDataPatternAndShock, MarketDataShock
+from gs_quant.target.risk import MarketDataShockBasedScenario as __MarketDataShockBasedScenario
 
 
 class MarketDataShockBasedScenario(__MarketDataShockBasedScenario):
-
     def __init__(self, shocks: Mapping[MarketDataPattern, MarketDataShock]):
         super().__init__(tuple(MarketDataPatternAndShock(p, s) for p, s in shocks.items()))

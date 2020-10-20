@@ -14,8 +14,8 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from typing import Union, Iterable
 import datetime
+from typing import Iterable, Union
 
 from gs_quant.backtests.backtest_utils import *
 from gs_quant.backtests.generic_engine import BackTest, ScalingPortfolio
@@ -47,7 +47,7 @@ class Action(object):
         self._risk = None
         global action_count
         if name is None:
-            self._name = 'Action{}'.format(action_count)
+            self._name = "Action{}".format(action_count)
             action_count += 1
         else:
             self._name = name
@@ -59,7 +59,7 @@ class Action(object):
         :param state:
         :return:
         """
-        raise RuntimeError('apply_action must be implemented by subclass')
+        raise RuntimeError("apply_action must be implemented by subclass")
 
     @property
     def calc_type(self):
@@ -71,7 +71,12 @@ class Action(object):
 
 
 class AddTradeAction(Action):
-    def __init__(self, priceables: Union[Priceable, Iterable[Priceable]], trade_duration: str = None, name: str = None):
+    def __init__(
+        self,
+        priceables: Union[Priceable, Iterable[Priceable]],
+        trade_duration: str = None,
+        name: str = None,
+    ):
         """
         create an action which adds a trade when triggered.  The trades are resolved on the trigger date (state) and
         last until the trade_duration if specified or for all future dates if not.
@@ -86,9 +91,9 @@ class AddTradeAction(Action):
         self._trade_duration = trade_duration
         for i, p in enumerate(self._priceables):
             if p.name is None:
-                p.name = '{}_Priceable{}'.format(self._name, i)
+                p.name = "{}_Priceable{}".format(self._name, i)
             else:
-                p.name = '{}_{}'.format(self._name, p.name)
+                p.name = "{}_{}".format(self._name, p.name)
 
     @property
     def priceables(self):
@@ -112,8 +117,11 @@ class AddTradeAction(Action):
         for s in backtest.states:
             pos = []
             for create_date, portfolio in f.items():
-                pos += [inst for inst in portfolio.result().instruments
-                        if get_final_date(inst, create_date, self.trade_duration) >= s >= create_date]
+                pos += [
+                    inst
+                    for inst in portfolio.result().instruments
+                    if get_final_date(inst, create_date, self.trade_duration) >= s >= create_date
+                ]
             if len(pos) > 0:
                 backtest.portfolio_dict[s].append(pos)
 
@@ -121,8 +129,14 @@ class AddTradeAction(Action):
 
 
 class HedgeAction(Action):
-    def __init__(self, risk, priceables: Priceable, trade_duration: str = None, risks_on_final_day: bool = False,
-                 name: str = None):
+    def __init__(
+        self,
+        risk,
+        priceables: Priceable,
+        trade_duration: str = None,
+        risks_on_final_day: bool = False,
+        name: str = None,
+    ):
         super().__init__(name)
         self._calc_type = CalcType.semi_path_dependent
         self._priceable = priceables
@@ -130,9 +144,9 @@ class HedgeAction(Action):
         self._trade_duration = trade_duration
         self._risks_on_final_day = risks_on_final_day
         if self._priceable.name is None:
-            self._priceable.name = '{}_Pricable{}'.format(self._name, 0)
+            self._priceable.name = "{}_Pricable{}".format(self._name, 0)
         else:
-            self._priceable.name = '{}_{}'.format(self._name, self._priceable.name)
+            self._priceable.name = "{}_{}".format(self._name, self._priceable.name)
 
     @property
     def trade_duration(self):
@@ -145,9 +159,13 @@ class HedgeAction(Action):
             f = Portfolio(make_list(self._priceable)).resolve(in_place=False)
 
         for create_date, portfolio in f.result().items():
-            active_dates = [s for s in backtest.states if get_final_date(portfolio.instruments[0], create_date,
-                                                                         self.trade_duration) >= s >= create_date]
+            active_dates = [
+                s
+                for s in backtest.states
+                if get_final_date(portfolio.instruments[0], create_date, self.trade_duration) >= s >= create_date
+            ]
             backtest.scaling_portfolios[create_date].append(
-                ScalingPortfolio(trade=portfolio.instruments[0], dates=active_dates, risk=self.risk))
+                ScalingPortfolio(trade=portfolio.instruments[0], dates=active_dates, risk=self.risk)
+            )
 
         return backtest

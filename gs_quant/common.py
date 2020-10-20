@@ -14,11 +14,25 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import BusinessDayConvention, BuySell, Currency, DayCountFraction, AssetClass, AssetType,\
-    OptionStyle, OptionSettlementMethod, OptionType, PayReceive, PricingLocation, SwapClearingHouse, SwapSettlement, \
-    XRef
-from gs_quant.target.risk import CountryCode
 from enum import Enum
+
+from gs_quant.target.common import (
+    AssetClass,
+    AssetType,
+    BusinessDayConvention,
+    BuySell,
+    Currency,
+    DayCountFraction,
+    OptionSettlementMethod,
+    OptionStyle,
+    OptionType,
+    PayReceive,
+    PricingLocation,
+    SwapClearingHouse,
+    SwapSettlement,
+    XRef,
+)
+from gs_quant.target.risk import CountryCode
 
 
 class PositionType(Enum):

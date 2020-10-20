@@ -14,14 +14,16 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from dateutil.relativedelta import relativedelta as rdelta
 from functools import reduce
 
+from dateutil.relativedelta import relativedelta as rdelta
+
 from gs_quant.timeseries.helper import _create_enum
+
 from .statistics import *
 
-RebalFreq = _create_enum('RebalFreq', ['Daily', 'Monthly'])
-ReturnType = _create_enum('ReturnType', ['excess_return'])
+RebalFreq = _create_enum("RebalFreq", ["Daily", "Monthly"])
+ReturnType = _create_enum("ReturnType", ["excess_return"])
 
 
 @plot_function
@@ -69,15 +71,12 @@ def basket(
     if len(weights) != num_assets or len(weights) != len(costs):
         raise ValueError("Series, weights and costs must have the same length.")
 
-    # For all inputs which are Pandas series, get the intersection of their calendars
+    # For all inputs which are Pandas series, get the intersection of their
+    # calendars
     cal = pd.DatetimeIndex(
         reduce(
             np.intersect1d,
-            (
-                curve.index
-                for curve in series + weights + costs
-                if isinstance(curve, pd.Series)
-            ),
+            (curve.index for curve in series + weights + costs if isinstance(curve, pd.Series)),
         )
     )
 
@@ -102,8 +101,14 @@ def basket(
 
     # Initialize backtest
     output.values[0] = 100
-    units.values[0, ] = (
-        output.values[0] * weights.values[0, ] / series.values[0, ]
+    units.values[0,] = (
+        output.values[0]
+        * weights.values[
+            0,
+        ]
+        / series.values[
+            0,
+        ]
     )
 
     # Run backtest
@@ -111,29 +116,62 @@ def basket(
     for i, date in enumerate(cal[1:], 1):
         # Update performance
         output.values[i] = output.values[i - 1] + np.dot(
-            units.values[i - 1, ], series.values[i, ] - series.values[i - 1, ]
+            units.values[
+                i - 1,
+            ],
+            series.values[
+                i,
+            ]
+            - series.values[
+                i - 1,
+            ],
         )
 
         # Rebalance on rebal_dates
         if date in rebal_dates:
             # Compute costs
             actual_weights = (
-                weights.values[prev_rebal, ] *
-                (series.values[i, ] / series.values[prev_rebal, ]) *
-                (output.values[prev_rebal] / output.values[i])
+                weights.values[
+                    prev_rebal,
+                ]
+                * (
+                    series.values[
+                        i,
+                    ]
+                    / series.values[
+                        prev_rebal,
+                    ]
+                )
+                * (output.values[prev_rebal] / output.values[i])
             )
             output.values[i] -= (
-                np.dot(costs.values[i, ], np.abs(weights.values[i, ] - actual_weights)) *
-                output.values[i]
+                np.dot(
+                    costs.values[
+                        i,
+                    ],
+                    np.abs(
+                        weights.values[
+                            i,
+                        ]
+                        - actual_weights
+                    ),
+                )
+                * output.values[i]
             )
 
             # Rebalance
-            units.values[i, ] = (
-                output.values[i] * weights.values[i, ] / series.values[i, ]
+            units.values[i,] = (
+                output.values[i]
+                * weights.values[
+                    i,
+                ]
+                / series.values[
+                    i,
+                ]
             )
             prev_rebal = i
         else:
-            units.values[i, ] = units.values[
+            units.values[i,] = units.values[
                 i - 1,
             ]
 

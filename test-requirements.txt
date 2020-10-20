@@ -1,0 +1,10 @@
+pylint
+pytest
+pytest-cov
+flake8
+mock
+requests-mock
+black
+isort
+autopep8
+testfixtures

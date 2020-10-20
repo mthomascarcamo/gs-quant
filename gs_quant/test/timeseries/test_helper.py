@@ -15,25 +15,43 @@ under the License.
 """
 
 from enum import IntEnum
+
 import pandas as pd
 import pytest
 
 import gs_quant.timeseries as ts
-from gs_quant.timeseries.helper import _create_int_enum, plot_function, plot_measure, plot_method, normalize_window, \
-    Window, apply_ramp
+from gs_quant.timeseries.helper import (
+    Window,
+    _create_int_enum,
+    apply_ramp,
+    normalize_window,
+    plot_function,
+    plot_measure,
+    plot_method,
+)
 
 # TODO test the instance of IntEnum when we have any.
 
-WeekDay = _create_int_enum('WeekDay', {'SUNDAY': 1, 'Monday': 2, 'TUESDAY': 3,
-                                       'WEDNESDAY': 4, 'THURSDAY': 5, 'Friday': 6, 'SATURDAY': 7})
+WeekDay = _create_int_enum(
+    "WeekDay",
+    {
+        "SUNDAY": 1,
+        "Monday": 2,
+        "TUESDAY": 3,
+        "WEDNESDAY": 4,
+        "THURSDAY": 5,
+        "Friday": 6,
+        "SATURDAY": 7,
+    },
+)
 
 
 def test_int_enum():
-    assert ['a', 'b', 'c'][WeekDay.MONDAY] == 'c'
+    assert ["a", "b", "c"][WeekDay.MONDAY] == "c"
 
     assert len(list(WeekDay)) == 7
     assert len(WeekDay) == 7
-    target = 'SUNDAY MONDAY TUESDAY WEDNESDAY THURSDAY FRIDAY SATURDAY'
+    target = "SUNDAY MONDAY TUESDAY WEDNESDAY THURSDAY FRIDAY SATURDAY"
     target = target.split()
     for i, weekday in enumerate(target, 1):
         e = WeekDay(i)
@@ -47,7 +65,7 @@ def pf():
     pass
 
 
-@plot_measure(asset_type=('abc',))
+@plot_measure(asset_type=("abc",))
 def pm():
     pass
 
@@ -62,7 +80,7 @@ def test_decorators():
     assert pm.plot_measure
     assert pmt.plot_method
     assert pm.asset_class is None
-    assert pm.asset_type == ('abc',)
+    assert pm.asset_type == ("abc",)
     assert pmt(1, real_time=True) == 1
 
 
@@ -125,7 +143,7 @@ def test_normalize_window_handles_ramp_of_size_zero():
 
 def test_normalize_window_str():
     x = ts.generate_series(10)
-    w = normalize_window(x, Window('1w', '2d'))
+    w = normalize_window(x, Window("1w", "2d"))
     assert w.w == pd.DateOffset(weeks=1)
     assert w.r == pd.DateOffset(days=2)
 
@@ -154,7 +172,7 @@ def test_apply_ramp_with_window_greater_than_series_length():
 
 
 def test_apply_ramp_dateoffset():
-    x = pd.Series(range(10), index=pd.bdate_range('2020-02-17', freq='b', periods=10))
+    x = pd.Series(range(10), index=pd.bdate_range("2020-02-17", freq="b", periods=10))
     y = apply_ramp(x, Window(pd.DateOffset(weeks=1), pd.DateOffset(days=1)))
     assert len(y) == 9
 

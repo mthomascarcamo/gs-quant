@@ -18,19 +18,17 @@ by the Federal Reserve Bank of St. Louis. FRED terms of use
 available at https://research.stlouisfed.org/docs/api/terms_of_use.html
 """
 
+import datetime as dt
+import textwrap
+from dataclasses import asdict, replace
 from typing import Iterable, Optional, Union
 
 import pandas as pd
-import datetime as dt
-import textwrap
-from gs_quant.api.utils import handle_proxy
-
 from requests.exceptions import HTTPError
-
-from dataclasses import asdict, replace
 
 from gs_quant.api.data import DataApi
 from gs_quant.api.fred.fred_query import FredQuery
+from gs_quant.api.utils import handle_proxy
 
 """
 Fred Data API that provides functions to query the Fred dataset.
@@ -41,26 +39,30 @@ http://research.stlouisfed.org/fred2/
 
 
 class FredDataApi(DataApi):
-    earliest_realtime_start = '1776-07-04'
-    latest_realtime_end = '9999-12-31'
-    root_url = 'https://api.stlouisfed.org/fred/series/observations'
+    earliest_realtime_start = "1776-07-04"
+    latest_realtime_end = "9999-12-31"
+    root_url = "https://api.stlouisfed.org/fred/series/observations"
 
     def __init__(self, api_key=None):
         if api_key is not None:
             self.api_key = api_key
         else:
-            raise ValueError(textwrap.dedent("""
+            raise ValueError(
+                textwrap.dedent(
+                    """
                     Please pass a string with your API key. You can sign up for a free api key on the Fred website at
-                    http://research.stlouisfed.org/fred2/"""))
+                    http://research.stlouisfed.org/fred2/"""
+                )
+            )
 
     def build_query(
-            self,
-            start: Optional[Union[dt.date, dt.datetime]] = None,
-            end: Optional[Union[dt.date, dt.datetime]] = None,
-            as_of: Optional[dt.datetime] = None,
-            since: Optional[dt.datetime] = None,
-            fields: Optional[Iterable[str]] = None,
-            **kwargs
+        self,
+        start: Optional[Union[dt.date, dt.datetime]] = None,
+        end: Optional[Union[dt.date, dt.datetime]] = None,
+        as_of: Optional[dt.datetime] = None,
+        since: Optional[dt.datetime] = None,
+        fields: Optional[Iterable[str]] = None,
+        **kwargs
     ) -> FredQuery:
         """
         Builds a FRED URL to query.
@@ -75,10 +77,15 @@ class FredDataApi(DataApi):
         """
 
         if start is not None and end is not None:
-            if type(start) != type(end):
-                raise ValueError('Start and end types must match!')
+            if not isinstance(start, type(end)):
+                raise ValueError("Start and end types must match!")
 
-        request = FredQuery(observation_start=start, observation_end=end, realtime_end=as_of, realtime_start=since)
+        request = FredQuery(
+            observation_start=start,
+            observation_end=end,
+            realtime_end=as_of,
+            realtime_start=since,
+        )
         return request
 
     def query_data(self, query: FredQuery, dataset_id: str, asset_id_type: str = None) -> pd.Series:
@@ -106,7 +113,7 @@ class FredDataApi(DataApi):
         """
 
         data = self.query_data(query, dataset_id)
-        return data.last('1D')
+        return data.last("1D")
 
     @staticmethod
     def __handle_response(response: str) -> pd.Series:
@@ -118,15 +125,15 @@ class FredDataApi(DataApi):
             response.raise_for_status()
             json_data = response.json()
         except HTTPError:
-            raise ValueError(response.json()['error_message'])
-        if not len(json_data['observations']):
-            raise ValueError('No data exists for {} for the provided parameters... '.format(id))
+            raise ValueError(response.json()["error_message"])
+        if not len(json_data["observations"]):
+            raise ValueError("No data exists for {} for the provided parameters... ".format(id))
 
-        data = pd.DataFrame(json_data['observations'])[['date', 'value']]
-        data = data[data.value != '.']
-        data['date'] = pd.to_datetime(data['date'])
-        data['value'] = data['value'].astype(float)
-        data = data.set_index('date')['value']
+        data = pd.DataFrame(json_data["observations"])[["date", "value"]]
+        data = data[data.value != "."]
+        data["date"] = pd.to_datetime(data["date"])
+        data["value"] = data["value"].astype(float)
+        data = data.set_index("date")["value"]
         data = data.sort_index()
         return data
 

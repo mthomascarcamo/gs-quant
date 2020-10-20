@@ -15,7 +15,9 @@ under the License.
 """
 
 import datetime as dt
+
 from pytest import approx
+
 from gs_quant.datetime import *
 
 
@@ -24,9 +26,9 @@ def test_has_feb_29():
     assert not has_feb_29(dt.date(2019, 1, 1), dt.date(2019, 12, 31))
     assert has_feb_29(dt.date(2020, 1, 1), dt.date(2020, 12, 31))
     assert has_feb_29(dt.date(2020, 2, 28), dt.date(2020, 3, 31))
-    assert not has_feb_29(dt.date(2020, 2, 29), dt.date(2020, 3, 31))   # first date is exclusive
+    assert not has_feb_29(dt.date(2020, 2, 29), dt.date(2020, 3, 31))  # first date is exclusive
     assert not has_feb_29(dt.date(2020, 1, 1), dt.date(2020, 2, 28))
-    assert has_feb_29(dt.date(2020, 1, 1), dt.date(2020, 2, 29))        # last date is inclusive
+    assert has_feb_29(dt.date(2020, 1, 1), dt.date(2020, 2, 29))  # last date is inclusive
     assert has_feb_29(dt.date(2008, 1, 1), dt.date(2020, 12, 31))
 
 
@@ -53,5 +55,6 @@ def test_day_count_fraction():
     assert day_count_fraction(start, end, DayCountConvention.ACTUAL_365L) == approx(2.093150684932)
 
     # Feb 29 is within range, so should use 366
-    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_365L, PaymentFrequency.ANNUALLY) == \
-        approx(2.087431693989)
+    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_365L, PaymentFrequency.ANNUALLY) == approx(
+        2.087431693989
+    )

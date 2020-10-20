@@ -16,6 +16,7 @@ under the License.
 
 import pytest
 from pandas.util.testing import assert_series_equal
+
 from gs_quant.timeseries import *
 
 
@@ -57,7 +58,20 @@ def test_basket():
         datetime.datetime(2019, 2, 6),
     ]
     mreb = pd.Series(
-        [100.0, 101, 103.02, 100.9596, 100.9596, 102.978792,
-         100.0, 101, 103.02, 100.9596, 100.9596, 102.978792],
-        index=dates)
+        [
+            100.0,
+            101,
+            103.02,
+            100.9596,
+            100.9596,
+            102.978792,
+            100.0,
+            101,
+            103.02,
+            100.9596,
+            100.9596,
+            102.978792,
+        ],
+        index=dates,
+    )
     assert_series_equal(mreb, basket([mreb], [1], rebal_freq=RebalFreq.MONTHLY))

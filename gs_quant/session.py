@@ -13,32 +13,33 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
-from abc import abstractmethod
-from configparser import ConfigParser
-import backoff
-import certifi
-from enum import Enum, auto, unique
 import inspect
 import itertools
 import json
-import msgpack
 import os
+import ssl
+from abc import abstractmethod
+from configparser import ConfigParser
+from enum import Enum, auto, unique
+from typing import List, Optional, Tuple, Union
+
+import backoff
+import certifi
+import msgpack
 import pandas as pd
 import requests
 import requests.adapters
 import requests.cookies
-import ssl
-from typing import List, Optional, Tuple, Union
 import websockets
+
+from gs_quant import version as APP_VERSION
 from gs_quant.base import Base
 from gs_quant.context_base import ContextBase
-from gs_quant.errors import MqError, MqRequestError, MqAuthenticationError, MqUninitialisedError
+from gs_quant.errors import MqAuthenticationError, MqError, MqRequestError, MqUninitialisedError
 from gs_quant.json_encoder import JSONEncoder, default
-from gs_quant import version as APP_VERSION
 
-
-API_VERSION = 'v1'
-DEFAULT_APPLICATION = 'gs-quant'
+API_VERSION = "v1"
+DEFAULT_APPLICATION = "gs-quant"
 DEFAULT_TIMEOUT = 65
 
 
@@ -55,27 +56,34 @@ class GsSession(ContextBase):
     __ssl_ctx = None
 
     class Scopes(Enum):
-        READ_CONTENT = 'read_content'
-        READ_FINANCIAL_DATA = 'read_financial_data'
-        READ_PRODUCT_DATA = 'read_product_data'
-        READ_USER_PROFILE = 'read_user_profile'
-        MODIFY_CONTENT = 'modify_content'
-        MODIFY_FINANCIAL_DATA = 'modify_financial_data'
-        MODIFY_PRODUCT_DATA = 'modify_product_data'
-        MODIFY_USER_PROFILE = 'modify_user_profile'
-        RUN_ANALYTICS = 'run_analytics'
-        EXECUTE_TRADES = 'execute_trades'
+        READ_CONTENT = "read_content"
+        READ_FINANCIAL_DATA = "read_financial_data"
+        READ_PRODUCT_DATA = "read_product_data"
+        READ_USER_PROFILE = "read_user_profile"
+        MODIFY_CONTENT = "modify_content"
+        MODIFY_FINANCIAL_DATA = "modify_financial_data"
+        MODIFY_PRODUCT_DATA = "modify_product_data"
+        MODIFY_USER_PROFILE = "modify_user_profile"
+        RUN_ANALYTICS = "run_analytics"
+        EXECUTE_TRADES = "execute_trades"
 
         @classmethod
         def get_default(cls):
             return (
                 cls.READ_CONTENT.value,
                 cls.READ_PRODUCT_DATA.value,
-                cls.READ_FINANCIAL_DATA.value
+                cls.READ_FINANCIAL_DATA.value,
             )
 
-    def __init__(self, domain: str, api_version: str = API_VERSION, application: str = DEFAULT_APPLICATION, verify=True,
-                 http_adapter: requests.adapters.HTTPAdapter = None, application_version=APP_VERSION):
+    def __init__(
+        self,
+        domain: str,
+        api_version: str = API_VERSION,
+        application: str = DEFAULT_APPLICATION,
+        verify=True,
+        http_adapter: requests.adapters.HTTPAdapter = None,
+        application_version=APP_VERSION,
+    ):
         super().__init__()
         self._session = None
         self.domain = domain
@@ -85,12 +93,16 @@ class GsSession(ContextBase):
         self.http_adapter = requests.adapters.HTTPAdapter(pool_maxsize=100) if http_adapter is None else http_adapter
         self.application_version = application_version
 
-    @backoff.on_exception(lambda: backoff.expo(factor=2),
-                          (requests.exceptions.HTTPError, requests.exceptions.Timeout),
-                          max_tries=5)
-    @backoff.on_predicate(lambda: backoff.expo(factor=2),
-                          lambda x: x.status_code in (500, 502, 503, 504),
-                          max_tries=5)
+    @backoff.on_exception(
+        lambda: backoff.expo(factor=2),
+        (requests.exceptions.HTTPError, requests.exceptions.Timeout),
+        max_tries=5,
+    )
+    @backoff.on_predicate(
+        lambda: backoff.expo(factor=2),
+        lambda x: x.status_code in (500, 502, 503, 504),
+        max_tries=5,
+    )
     @abstractmethod
     def _authenticate(self):
         raise NotImplementedError("Must implement _authenticate")
@@ -108,9 +120,9 @@ class GsSession(ContextBase):
         if not self._session:
             self._session = requests.Session()
             if self.http_adapter is not None:
-                self._session.mount('https://', self.http_adapter)
+                self._session.mount("https://", self.http_adapter)
             self._session.verify = self.verify
-            self._session.headers.update({'X-Application': self.application})
+            self._session.headers.update({"X-Application": self.application})
             self._authenticate()
 
     def close(self):
@@ -148,135 +160,197 @@ class GsSession(ContextBase):
                 return cls(**results)
 
     def __request(
-            self,
-            method: str,
-            path: str,
-            payload: Optional[Union[dict, str, Base, pd.DataFrame]] = None,
-            request_headers: Optional[dict] = None,
-            cls: Optional[type] = None,
-            try_auth=True,
-            include_version: bool = True,
-            timeout: int = DEFAULT_TIMEOUT
+        self,
+        method: str,
+        path: str,
+        payload: Optional[Union[dict, str, Base, pd.DataFrame]] = None,
+        request_headers: Optional[dict] = None,
+        cls: Optional[type] = None,
+        try_auth=True,
+        include_version: bool = True,
+        timeout: int = DEFAULT_TIMEOUT,
     ) -> Union[Base, tuple, dict]:
         is_dataframe = isinstance(payload, pd.DataFrame)
         if not is_dataframe:
             payload = payload or {}
 
-        url = '{}{}{}'.format(self.domain, '/' + self.api_version if include_version else '', path)
+        url = "{}{}{}".format(self.domain, "/" + self.api_version if include_version else "", path)
 
-        kwargs = {
-            'timeout': timeout
-        }
-        if method in ['GET', 'DELETE']:
-            kwargs['params'] = payload
-        elif method in ['POST', 'PUT']:
+        kwargs = {"timeout": timeout}
+        if method in ["GET", "DELETE"]:
+            kwargs["params"] = payload
+        elif method in ["POST", "PUT"]:
             headers = self._session.headers.copy()
 
             if request_headers:
                 headers.update(request_headers)
 
-            if 'Content-Type' not in headers:
-                headers.update({'Content-Type': 'application/json; charset=utf-8'})
+            if "Content-Type" not in headers:
+                headers.update({"Content-Type": "application/json; charset=utf-8"})
 
-            use_msgpack = headers.get('Content-Type') == 'application/x-msgpack'
-            kwargs['headers'] = headers
+            use_msgpack = headers.get("Content-Type") == "application/x-msgpack"
+            kwargs["headers"] = headers
 
             if is_dataframe or payload:
-                kwargs['data'] = payload if isinstance(payload, str) else\
-                    msgpack.dumps(payload, default=default) if use_msgpack else json.dumps(payload, cls=JSONEncoder)
+                kwargs["data"] = (
+                    payload
+                    if isinstance(payload, str)
+                    else msgpack.dumps(payload, default=default)
+                    if use_msgpack
+                    else json.dumps(payload, cls=JSONEncoder)
+                )
         else:
-            raise MqError('not implemented')
+            raise MqError("not implemented")
 
         response = self._session.request(method, url, **kwargs)
         if response.status_code == 401:
             # Expired token or other authorization issue
             if not try_auth:
-                raise MqRequestError(response.status_code, response.text, context='{} {}'.format(method, url))
+                raise MqRequestError(
+                    response.status_code,
+                    response.text,
+                    context="{} {}".format(method, url),
+                )
             self._authenticate()
             return self.__request(method, path, payload=payload, cls=cls, try_auth=False)
         elif not 199 < response.status_code < 300:
-            raise MqRequestError(response.status_code, response.text, context='{} {}'.format(method, url))
-        elif 'Content-Type' in response.headers:
-            if 'application/x-msgpack' in response.headers['Content-Type']:
+            raise MqRequestError(response.status_code, response.text, context="{} {}".format(method, url))
+        elif "Content-Type" in response.headers:
+            if "application/x-msgpack" in response.headers["Content-Type"]:
                 res = msgpack.unpackb(response.content, raw=False)
 
                 if cls:
-                    if isinstance(res, dict) and 'results' in res:
-                        res['results'] = self.__unpack(res['results'], cls)
+                    if isinstance(res, dict) and "results" in res:
+                        res["results"] = self.__unpack(res["results"], cls)
                     else:
                         res = self.__unpack(res, cls)
 
                 return res
-            elif 'application/json' in response.headers['Content-Type']:
+            elif "application/json" in response.headers["Content-Type"]:
                 res = json.loads(response.text)
 
                 if cls:
-                    if isinstance(res, dict) and 'results' in res:
-                        res['results'] = self.__unpack(res['results'], cls)
+                    if isinstance(res, dict) and "results" in res:
+                        res["results"] = self.__unpack(res["results"], cls)
                     else:
                         res = self.__unpack(res, cls)
 
                 return res
         else:
-            return {'raw': response}
+            return {"raw": response}
 
-    def _get(self, path: str, payload: Optional[Union[dict, Base]] = None, request_headers: Optional[dict] = None,
-             cls: Optional[type] = None, include_version: bool = True,
-             timeout: int = DEFAULT_TIMEOUT) -> Union[Base, tuple, dict]:
-        return self.__request('GET', path, payload=payload, request_headers=request_headers,
-                              cls=cls, include_version=include_version, timeout=timeout)
+    def _get(
+        self,
+        path: str,
+        payload: Optional[Union[dict, Base]] = None,
+        request_headers: Optional[dict] = None,
+        cls: Optional[type] = None,
+        include_version: bool = True,
+        timeout: int = DEFAULT_TIMEOUT,
+    ) -> Union[Base, tuple, dict]:
+        return self.__request(
+            "GET",
+            path,
+            payload=payload,
+            request_headers=request_headers,
+            cls=cls,
+            include_version=include_version,
+            timeout=timeout,
+        )
 
-    def _post(self, path: str, payload: Optional[Union[dict, Base, pd.DataFrame]] = None,
-              request_headers: Optional[dict] = None, cls: Optional[type] = None,
-              include_version: bool = True, timeout: int = DEFAULT_TIMEOUT) -> Union[Base, tuple, dict]:
-        return self.__request('POST', path, payload=payload, request_headers=request_headers,
-                              cls=cls, include_version=include_version, timeout=timeout)
+    def _post(
+        self,
+        path: str,
+        payload: Optional[Union[dict, Base, pd.DataFrame]] = None,
+        request_headers: Optional[dict] = None,
+        cls: Optional[type] = None,
+        include_version: bool = True,
+        timeout: int = DEFAULT_TIMEOUT,
+    ) -> Union[Base, tuple, dict]:
+        return self.__request(
+            "POST",
+            path,
+            payload=payload,
+            request_headers=request_headers,
+            cls=cls,
+            include_version=include_version,
+            timeout=timeout,
+        )
 
-    def _delete(self, path: str, payload: Optional[Union[dict, Base]] = None, request_headers: Optional[dict]
-                = None, cls: Optional[type] = None, include_version: bool = True,
-                timeout: int = DEFAULT_TIMEOUT) -> Union[Base, tuple, dict]:
-        return self.__request('DELETE', path, payload=payload, request_headers=request_headers,
-                              cls=cls, include_version=include_version, timeout=timeout)
+    def _delete(
+        self,
+        path: str,
+        payload: Optional[Union[dict, Base]] = None,
+        request_headers: Optional[dict] = None,
+        cls: Optional[type] = None,
+        include_version: bool = True,
+        timeout: int = DEFAULT_TIMEOUT,
+    ) -> Union[Base, tuple, dict]:
+        return self.__request(
+            "DELETE",
+            path,
+            payload=payload,
+            request_headers=request_headers,
+            cls=cls,
+            include_version=include_version,
+            timeout=timeout,
+        )
 
-    def _put(self, path: str, payload: Optional[Union[dict, Base]] = None, request_headers: Optional[dict]
-             = None, cls: Optional[type] = None, include_version: bool = True,
-             timeout: int = DEFAULT_TIMEOUT) -> Union[Base, tuple, dict]:
-        return self.__request('PUT', path, payload=payload, request_headers=request_headers,
-                              cls=cls, include_version=include_version, timeout=timeout)
+    def _put(
+        self,
+        path: str,
+        payload: Optional[Union[dict, Base]] = None,
+        request_headers: Optional[dict] = None,
+        cls: Optional[type] = None,
+        include_version: bool = True,
+        timeout: int = DEFAULT_TIMEOUT,
+    ) -> Union[Base, tuple, dict]:
+        return self.__request(
+            "PUT",
+            path,
+            payload=payload,
+            request_headers=request_headers,
+            cls=cls,
+            include_version=include_version,
+            timeout=timeout,
+        )
 
     def _connect_websocket(self, path: str, headers: Optional[dict] = None):
-        url = 'ws{}{}{}'.format(self.domain[4:], '/' + self.api_version, path)
+        url = "ws{}{}{}".format(self.domain[4:], "/" + self.api_version, path)
         extra_headers = self._headers() + list((headers or {}).items())
-        return websockets.connect(url,
-                                  extra_headers=extra_headers,
-                                  max_size=2**64,
-                                  read_limit=2**64,
-                                  ssl=self.__ssl_context() if url.startswith('wss') else None)
+        return websockets.connect(
+            url,
+            extra_headers=extra_headers,
+            max_size=2 ** 64,
+            read_limit=2 ** 64,
+            ssl=self.__ssl_context() if url.startswith("wss") else None,
+        )
 
     def _headers(self):
-        return [('Cookie', 'GSSSO=' + self._session.cookies['GSSSO'])]
+        return [("Cookie", "GSSSO=" + self._session.cookies["GSSSO"])]
 
     @classmethod
     def _config_for_environment(cls, environment):
         if cls.__config is None:
             cls.__config = ConfigParser()
-            cls.__config.read(os.path.join(os.path.dirname(inspect.getfile(cls)), 'config.ini'))
+            cls.__config.read(os.path.join(os.path.dirname(inspect.getfile(cls)), "config.ini"))
 
         return cls.__config[environment]
 
     @classmethod
     def use(
-            cls,
-            environment_or_domain: Union[Environment, str] = Environment.PROD,
-            client_id: Optional[str] = None,
-            client_secret: Optional[str] = None,
-            scopes: Optional[Union[Tuple, List, str]] = (),
-            api_version: str = API_VERSION,
-            application: str = DEFAULT_APPLICATION,
-            http_adapter: requests.adapters.HTTPAdapter = None
+        cls,
+        environment_or_domain: Union[Environment, str] = Environment.PROD,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        scopes: Optional[Union[Tuple, List, str]] = (),
+        api_version: str = API_VERSION,
+        application: str = DEFAULT_APPLICATION,
+        http_adapter: requests.adapters.HTTPAdapter = None,
     ) -> None:
-        environment_or_domain = environment_or_domain.name if isinstance(environment_or_domain,
-                                                                         Environment) else environment_or_domain
+        environment_or_domain = (
+            environment_or_domain.name if isinstance(environment_or_domain, Environment) else environment_or_domain
+        )
         session = cls.get(
             environment_or_domain,
             client_id=client_id,
@@ -284,7 +358,7 @@ class GsSession(ContextBase):
             scopes=scopes,
             api_version=api_version,
             application=application,
-            http_adapter=http_adapter
+            http_adapter=http_adapter,
         )
 
         session.init()
@@ -292,22 +366,23 @@ class GsSession(ContextBase):
 
     @classmethod
     def get(
-            cls,
-            environment_or_domain: Union[Environment, str] = Environment.PROD,
-            client_id: Optional[str] = None,
-            client_secret: Optional[str] = None,
-            scopes: Optional[Union[Tuple, List, str]] = (),
-            token: str = '',
-            is_gssso: bool = False,
-            api_version: str = API_VERSION,
-            application: str = DEFAULT_APPLICATION,
-            http_adapter: requests.adapters.HTTPAdapter = None,
-            application_version: str = APP_VERSION,
-    ) -> 'GsSession':
+        cls,
+        environment_or_domain: Union[Environment, str] = Environment.PROD,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        scopes: Optional[Union[Tuple, List, str]] = (),
+        token: str = "",
+        is_gssso: bool = False,
+        api_version: str = API_VERSION,
+        application: str = DEFAULT_APPLICATION,
+        http_adapter: requests.adapters.HTTPAdapter = None,
+        application_version: str = APP_VERSION,
+    ) -> "GsSession":
         """ Return an instance of the appropriate session type for the given credentials"""
 
-        environment_or_domain = environment_or_domain.name if isinstance(environment_or_domain,
-                                                                         Environment) else environment_or_domain
+        environment_or_domain = (
+            environment_or_domain.name if isinstance(environment_or_domain, Environment) else environment_or_domain
+        )
 
         if client_id is not None:
             if isinstance(scopes, str):
@@ -315,109 +390,181 @@ class GsSession(ContextBase):
 
             scopes = tuple(set(itertools.chain(scopes, cls.Scopes.get_default())))
 
-            return OAuth2Session(environment_or_domain, client_id, client_secret, scopes, api_version=api_version,
-                                 application=application, http_adapter=http_adapter)
+            return OAuth2Session(
+                environment_or_domain,
+                client_id,
+                client_secret,
+                scopes,
+                api_version=api_version,
+                application=application,
+                http_adapter=http_adapter,
+            )
         elif token:
             if is_gssso:
                 try:
-                    return PassThroughGSSSOSession(environment_or_domain, token, api_version=api_version,
-                                                   application=application, http_adapter=http_adapter)
+                    return PassThroughGSSSOSession(
+                        environment_or_domain,
+                        token,
+                        api_version=api_version,
+                        application=application,
+                        http_adapter=http_adapter,
+                    )
                 except NameError:
-                    raise MqUninitialisedError('This option requires gs_quant_internal to be installed')
+                    raise MqUninitialisedError("This option requires gs_quant_internal to be installed")
             else:
-                return PassThroughSession(environment_or_domain, token, api_version=api_version,
-                                          application=application, http_adapter=http_adapter)
+                return PassThroughSession(
+                    environment_or_domain,
+                    token,
+                    api_version=api_version,
+                    application=application,
+                    http_adapter=http_adapter,
+                )
         else:
             try:
-                return KerberosSession(environment_or_domain, api_version=api_version, http_adapter=http_adapter,
-                                       application_version=application_version)
+                return KerberosSession(
+                    environment_or_domain,
+                    api_version=api_version,
+                    http_adapter=http_adapter,
+                    application_version=application_version,
+                )
             except NameError:
-                raise MqUninitialisedError('Must specify client_id and client_secret')
+                raise MqUninitialisedError("Must specify client_id and client_secret")
 
 
 class OAuth2Session(GsSession):
+    def __init__(
+        self,
+        environment,
+        client_id,
+        client_secret,
+        scopes,
+        api_version=API_VERSION,
+        application=DEFAULT_APPLICATION,
+        http_adapter=None,
+    ):
 
-    def __init__(self, environment, client_id, client_secret, scopes, api_version=API_VERSION,
-                 application=DEFAULT_APPLICATION, http_adapter=None):
-
-        if environment not in (Environment.PROD.name, Environment.QA.name, Environment.DEV.name):
+        if environment not in (
+            Environment.PROD.name,
+            Environment.QA.name,
+            Environment.DEV.name,
+        ):
             env_config = self._config_for_environment(Environment.DEV.name)
             url = environment
         else:
             env_config = self._config_for_environment(environment)
-            url = env_config['AppDomain']
+            url = env_config["AppDomain"]
 
-        super().__init__(url, api_version=api_version, application=application, http_adapter=http_adapter)
-        self.auth_url = env_config['AuthURL']
+        super().__init__(
+            url,
+            api_version=api_version,
+            application=application,
+            http_adapter=http_adapter,
+        )
+        self.auth_url = env_config["AuthURL"]
         self.client_id = client_id
         self.client_secret = client_secret
         self.scopes = scopes
 
-        if environment == Environment.DEV.name or url != env_config['AppDomain']:
+        if environment == Environment.DEV.name or url != env_config["AppDomain"]:
             import urllib3
+
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
             self.verify = False
 
     def _authenticate(self):
         auth_data = {
-            'grant_type': 'client_credentials',
-            'client_id': self.client_id,
-            'client_secret': self.client_secret,
-            'scope': ' '.join(self.scopes)
+            "grant_type": "client_credentials",
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "scope": " ".join(self.scopes),
         }
         reply = self._session.post(self.auth_url, data=auth_data, verify=self.verify)
         if reply.status_code != 200:
             raise MqAuthenticationError(reply.status_code, reply.text, context=self.auth_url)
 
         response = json.loads(reply.text)
-        self._session.headers.update({'Authorization': 'Bearer {}'.format(response['access_token'])})
+        self._session.headers.update({"Authorization": "Bearer {}".format(response["access_token"])})
 
     def _headers(self):
-        return [('Authorization', self._session.headers['Authorization'])]
+        return [("Authorization", self._session.headers["Authorization"])]
 
 
 class PassThroughSession(GsSession):
-
-    def __init__(self, environment: str, token, api_version=API_VERSION,
-                 application=DEFAULT_APPLICATION, http_adapter=None):
-        domain = self._config_for_environment(environment)['AppDomain']
+    def __init__(
+        self,
+        environment: str,
+        token,
+        api_version=API_VERSION,
+        application=DEFAULT_APPLICATION,
+        http_adapter=None,
+    ):
+        domain = self._config_for_environment(environment)["AppDomain"]
         verify = True
 
-        super().__init__(domain, api_version=api_version, application=application, verify=verify,
-                         http_adapter=http_adapter)
+        super().__init__(
+            domain,
+            api_version=api_version,
+            application=application,
+            verify=verify,
+            http_adapter=http_adapter,
+        )
 
         self.token = token
 
     def _authenticate(self):
-        self._session.headers.update({'Authorization': 'Bearer {}'.format(self.token)})
+        self._session.headers.update({"Authorization": "Bearer {}".format(self.token)})
 
     def _headers(self):
-        return [('Authorization', self._session.headers['Authorization'])]
+        return [("Authorization", self._session.headers["Authorization"])]
 
 
 try:
     from gs_quant_internal.kerberos.session_kerberos import KerberosSessionMixin
 
     class KerberosSession(KerberosSessionMixin, GsSession):
-
-        def __init__(self, environment_or_domain: str, api_version: str = API_VERSION,
-                     application: str = DEFAULT_APPLICATION, http_adapter: requests.adapters.HTTPAdapter = None,
-                     application_version: str = APP_VERSION):
+        def __init__(
+            self,
+            environment_or_domain: str,
+            api_version: str = API_VERSION,
+            application: str = DEFAULT_APPLICATION,
+            http_adapter: requests.adapters.HTTPAdapter = None,
+            application_version: str = APP_VERSION,
+        ):
             domain, verify = self.domain_and_verify(environment_or_domain)
-            GsSession.__init__(self, domain, api_version=api_version, application=application, verify=verify,
-                               http_adapter=http_adapter, application_version=application_version)
+            GsSession.__init__(
+                self,
+                domain,
+                api_version=api_version,
+                application=application,
+                verify=verify,
+                http_adapter=http_adapter,
+                application_version=application_version,
+            )
 
     class PassThroughGSSSOSession(KerberosSessionMixin, GsSession):
-
-        def __init__(self, environment: str, token, api_version=API_VERSION,
-                     application=DEFAULT_APPLICATION, http_adapter=None):
+        def __init__(
+            self,
+            environment: str,
+            token,
+            api_version=API_VERSION,
+            application=DEFAULT_APPLICATION,
+            http_adapter=None,
+        ):
             domain, verify = self.domain_and_verify(environment)
-            GsSession.__init__(self, domain, api_version=api_version, application=application, verify=verify,
-                               http_adapter=http_adapter)
+            GsSession.__init__(
+                self,
+                domain,
+                api_version=api_version,
+                application=application,
+                verify=verify,
+                http_adapter=http_adapter,
+            )
 
             self.token = token
 
         def _authenticate(self):
             self._handle_cookies(self.token)
+
+
 except ModuleNotFoundError:
     pass

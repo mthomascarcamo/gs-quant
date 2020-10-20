@@ -14,8 +14,8 @@ specific language governing permissions and limitations
 under the License.
 """
 from .date import *
-from .time import *
 from .gscalendar import *
 from .point import *
+from .time import *
 
-__name__ = 'datetime'
+__name__ = "datetime"

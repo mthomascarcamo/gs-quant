@@ -14,15 +14,15 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from .datetime import *
 from .algebra import *
 from .analysis import *
-from .statistics import *
+from .backtesting import *
+from .datetime import *
 from .econometrics import *
-from .technicals import *
+from .helper import *
 from .measures import *
 from .measures_rates import *
-from .helper import *
-from .backtesting import *
+from .statistics import *
+from .technicals import *
 
-__name__ = 'timeseries'
+__name__ = "timeseries"

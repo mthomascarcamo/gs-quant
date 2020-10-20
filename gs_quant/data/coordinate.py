@@ -17,13 +17,13 @@ import json
 from abc import ABCMeta
 from datetime import date, datetime
 from enum import Enum
-from typing import Union, Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple, Union
 
 import pandas as pd
 
 from .core import DataContext, DataFrequency
 from .dataset import Dataset
-from .fields import DataMeasure, DataDimension
+from .fields import DataDimension, DataMeasure
 
 DataDimensions = Dict[Union[DataDimension, str], Union[str, float]]
 DateOrDatetime = Union[date, datetime]
@@ -32,18 +32,17 @@ DateOrDatetime = Union[date, datetime]
 class BaseDataCoordinate(metaclass=ABCMeta):
     """Base class for data coordinates"""
 
-    __slots__ = ['__measure', '__dimensions']
+    __slots__ = ["__measure", "__dimensions"]
 
-    def __init__(self,
-                 measure: DataMeasure,
-                 dimensions: Optional[DataDimensions] = None):
+    def __init__(self, measure: DataMeasure, dimensions: Optional[DataDimensions] = None):
         self.__measure = measure
         # Sorted so different dimension orders doesn't matter
         if dimensions is None:
             self.__dimensions = tuple()
         else:
             self.__dimensions = tuple(
-                sorted({k.value if isinstance(k, Enum) else k: v for k, v in dimensions.items()}.items()))
+                sorted({k.value if isinstance(k, Enum) else k: v for k, v in dimensions.items()}.items())
+            )
 
     @property
     def measure(self) -> DataMeasure:
@@ -53,9 +52,11 @@ class BaseDataCoordinate(metaclass=ABCMeta):
     def dimensions(self) -> Dict:
         return dict(self.__dimensions)
 
-    def get_series(self,
-                   start: Optional[DateOrDatetime] = None,
-                   end: Optional[DateOrDatetime] = None):
+    def get_series(
+        self,
+        start: Optional[DateOrDatetime] = None,
+        end: Optional[DateOrDatetime] = None,
+    ):
         pass
 
     def set_dimensions(self, dimensions: DataDimensions):
@@ -76,13 +77,15 @@ class BaseDataCoordinate(metaclass=ABCMeta):
 class DataCoordinate(BaseDataCoordinate):
     """A coordinate which locates a given datapoint through time"""
 
-    __slots__ = ['__dataset_id', '__frequency']
+    __slots__ = ["__dataset_id", "__frequency"]
 
-    def __init__(self,
-                 measure: DataMeasure,
-                 dataset_id: Optional[str] = None,
-                 dimensions: Optional[DataDimensions] = None,
-                 frequency: Optional[DataFrequency] = None):
+    def __init__(
+        self,
+        measure: DataMeasure,
+        dataset_id: Optional[str] = None,
+        dimensions: Optional[DataDimensions] = None,
+        frequency: Optional[DataFrequency] = None,
+    ):
         """Initialize data coordinate
 
         :param dataset_id: Unique identifier for dataset
@@ -122,30 +125,44 @@ class DataCoordinate(BaseDataCoordinate):
         Equality check for two coordinates. Validates if the dataset id, data measure and dimensions are equivalent.
 
         """
-        return (self.dataset_id, self.measure, self.dimensions) == (other.dataset_id, other.measure, other.dimensions)
+        return (self.dataset_id, self.measure, self.dimensions) == (
+            other.dataset_id,
+            other.measure,
+            other.dimensions,
+        )
 
     def __hash__(self):
         return hash((self.dataset_id, self.measure, tuple(self.dimensions)))
 
     def __str__(self):
-        return f'Dataset Id: {self.dataset_id}, Measure: {self.measure.value} Dimensions: {json.dumps(self.dimensions)}'
+        return f"Dataset Id: {self.dataset_id}, Measure: {self.measure.value} Dimensions: {json.dumps(self.dimensions)}"
 
-    def get_range(self,
-                  start: Optional[DateOrDatetime] = None,
-                  end: Optional[DateOrDatetime] = None) -> Tuple[Optional[DateOrDatetime], Optional[DateOrDatetime]]:
+    def get_range(
+        self,
+        start: Optional[DateOrDatetime] = None,
+        end: Optional[DateOrDatetime] = None,
+    ) -> Tuple[Optional[DateOrDatetime], Optional[DateOrDatetime]]:
         if start is None:
-            start = DataContext.current.start_time if self.frequency is DataFrequency.REAL_TIME \
+            start = (
+                DataContext.current.start_time
+                if self.frequency is DataFrequency.REAL_TIME
                 else DataContext.current.start_date
+            )
 
         if end is None:
-            end = DataContext.current.end_time if self.frequency is DataFrequency.REAL_TIME \
+            end = (
+                DataContext.current.end_time
+                if self.frequency is DataFrequency.REAL_TIME
                 else DataContext.current.end_date
+            )
 
         return start, end
 
-    def get_series(self,
-                   start: Optional[DateOrDatetime] = None,
-                   end: Optional[DateOrDatetime] = None) -> Union[pd.Series, None]:
+    def get_series(
+        self,
+        start: Optional[DateOrDatetime] = None,
+        end: Optional[DateOrDatetime] = None,
+    ) -> Union[pd.Series, None]:
         """Get timeseries of coordinate"""
 
         if not self.dataset_id:
@@ -156,12 +173,11 @@ class DataCoordinate(BaseDataCoordinate):
 
         return dataset.get_data_series(self.measure, start=start, end=end, **self.dimensions)
 
-    def last_value(self,
-                   before: Optional[DateOrDatetime] = None) -> Union[float, None]:
+    def last_value(self, before: Optional[DateOrDatetime] = None) -> Union[float, None]:
         """Return the last available value
 
-         Returns the last value prior to to the specified date / time. If `before` argument is not provided, will
-         return the last value prior to the end date / time of the current data context
+        Returns the last value prior to to the specified date / time. If `before` argument is not provided, will
+        return the last value prior to the end date / time of the current data context
 
         """
         if not self.dataset_id:

@@ -27,10 +27,7 @@ class GsIndexApi:
     def __init__(self, marquee_id: str = None):
         self.marquee_id = marquee_id
 
-    def create(
-            self,
-            inputs: Union[CustomBasketsCreateInputs, IndicesDynamicConstructInputs]
-    ) -> CustomBasketsResponse:
+    def create(self, inputs: Union[CustomBasketsCreateInputs, IndicesDynamicConstructInputs]) -> CustomBasketsResponse:
         """
         Create a custom basket of equity stocks or ETFs
 
@@ -38,13 +35,13 @@ class GsIndexApi:
         :return: a response object containing status of create process, reportId and assetId
         """
 
-        response = GsSession.current._post('/indices', payload=inputs, cls=CustomBasketsResponse)
+        response = GsSession.current._post("/indices", payload=inputs, cls=CustomBasketsResponse)
         self.marquee_id = response.assetId
         return response
 
     def rebalance(
-            self,
-            inputs: IndicesRebalanceInputs,
+        self,
+        inputs: IndicesRebalanceInputs,
     ) -> Union[CustomBasketsResponse, ISelectResponse]:
         """
         Rebalance of indices: including iSelect and Custom Baskets
@@ -54,7 +51,7 @@ class GsIndexApi:
         """
 
         if self.marquee_id is None:
-            raise ValueError('Missing Asset Id of target index at initialization')
+            raise ValueError("Missing Asset Id of target index at initialization")
 
         asset = GsAssetApi.get_asset(self.marquee_id)
         if asset.type == AssetType.Custom_Basket or asset.type == AssetType.Research_Basket:
@@ -67,8 +64,8 @@ class GsIndexApi:
         return response
 
     def cancel_rebalance(
-            self,
-            inputs: Union[CustomBasketsRebalanceAction, ISelectActionRequest],
+        self,
+        inputs: Union[CustomBasketsRebalanceAction, ISelectActionRequest],
     ):
         """
         Cancel current pending rebalance of an index
@@ -77,14 +74,14 @@ class GsIndexApi:
         """
 
         if self.marquee_id is None:
-            raise ValueError('Missing Asset Id of target index at initialization')
+            raise ValueError("Missing Asset Id of target index at initialization")
 
         url = "/indices/{id}/rebalance/cancel".format(id=self.marquee_id)
         GsSession.current._post(url, payload=inputs)
 
     def edit(
-            self,
-            inputs: IndicesEditInputs,
+        self,
+        inputs: IndicesEditInputs,
     ) -> CustomBasketsResponse:
         """
         Edit indices
@@ -94,7 +91,7 @@ class GsIndexApi:
         """
 
         if self.marquee_id is None:
-            raise ValueError('Missing Asset Id of target index at initialization')
+            raise ValueError("Missing Asset Id of target index at initialization")
 
         url = "/indices/{id}/edit".format(id=self.marquee_id)
         response = GsSession.current._post(url, payload=inputs, cls=CustomBasketsResponse)

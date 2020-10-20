@@ -27,16 +27,15 @@ def do_not_serialise(func):
 
 
 class ContextMeta(type):
-
     @property
     @do_not_serialise
     def __path_key(cls) -> str:
-        return '{}_path'.format(cls.__name__)
+        return "{}_path".format(cls.__name__)
 
     @property
     @do_not_serialise
     def __default_key(cls) -> str:
-        return '{}_default'.format(cls.__name__)
+        return "{}_default".format(cls.__name__)
 
     @classmethod
     def default_value(mcs) -> object:
@@ -55,7 +54,7 @@ class ContextMeta(type):
         """
         current = next(iter(cls.path), cls.default)
         if current is None:
-            raise MqUninitialisedError('{} is not initialised'.format(cls.__name__))
+            raise MqUninitialisedError("{} is not initialised".format(cls.__name__))
 
         return current
 
@@ -89,7 +88,6 @@ class ContextMeta(type):
 
 
 class ContextBase(metaclass=ContextMeta):
-
     def __enter__(self):
         self._cls.push(self)
         setattr(thread_local, self.__entered_key, True)
@@ -106,7 +104,7 @@ class ContextBase(metaclass=ContextMeta):
     @property
     @do_not_serialise
     def __entered_key(self) -> str:
-        return '{}_entered'.format(id(self))
+        return "{}_entered".format(id(self))
 
     @property
     @do_not_serialise
@@ -140,7 +138,6 @@ class ContextBase(metaclass=ContextMeta):
 
 
 class ContextBaseWithDefault(ContextBase):
-
     @classmethod
     def default_value(cls) -> object:
         return cls()
@@ -152,7 +149,6 @@ except ImportError:
     from contextlib import AbstractContextManager
 
     class nullcontext(AbstractContextManager):
-
         def __init__(self, enter_result=None):
             self.enter_result = enter_result
 
