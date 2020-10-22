@@ -15,7 +15,7 @@ under the License.
 """
 import datetime as dt
 from enum import Enum
-from typing import Iterable, Optional, Union, List
+from typing import Iterable, List, Optional, Union
 
 import pandas as pd
 
@@ -56,7 +56,10 @@ class Dataset:
     class FRED(Vendor):
         GDP = 'GDP'
 
-    def __init__(self, dataset_id: Union[str, Vendor], provider: DataApi = None):
+    def __init__(self,
+                 dataset_id: Union[str,
+                                   Vendor],
+                 provider: DataApi = None):
         """
 
         :param dataset_id: The dataset's identifier
@@ -66,7 +69,8 @@ class Dataset:
         self.__provider = provider
 
     def _get_dataset_id_str(self, dataset_id):
-        return dataset_id.value if isinstance(dataset_id, Dataset.Vendor) else dataset_id
+        return dataset_id.value if isinstance(
+            dataset_id, Dataset.Vendor) else dataset_id
 
     @property
     def id(self) -> str:
@@ -114,7 +118,8 @@ class Dataset:
         >>> weather_data = weather.get_data(dt.date(2016, 1, 15), dt.date(2016, 1, 16), city=('Boston', 'Austin'))
         """
 
-        field_names = None if fields is None else list(map(lambda f: f if isinstance(f, str) else f.value, fields))
+        field_names = None if fields is None else list(
+            map(lambda f: f if isinstance(f, str) else f.value, fields))
 
         query = self.provider.build_query(
             start=start,
@@ -124,7 +129,8 @@ class Dataset:
             fields=field_names,
             **kwargs
         )
-        data = self.provider.query_data(query, self.id, asset_id_type=asset_id_type)
+        data = self.provider.query_data(
+            query, self.id, asset_id_type=asset_id_type)
 
         return self.provider.construct_dataframe_with_types(self.id, data)
 
@@ -171,7 +177,8 @@ class Dataset:
 
         symbol_dimensions = self.provider.symbol_dimensions(self.id)
         if len(symbol_dimensions) != 1:
-            raise MqValueError('get_data_series only valid for symbol_dimensions of length 1')
+            raise MqValueError(
+                'get_data_series only valid for symbol_dimensions of length 1')
 
         symbol_dimension = symbol_dimensions[0]
         data = self.provider.query_data(query, self.id)
@@ -182,7 +189,8 @@ class Dataset:
         if isinstance(self.provider, GsDataApi):
             gb = df.groupby(symbol_dimension)
             if len(gb.groups) > 1:
-                raise MqValueError('Not a series for a single {}'.format(symbol_dimension))
+                raise MqValueError(
+                    'Not a series for a single {}'.format(symbol_dimension))
 
         if df.empty:
             return pd.Series()

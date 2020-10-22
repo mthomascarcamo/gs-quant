@@ -15,7 +15,9 @@ under the License.
 """
 
 import datetime as dt
+
 from pytest import approx
+
 from gs_quant.datetime import *
 
 
@@ -24,9 +26,15 @@ def test_has_feb_29():
     assert not has_feb_29(dt.date(2019, 1, 1), dt.date(2019, 12, 31))
     assert has_feb_29(dt.date(2020, 1, 1), dt.date(2020, 12, 31))
     assert has_feb_29(dt.date(2020, 2, 28), dt.date(2020, 3, 31))
-    assert not has_feb_29(dt.date(2020, 2, 29), dt.date(2020, 3, 31))   # first date is exclusive
+    assert not has_feb_29(
+        dt.date(
+            2020, 2, 29), dt.date(
+            2020, 3, 31))   # first date is exclusive
     assert not has_feb_29(dt.date(2020, 1, 1), dt.date(2020, 2, 28))
-    assert has_feb_29(dt.date(2020, 1, 1), dt.date(2020, 2, 29))        # last date is inclusive
+    assert has_feb_29(
+        dt.date(
+            2020, 1, 1), dt.date(
+            2020, 2, 29))        # last date is inclusive
     assert has_feb_29(dt.date(2008, 1, 1), dt.date(2020, 12, 31))
 
 
@@ -36,22 +44,33 @@ def test_day_count_fraction():
     start = dt.date(2017, 1, 1)
     end = dt.date(2017, 12, 31)
 
-    assert day_count_fraction(start, end, DayCountConvention.ONE_ONE) == approx(1)
-    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_360) == approx(1.011111111111)
-    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_365F) == approx(0.997260273973)
-    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_365L) == approx(0.997260273973)
+    assert day_count_fraction(
+        start, end, DayCountConvention.ONE_ONE) == approx(1)
+    assert day_count_fraction(
+        start, end, DayCountConvention.ACTUAL_360) == approx(1.011111111111)
+    assert day_count_fraction(
+        start, end, DayCountConvention.ACTUAL_365F) == approx(0.997260273973)
+    assert day_count_fraction(
+        start, end, DayCountConvention.ACTUAL_365L) == approx(0.997260273973)
 
     # 2016 is a leap year
     start = dt.date(2015, 11, 12)
     end = dt.date(2017, 12, 15)
 
-    assert day_count_fraction(start, end, DayCountConvention.ONE_ONE) == approx(1)
-    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_360) == approx(2.122222222222)
-    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_365F) == approx(2.093150684932)
+    assert day_count_fraction(
+        start, end, DayCountConvention.ONE_ONE) == approx(1)
+    assert day_count_fraction(
+        start, end, DayCountConvention.ACTUAL_360) == approx(2.122222222222)
+    assert day_count_fraction(
+        start, end, DayCountConvention.ACTUAL_365F) == approx(2.093150684932)
 
     # End date is not leap year, so should use 365
-    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_365L) == approx(2.093150684932)
+    assert day_count_fraction(
+        start, end, DayCountConvention.ACTUAL_365L) == approx(2.093150684932)
 
     # Feb 29 is within range, so should use 366
-    assert day_count_fraction(start, end, DayCountConvention.ACTUAL_365L, PaymentFrequency.ANNUALLY) == \
-        approx(2.087431693989)
+    assert day_count_fraction(
+        start,
+        end,
+        DayCountConvention.ACTUAL_365L,
+        PaymentFrequency.ANNUALLY) == approx(2.087431693989)

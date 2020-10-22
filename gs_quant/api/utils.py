@@ -15,6 +15,7 @@ under the License.
 """
 
 import socket
+
 import requests
 
 
@@ -25,7 +26,8 @@ def handle_proxy(url, params):
             proxies = gs_quant_internal.__proxies__
             response = requests.get(url, params=params, proxies=proxies)
         except ModuleNotFoundError:
-            raise RuntimeError('You must install gs_quant_internal to be able to use this endpoint')
+            raise RuntimeError(
+                'You must install gs_quant_internal to be able to use this endpoint')
     else:
         response = requests.get(url, params=params)
     return response

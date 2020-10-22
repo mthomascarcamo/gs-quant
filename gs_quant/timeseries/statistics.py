@@ -16,15 +16,16 @@
 # a 1-line description. Type annotations should be provided for parameters.
 
 import datetime
+
 import numpy
 import scipy.stats.mstats as stats
+import statsmodels.api as sm
 from scipy.stats import percentileofscore
 from statsmodels.regression.rolling import RollingOLS
-from .algebra import *
-import statsmodels.api as sm
-from ..models.epidemiology import SIR, SEIR, EpidemicModel
-from ..data import DataContext
 
+from ..data import DataContext
+from ..models.epidemiology import SEIR, SIR, EpidemicModel
+from .algebra import *
 
 """
 Stats library is for basic arithmetic and statistical operations on timeseries.
@@ -47,7 +48,8 @@ def _concat_series(series: List[pd.Series]):
 
 
 @plot_function
-def min_(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def min_(x: Union[pd.Series, List[pd.Series]],
+         w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Minimum value of series over given window
 
@@ -95,14 +97,21 @@ def min_(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Wind
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing, "series index is monotonic increasing"
     if isinstance(w.w, pd.DateOffset):
-        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].min() for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].min()
+                  for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).min(), w)
 
 
 @plot_function
-def max_(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def max_(x: Union[pd.Series, List[pd.Series]],
+         w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Maximum value of series over given window
 
@@ -148,14 +157,21 @@ def max_(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Wind
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing, "series index is monotonic increasing"
     if isinstance(w.w, pd.DateOffset):
-        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].max() for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].max()
+                  for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).max(), w)
 
 
 @plot_function
-def range_(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def range_(x: pd.Series, w: Union[Window, int,
+                                  str] = Window(None, 0)) -> pd.Series:
     """
     Range of series over given window
 
@@ -196,7 +212,8 @@ def range_(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Ser
 
 
 @plot_function
-def mean(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def mean(x: Union[pd.Series, List[pd.Series]],
+         w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Arithmetic mean of series over given window
 
@@ -243,14 +260,22 @@ def mean(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Wind
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing, "series index is monotonic increasing"
     if isinstance(w.w, pd.DateOffset):
-        values = [np.nanmean(x.loc[(x.index > idx - w.w) & (x.index <= idx)]) for idx in x.index]
+        values = [np.nanmean(x.loc[(x.index > idx - w.w) &
+                                   (x.index <= idx)]) for idx in x.index]
     else:
-        values = [np.nanmean(x.iloc[max(idx - w.w + 1, 0): idx + 1]) for idx in range(0, len(x))]
-    return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [np.nanmean(x.iloc[max(idx - w.w + 1, 0): idx + 1])
+                  for idx in range(0, len(x))]
+    return apply_ramp(
+        pd.Series(
+            values,
+            index=x.index,
+            dtype=np.dtype(float)),
+        w)
 
 
 @plot_function
-def median(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def median(x: pd.Series, w: Union[Window, int,
+                                  str] = Window(None, 0)) -> pd.Series:
     """
     Median value of series over given window
 
@@ -287,14 +312,21 @@ def median(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Ser
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing, "series index is monotonic increasing"
     if isinstance(w.w, pd.DateOffset):
-        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].median() for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].median()
+                  for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).median(), w)
 
 
 @plot_function
-def mode(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def mode(x: pd.Series, w: Union[Window, int, str]
+         = Window(None, 0)) -> pd.Series:
     """
     Most common value in series over given window
 
@@ -326,14 +358,27 @@ def mode(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Serie
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing, "series index is monotonic increasing"
     if isinstance(w.w, pd.DateOffset):
-        values = [stats.mode(x.loc[(x.index > idx - w.w) & (x.index <= idx)]).mode[0] for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [stats.mode(x.loc[(x.index > idx - w.w) &
+                                   (x.index <= idx)]).mode[0] for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
-        return apply_ramp(x.rolling(w.w, 0).apply(lambda y: stats.mode(y).mode, raw=True), w)
+        return apply_ramp(
+            x.rolling(
+                w.w,
+                0).apply(
+                lambda y: stats.mode(y).mode,
+                raw=True),
+            w)
 
 
 @plot_function
-def sum_(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def sum_(x: Union[pd.Series, List[pd.Series]],
+         w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Rolling sum of series over given window
 
@@ -379,14 +424,21 @@ def sum_(x: Union[pd.Series, List[pd.Series]], w: Union[Window, int, str] = Wind
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing
     if isinstance(w.w, pd.DateOffset):
-        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].sum() for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].sum()
+                  for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).sum(), w)
 
 
 @plot_function
-def product(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def product(x: pd.Series, w: Union[Window,
+                                   int, str] = Window(None, 0)) -> pd.Series:
     """
     Rolling product of series over given window
 
@@ -419,14 +471,21 @@ def product(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Se
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing
     if isinstance(w.w, pd.DateOffset):
-        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].agg(pd.Series.prod) for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)
+                        ].agg(pd.Series.prod) for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).agg(pd.Series.prod), w)
 
 
 @plot_function
-def std(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def std(x: pd.Series, w: Union[Window, int, str]
+        = Window(None, 0)) -> pd.Series:
     """
     Rolling standard deviation of series over given window
 
@@ -465,8 +524,14 @@ def std(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing, "series index is monotonic increasing"
     if isinstance(w.w, pd.DateOffset):
-        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].std() for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].std()
+                  for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).std(), w)
 
@@ -517,7 +582,8 @@ def exponential_std(x: pd.Series, beta: float = 0.75) -> pd.Series:
 
 
 @plot_function
-def var(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def var(x: pd.Series, w: Union[Window, int, str]
+        = Window(None, 0)) -> pd.Series:
     """
     Rolling variance of series over given window
 
@@ -556,14 +622,21 @@ def var(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing, "series index is monotonic increasing"
     if isinstance(w.w, pd.DateOffset):
-        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].var() for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].var()
+                  for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).var(), w)
 
 
 @plot_function
-def cov(x: pd.Series, y: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def cov(x: pd.Series, y: pd.Series,
+        w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Rolling co-variance of series over given window
 
@@ -604,8 +677,14 @@ def cov(x: pd.Series, y: pd.Series, w: Union[Window, int, str] = Window(None, 0)
     w = normalize_window(x, w)
     assert x.index.is_monotonic_increasing, "series index is monotonic increasing"
     if isinstance(w.w, pd.DateOffset):
-        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].cov(y) for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].cov(y)
+                  for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).cov(y), w)
 
@@ -618,7 +697,8 @@ def _zscore(x):
 
 
 @plot_function
-def zscores(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def zscores(x: pd.Series, w: Union[Window,
+                                   int, str] = Window(None, 0)) -> pd.Series:
     """
     Rolling z-scores over a given window
 
@@ -658,26 +738,44 @@ def zscores(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Se
     if isinstance(w, int):
         w = normalize_window(x, w)
     elif isinstance(w, str):
-        if not (isinstance(x.index, pd.DatetimeIndex) or isinstance(x.index[0], datetime.date)):
-            raise MqValueError("When string is passed window index must be a DatetimeIndex or of type datetime.date")
+        if not (
+            isinstance(
+                x.index,
+                pd.DatetimeIndex) or isinstance(
+                x.index[0],
+                datetime.date)):
+            raise MqValueError(
+                "When string is passed window index must be a DatetimeIndex or of type datetime.date")
         w = normalize_window(x, w)
     if not w.w:
         if x.size == 1:
             return pd.Series([0.0], index=x.index, dtype=np.dtype(float))
 
         clean_series = x.dropna()
-        zscore_series = pd.Series(stats.zscore(clean_series, ddof=1), clean_series.index, dtype=np.dtype(float))
+        zscore_series = pd.Series(
+            stats.zscore(
+                clean_series,
+                ddof=1),
+            clean_series.index,
+            dtype=np.dtype(float))
         return interpolate(zscore_series, x, Interpolate.NAN)
     if not isinstance(w.w, int):
         w = normalize_window(x, w)
-        values = [_zscore(x.loc[(x.index > idx - w.w) & (x.index <= idx)]) for idx in x.index]
-        return apply_ramp(pd.Series(values, index=x.index, dtype=np.dtype(float)), w)
+        values = [_zscore(x.loc[(x.index > idx - w.w) & (x.index <= idx)])
+                  for idx in x.index]
+        return apply_ramp(
+            pd.Series(
+                values,
+                index=x.index,
+                dtype=np.dtype(float)),
+            w)
     else:
         return apply_ramp(x.rolling(w.w, 0).apply(_zscore, raw=False), w)
 
 
 @plot_function
-def winsorize(x: pd.Series, limit: float = 2.5, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def winsorize(x: pd.Series, limit: float = 2.5,
+              w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Limit extreme values in series
 
@@ -781,7 +879,8 @@ def generate_series(length: int) -> pd.Series:
 
 
 @plot_function
-def percentiles(x: pd.Series, y: pd.Series = None, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def percentiles(x: pd.Series, y: pd.Series = None,
+                w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Rolling percentiles over given window
 
@@ -824,14 +923,16 @@ def percentiles(x: pd.Series, y: pd.Series = None, w: Union[Window, int, str] = 
         y = x.copy()
 
     if isinstance(w.r, int) and w.r > len(y):
-        raise ValueError('Ramp value must be less than the length of the series y.')
+        raise ValueError(
+            'Ramp value must be less than the length of the series y.')
 
     if isinstance(w.w, int) and w.w > len(x):
         return pd.Series()
 
     res = pd.Series(dtype=np.dtype(float))
     for idx, val in y.iteritems():
-        sample = x.loc[(x.index > idx - w.w) & (x.index <= idx)] if isinstance(w.w, pd.DateOffset) else x[:idx][-w.w:]
+        sample = x.loc[(x.index > idx - w.w) & (x.index <= idx)
+                       ] if isinstance(w.w, pd.DateOffset) else x[:idx][-w.w:]
         res.loc[idx] = percentileofscore(sample, val, kind='mean')
 
     if isinstance(w.r, pd.DateOffset):
@@ -841,7 +942,12 @@ def percentiles(x: pd.Series, y: pd.Series = None, w: Union[Window, int, str] = 
 
 
 @plot_function
-def percentile(x: pd.Series, n: float, w: Union[Window, int, str] = None) -> Union[pd.Series, float]:
+def percentile(x: pd.Series,
+               n: float,
+               w: Union[Window,
+                        int,
+                        str] = None) -> Union[pd.Series,
+                                              float]:
     """
     Returns the nth percentile of a series.
 
@@ -876,9 +982,11 @@ def percentile(x: pd.Series, n: float, w: Union[Window, int, str] = None) -> Uni
     w = normalize_window(x, w)
     if isinstance(w.w, pd.DateOffset):
         try:
-            values = [x.loc[(x.index > idx - w.w) & (x.index <= idx)].quantile(n) for idx in x.index]
+            values = [x.loc[(x.index > idx - w.w) &
+                            (x.index <= idx)].quantile(n) for idx in x.index]
         except TypeError:
-            raise MqTypeError(f'cannot use relative dates with index {x.index}')
+            raise MqTypeError(
+                f'cannot use relative dates with index {x.index}')
         res = pd.Series(values, index=x.index, dtype=np.dtype(float))
     else:
         res = x.rolling(w.w, 0).quantile(n)
@@ -910,16 +1018,26 @@ class LinearRegression:
 
     """
 
-    def __init__(self, X: Union[pd.Series, List[pd.Series]], y: pd.Series, fit_intercept: bool = True):
+    def __init__(self,
+                 X: Union[pd.Series,
+                          List[pd.Series]],
+                 y: pd.Series,
+                 fit_intercept: bool = True):
         df = pd.concat(X, axis=1) if isinstance(X, list) else X.to_frame()
         df = sm.add_constant(df) if fit_intercept else df
-        df.columns = range(len(df.columns)) if fit_intercept else range(1, len(df.columns) + 1)
+        df.columns = range(len(df.columns)) if fit_intercept else range(
+            1, len(df.columns) + 1)
 
-        df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]  # filter out nan and inf
+        df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)
+                ]  # filter out nan and inf
         y = y[~y.isin([np.nan, np.inf, -np.inf])]
         df_aligned, y_aligned = df.align(y, 'inner', axis=0)  # align series
 
-        self._index_scope = range(0, len(df.columns)) if fit_intercept else range(1, len(df.columns) + 1)
+        self._index_scope = range(
+            0, len(
+                df.columns)) if fit_intercept else range(
+            1, len(
+                df.columns) + 1)
         self._res = sm.OLS(y_aligned, df_aligned).fit()
         self._fit_intercept = fit_intercept
 
@@ -952,15 +1070,22 @@ class LinearRegression:
         return self._res.fittedvalues
 
     @plot_method
-    def predict(self, X_predict: Union[pd.Series, List[pd.Series]]) -> pd.Series:
+    def predict(self,
+                X_predict: Union[pd.Series,
+                                 List[pd.Series]]) -> pd.Series:
         """
         Use the model for prediction
 
         :param X_predict: the values for which to predict
         :return: predicted values
         """
-        df = pd.concat(X_predict, axis=1) if isinstance(X_predict, list) else X_predict.to_frame()
-        return self._res.predict(sm.add_constant(df) if self._fit_intercept else df)
+        df = pd.concat(
+            X_predict,
+            axis=1) if isinstance(
+            X_predict,
+            list) else X_predict.to_frame()
+        return self._res.predict(
+            sm.add_constant(df) if self._fit_intercept else df)
 
     @plot_method
     def standard_deviation_of_errors(self) -> float:
@@ -1001,15 +1126,23 @@ class RollingLinearRegression:
 
     """
 
-    def __init__(self, X: Union[pd.Series, List[pd.Series]], y: pd.Series, w: int, fit_intercept: bool = True):
+    def __init__(self,
+                 X: Union[pd.Series,
+                          List[pd.Series]],
+                 y: pd.Series,
+                 w: int,
+                 fit_intercept: bool = True):
         df = pd.concat(X, axis=1) if isinstance(X, list) else X.to_frame()
         df = sm.add_constant(df) if fit_intercept else df
-        df.columns = range(len(df.columns)) if fit_intercept else range(1, len(df.columns) + 1)
+        df.columns = range(len(df.columns)) if fit_intercept else range(
+            1, len(df.columns) + 1)
 
         if w <= len(df.columns):
-            raise MqValueError('Window length must be larger than the number of explanatory variables')
+            raise MqValueError(
+                'Window length must be larger than the number of explanatory variables')
 
-        df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)]  # filter out nan and inf
+        df = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)
+                ]  # filter out nan and inf
         y = y[~y.isin([np.nan, np.inf, -np.inf])]
         df_aligned, y_aligned = df.align(y, 'inner', axis=0)  # align series
 
@@ -1092,9 +1225,19 @@ class SIRModel:
     compartment once calibrated
 
     """
-    def __init__(self, beta: float = None, gamma: float = None, s: Union[pd.Series, float] = None,
-                 i: Union[pd.Series, float] = None, r: Union[pd.Series, float] = None,
-                 n: Union[pd.Series, float] = None, fit: bool = True,
+
+    def __init__(self,
+                 beta: float = None,
+                 gamma: float = None,
+                 s: Union[pd.Series,
+                          float] = None,
+                 i: Union[pd.Series,
+                          float] = None,
+                 r: Union[pd.Series,
+                          float] = None,
+                 n: Union[pd.Series,
+                          float] = None,
+                 fit: bool = True,
                  fit_period: int = None):
         n = n.dropna()[0] if isinstance(n, pd.Series) else n
         n = 100 if n is None else n
@@ -1103,11 +1246,13 @@ class SIRModel:
         i = 1 if i is None else i
         r = 0 if r is None else r
 
-        data_start = [ts.index.min().date() for ts in [s, i, r] if isinstance(ts, pd.Series)]
+        data_start = [ts.index.min().date()
+                      for ts in [s, i, r] if isinstance(ts, pd.Series)]
         data_start.append(DataContext.current.start_date)
         start_date = max(data_start)
 
-        data_end = [ts.index.max().date() for ts in [s, i, r] if isinstance(ts, pd.Series)]
+        data_end = [ts.index.max().date()
+                    for ts in [s, i, r] if isinstance(ts, pd.Series)]
         data_end.append(DataContext.current.end_date)
         end_date = max(data_end)
 
@@ -1133,13 +1278,18 @@ class SIRModel:
                                                             R0_fixed=True)
         self.parameters = parameters
 
-        self._model = EpidemicModel(SIR, parameters=parameters, data=data, initial_conditions=initial_conditions,
-                                    fit_period=self.fit_period)
+        self._model = EpidemicModel(
+            SIR,
+            parameters=parameters,
+            data=data,
+            initial_conditions=initial_conditions,
+            fit_period=self.fit_period)
         if self.fit:
             self._model.fit(verbose=False)
 
         t = np.arange((end_date - start_date).days + 1)
-        predict = self._model.solve(t, (self.s0(), self.i0(), self.r0()), (self.beta(), self.gamma(), n))
+        predict = self._model.solve(
+            t, (self.s0(), self.i0(), self.r0()), (self.beta(), self.gamma(), n))
 
         predict_dates = pd.date_range(start_date, end_date)
 
@@ -1271,10 +1421,23 @@ class SEIRModel(SIRModel):
     predict the populations of each compartment once calibrated.
 
     """
-    def __init__(self, beta: float = None, gamma: float = None, sigma: float = None, s: Union[pd.Series, float] = None,
-                 e: Union[pd.Series, float] = None, i: Union[pd.Series, float] = None,
-                 r: Union[pd.Series, float] = None, n: Union[pd.Series, float] = None,
-                 fit: bool = True, fit_period: int = None):
+
+    def __init__(self,
+                 beta: float = None,
+                 gamma: float = None,
+                 sigma: float = None,
+                 s: Union[pd.Series,
+                          float] = None,
+                 e: Union[pd.Series,
+                          float] = None,
+                 i: Union[pd.Series,
+                          float] = None,
+                 r: Union[pd.Series,
+                          float] = None,
+                 n: Union[pd.Series,
+                          float] = None,
+                 fit: bool = True,
+                 fit_period: int = None):
         n = n.dropna()[0] if isinstance(n, pd.Series) else n
         n = 100 if n is None else n
         fit = False if all(state is None for state in (s, e, i, r)) else fit
@@ -1283,11 +1446,13 @@ class SEIRModel(SIRModel):
         i = 1 if i is None else i
         r = 0 if r is None else r
 
-        data_start = [ts.index.min().date() for ts in [s, i, r] if isinstance(ts, pd.Series)]
+        data_start = [ts.index.min().date()
+                      for ts in [s, i, r] if isinstance(ts, pd.Series)]
         data_start.append(DataContext.current.start_date)
         start_date = max(data_start)
 
-        data_end = [ts.index.max().date() for ts in [s, i, r] if isinstance(ts, pd.Series)]
+        data_end = [ts.index.max().date()
+                    for ts in [s, i, r] if isinstance(ts, pd.Series)]
         data_end.append(DataContext.current.end_date)
         end_date = max(data_end)
 
@@ -1321,14 +1486,18 @@ class SEIRModel(SIRModel):
                                                              E0_max=10e6, R0_max=10e6)
         self.parameters = parameters
 
-        self._model = EpidemicModel(SEIR, parameters=parameters, data=data, initial_conditions=initial_conditions,
-                                    fit_period=self.fit_period)
+        self._model = EpidemicModel(
+            SEIR,
+            parameters=parameters,
+            data=data,
+            initial_conditions=initial_conditions,
+            fit_period=self.fit_period)
         if self.fit:
             self._model.fit(verbose=False)
 
         t = np.arange((end_date - start_date).days + 1)
-        predict = self._model.solve(t, (self.s0(), self.e0(), self.i0(), self.r0()),
-                                    (self.beta(), self.gamma(), self.sigma(), n))
+        predict = self._model.solve(t, (self.s0(), self.e0(), self.i0(
+        ), self.r0()), (self.beta(), self.gamma(), self.sigma(), n))
 
         predict_dates = pd.date_range(start_date, end_date)
 

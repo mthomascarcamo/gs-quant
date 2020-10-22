@@ -16,7 +16,9 @@ under the License.
 
 import datetime as dt
 from enum import Enum
+
 from dateutil.relativedelta import relativedelta
+
 from gs_quant.datetime.date import business_day_offset
 from gs_quant.instrument import Instrument
 

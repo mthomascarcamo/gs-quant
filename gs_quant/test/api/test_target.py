@@ -24,13 +24,29 @@ def classes(module_name) -> list:
     module_path = 'gs_quant.target.' + module_name
     __import__(module_path)
     module = sys.modules[module_path]
-    return [m for n, m in inspect.getmembers(module) if inspect.isclass(m) and issubclass(m, Base)]
+    return [m for n, m in inspect.getmembers(
+        module) if inspect.isclass(m) and issubclass(m, Base)]
 
 
 def test_classes():
-    for module_name in ('assets', 'backtests', 'charts', 'common', 'content', 'coordinates', 'countries', 'data',
-                        'hedge', 'indices', 'instrument', 'monitor', 'portfolios', 'reports', 'risk', 'trades',
-                        'workspaces_markets'):
+    for module_name in (
+        'assets',
+        'backtests',
+        'charts',
+        'common',
+        'content',
+        'coordinates',
+        'countries',
+        'data',
+        'hedge',
+        'indices',
+        'instrument',
+        'monitor',
+        'portfolios',
+        'reports',
+        'risk',
+        'trades',
+            'workspaces_markets'):
         for typ in classes(module_name):
             properties = typ.properties()
             if not properties:

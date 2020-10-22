@@ -14,13 +14,12 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
-from gs_quant.backtests.triggers import *
-from gs_quant.backtests.generic_engine import GenericEngine
 from gs_quant.backtests.equity_vol_engine import EquityVolEngine
+from gs_quant.backtests.generic_engine import GenericEngine
+from gs_quant.backtests.triggers import *
 from gs_quant.base import Priceable
-
 
 backtest_engines = [GenericEngine, EquityVolEngine]
 
@@ -30,7 +29,8 @@ class Strategy(object):
     A strategy object on which one may run a backtest
     """
 
-    def __init__(self, initial_portfolio: Optional[Tuple[Priceable, ...]], triggers: Union[Trigger, Iterable[Trigger]]):
+    def __init__(
+            self, initial_portfolio: Optional[Tuple[Priceable, ...]], triggers: Union[Trigger, Iterable[Trigger]]):
         self._initial_portfolio = make_list(initial_portfolio)
         self._triggers = make_list(triggers)
 
@@ -46,4 +46,5 @@ class Strategy(object):
         return risk_list
 
     def get_available_engines(self):
-        return [engine for engine in backtest_engines if engine.supports_strategy(self)]
+        return [
+            engine for engine in backtest_engines if engine.supports_strategy(self)]

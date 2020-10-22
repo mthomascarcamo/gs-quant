@@ -15,7 +15,7 @@ under the License.
 """
 
 import urllib.parse
-from typing import Tuple, Dict
+from typing import Dict, Tuple
 
 from pydash import get
 
@@ -23,7 +23,8 @@ from gs_quant.session import GsSession
 from gs_quant.target.workspaces_markets import Workspace
 
 API = '/workspaces/markets'
-WORKSPACES_MARKETS_HEADERS: Dict[str, str] = {'Content-Type': 'application/json;charset=utf-8'}
+WORKSPACES_MARKETS_HEADERS: Dict[str, str] = {
+    'Content-Type': 'application/json;charset=utf-8'}
 
 
 class GsWorkspacesMarketsApi:
@@ -31,7 +32,9 @@ class GsWorkspacesMarketsApi:
 
     @classmethod
     def get_workspaces(cls, limit: int = 10, **kwargs) -> Tuple[Workspace]:
-        return GsSession.current._get(f'{API}?limit={limit}&{urllib.parse.urlencode(kwargs)}', cls=Workspace)['results']
+        return GsSession.current._get(
+            f'{API}?limit={limit}&{urllib.parse.urlencode(kwargs)}',
+            cls=Workspace)['results']
 
     @classmethod
     def get_workspace(cls, workspace_id: str):
@@ -39,19 +42,30 @@ class GsWorkspacesMarketsApi:
 
     @classmethod
     def get_workspace_by_alias(cls, alias: str) -> Workspace:
-        workspace = get(GsSession.current._get(f'{API}?alias={alias}', cls=Workspace), 'results.0')
+        workspace = get(
+            GsSession.current._get(
+                f'{API}?alias={alias}',
+                cls=Workspace),
+            'results.0')
         if not workspace:
             raise ValueError(f'Workspace with alias {alias} not found')
         return workspace
 
     @classmethod
     def create_workspace(cls, workspace: Workspace) -> Workspace:
-        return GsSession.current._post(f'{API}', workspace, cls=Workspace, request_headers=WORKSPACES_MARKETS_HEADERS)
+        return GsSession.current._post(
+            f'{API}',
+            workspace,
+            cls=Workspace,
+            request_headers=WORKSPACES_MARKETS_HEADERS)
 
     @classmethod
     def update_workspace(cls, workspace: Workspace):
-        return GsSession.current._put(f'{API}/{workspace.id}', workspace, cls=Workspace,
-                                      request_headers=WORKSPACES_MARKETS_HEADERS)
+        return GsSession.current._put(
+            f'{API}/{workspace.id}',
+            workspace,
+            cls=Workspace,
+            request_headers=WORKSPACES_MARKETS_HEADERS)
 
     @classmethod
     def delete_workspace(cls, workspace_id: str) -> Dict:

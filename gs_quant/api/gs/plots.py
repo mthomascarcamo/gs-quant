@@ -27,11 +27,13 @@ class GsPlotApi:
 
     @classmethod
     def get_many_charts(cls, limit: int = 100) -> Tuple[Chart, ...]:
-        return GsSession.current._get('/charts?limit={limit}'.format(limit=limit), cls=Chart)['results']
+        return GsSession.current._get(
+            '/charts?limit={limit}'.format(limit=limit), cls=Chart)['results']
 
     @classmethod
     def get_chart(cls, chart_id: str) -> Chart:
-        return GsSession.current._get('/charts/{id}'.format(id=chart_id), cls=Chart)
+        return GsSession.current._get(
+            '/charts/{id}'.format(id=chart_id), cls=Chart)
 
     @classmethod
     def create_chart(cls, chart: Chart) -> Chart:
@@ -39,7 +41,8 @@ class GsPlotApi:
 
     @classmethod
     def update_chart(cls, chart: Chart):
-        return GsSession.current._put('/charts/{id}'.format(id=chart.id), chart, cls=Chart)
+        return GsSession.current._put(
+            '/charts/{id}'.format(id=chart.id), chart, cls=Chart)
 
     @classmethod
     def delete_chart(cls, chart_id: str) -> dict:
@@ -49,9 +52,12 @@ class GsPlotApi:
 
     @classmethod
     def share_chart(cls, chart_id: str, users: Iterable):
-        # endpoint silently discards tokens not prefixed with 'guid:' => can't be used for roles, groups, etc.
+        # endpoint silently discards tokens not prefixed with 'guid:' => can't
+        # be used for roles, groups, etc.
         if any(map(lambda x: not x.startswith('guid:'), users)):
-            raise ValueError('Chart can only be shared with individual users via this method.')
+            raise ValueError(
+                'Chart can only be shared with individual users via this method.')
         chart = cls.get_chart(chart_id)
         share = ChartShare(tuple(users), chart.version)
-        return GsSession.current._post(f'/charts/{chart_id}/share', share, cls=Chart)
+        return GsSession.current._post(
+            f'/charts/{chart_id}/share', share, cls=Chart)

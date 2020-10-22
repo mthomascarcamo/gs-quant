@@ -18,7 +18,8 @@ from typing import Optional, Union
 from gs_quant.base import Market
 from gs_quant.common import AssetClass
 from gs_quant.context_base import do_not_serialise
-from gs_quant.target.risk import RiskMeasure as __RiskMeasure, RiskMeasureType, RiskMeasureUnit
+from gs_quant.target.risk import RiskMeasure as __RiskMeasure
+from gs_quant.target.risk import RiskMeasureType, RiskMeasureUnit
 
 
 class RiskMeasure(__RiskMeasure):
@@ -42,7 +43,12 @@ class __RelativeRiskMeasure(RiskMeasure):
                  unit: Union[RiskMeasureUnit, str] = None,
                  value: Union[float, str] = None,
                  name: str = None):
-        super().__init__(asset_class=asset_class, measure_type=measure_type, unit=unit, value=value, name=name)
+        super().__init__(
+            asset_class=asset_class,
+            measure_type=measure_type,
+            unit=unit,
+            value=value,
+            name=name)
         self.__to_market = to_market
 
     @property
@@ -50,7 +56,10 @@ class __RelativeRiskMeasure(RiskMeasure):
     def pricing_context(self):
         from gs_quant.markets import PricingContext, RelativeMarket
         current = PricingContext.current
-        return current.clone(market=RelativeMarket(from_market=current.market, to_market=self.__to_market))
+        return current.clone(
+            market=RelativeMarket(
+                from_market=current.market,
+                to_market=self.__to_market))
 
 
 class PnlExplain(__RelativeRiskMeasure):
@@ -58,7 +67,10 @@ class PnlExplain(__RelativeRiskMeasure):
     """ Pnl Explained """
 
     def __init__(self, to_market: Market):
-        super().__init__(to_market, measure_type=RiskMeasureType.PnlExplain, name=RiskMeasureType.PnlExplain.value)
+        super().__init__(
+            to_market,
+            measure_type=RiskMeasureType.PnlExplain,
+            name=RiskMeasureType.PnlExplain.value)
 
 
 class PnlExplainClose(PnlExplain):
@@ -81,7 +93,10 @@ class PnlPredictLive(__RelativeRiskMeasure):
 
     def __init__(self):
         from gs_quant.markets import LiveMarket
-        super().__init__(LiveMarket(), measure_type=RiskMeasureType.PnlPredict, name=RiskMeasureType.PnlPredict.value)
+        super().__init__(
+            LiveMarket(),
+            measure_type=RiskMeasureType.PnlPredict,
+            name=RiskMeasureType.PnlPredict.value)
 
 
 def __risk_measure_with_doc_string(name: str,
@@ -90,20 +105,32 @@ def __risk_measure_with_doc_string(name: str,
                                    asset_class: Optional[AssetClass] = None,
                                    unit: Optional[RiskMeasureUnit] = None
                                    ) -> RiskMeasure:
-    measure = RiskMeasure(measure_type=measure_type, asset_class=asset_class, unit=unit, name=name)
+    measure = RiskMeasure(
+        measure_type=measure_type,
+        asset_class=asset_class,
+        unit=unit,
+        name=name)
     measure.__doc__ = doc
     return measure
 
 
-DollarPrice = __risk_measure_with_doc_string('DollarPrice', 'Present value in USD', RiskMeasureType.Dollar_Price)
-Price = __risk_measure_with_doc_string('Price', 'Present value in local currency', RiskMeasureType.PV)
+DollarPrice = __risk_measure_with_doc_string(
+    'DollarPrice',
+    'Present value in USD',
+    RiskMeasureType.Dollar_Price)
+Price = __risk_measure_with_doc_string(
+    'Price',
+    'Present value in local currency',
+    RiskMeasureType.PV)
 ForwardPrice = __risk_measure_with_doc_string(
     'ForwardPrice',
     'Forward price',
     RiskMeasureType.Forward_Price,
     unit=RiskMeasureUnit.BPS)
-BaseCPI = __risk_measure_with_doc_string('BaseCPI', 'Base CPI level', RiskMeasureType.BaseCPI)
-Theta = __risk_measure_with_doc_string('Theta', '1 day Theta', RiskMeasureType.Theta)
+BaseCPI = __risk_measure_with_doc_string(
+    'BaseCPI', 'Base CPI level', RiskMeasureType.BaseCPI)
+Theta = __risk_measure_with_doc_string(
+    'Theta', '1 day Theta', RiskMeasureType.Theta)
 EqDelta = __risk_measure_with_doc_string(
     'EqDelta',
     'Equity Delta',
@@ -114,7 +141,11 @@ EqGamma = __risk_measure_with_doc_string(
     'Equity Gamma',
     RiskMeasureType.Gamma,
     asset_class=AssetClass.Equity)
-EqVega = __risk_measure_with_doc_string('EqVega', 'Equity Vega', RiskMeasureType.Vega, asset_class=AssetClass.Equity)
+EqVega = __risk_measure_with_doc_string(
+    'EqVega',
+    'Equity Vega',
+    RiskMeasureType.Vega,
+    asset_class=AssetClass.Equity)
 EqSpot = __risk_measure_with_doc_string(
     'EqSpot',
     'Equity Spot Level',
@@ -148,10 +179,26 @@ FairVarStrike = __risk_measure_with_doc_string(
     'FairVarStrike',
     'Fair Variance Strike Value of a Variance Swap',
     RiskMeasureType.FairVarStrike)
-FXDelta = __risk_measure_with_doc_string('FXDelta', 'FX Delta', RiskMeasureType.Delta, asset_class=AssetClass.FX)
-FXGamma = __risk_measure_with_doc_string('FXGamma', 'FX Gamma', RiskMeasureType.Gamma, asset_class=AssetClass.FX)
-FXVega = __risk_measure_with_doc_string('FXVega', 'FX Vega', RiskMeasureType.Vega, asset_class=AssetClass.FX)
-FXSpot = __risk_measure_with_doc_string('FXSpot', 'FX Spot Rate', RiskMeasureType.Spot, asset_class=AssetClass.FX)
+FXDelta = __risk_measure_with_doc_string(
+    'FXDelta',
+    'FX Delta',
+    RiskMeasureType.Delta,
+    asset_class=AssetClass.FX)
+FXGamma = __risk_measure_with_doc_string(
+    'FXGamma',
+    'FX Gamma',
+    RiskMeasureType.Gamma,
+    asset_class=AssetClass.FX)
+FXVega = __risk_measure_with_doc_string(
+    'FXVega',
+    'FX Vega',
+    RiskMeasureType.Vega,
+    asset_class=AssetClass.FX)
+FXSpot = __risk_measure_with_doc_string(
+    'FXSpot',
+    'FX Spot Rate',
+    RiskMeasureType.Spot,
+    asset_class=AssetClass.FX)
 IRBasis = __risk_measure_with_doc_string(
     'IRBasis',
     'Interest Rate Basis',

@@ -24,11 +24,19 @@ class GsParserApi:
     """GS instrument parser API client implementation"""
 
     @classmethod
-    def get_instrument_from_text_asset_class(cls, text: str, asset_class: str) -> dict:
-        res = GsSession.current._post('/parser/quoteTicket', payload={'message': text, 'assetClass': asset_class})
+    def get_instrument_from_text_asset_class(
+            cls, text: str, asset_class: str) -> dict:
+        res = GsSession.current._post(
+            '/parser/quoteTicket',
+            payload={
+                'message': text,
+                'assetClass': asset_class})
         return res['ticket']['quote']['instrument']
 
     @classmethod
     def get_instrument_from_text(cls, text: str) -> dict:
-        res = GsSession.current._post('/parser/portfolio', payload={'message': text})
+        res = GsSession.current._post(
+            '/parser/portfolio',
+            payload={
+                'message': text})
         return res['instruments']

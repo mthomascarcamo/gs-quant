@@ -42,7 +42,8 @@ class GsCalendar:
         if isinstance(calendars, str):
             calendars = (calendars,)
 
-        return GsCalendar.__CALENDAR_CACHE.setdefault(calendars, GsCalendar(calendars))
+        return GsCalendar.__CALENDAR_CACHE.setdefault(
+            calendars, GsCalendar(calendars))
 
     @staticmethod
     def reset():
@@ -56,12 +57,18 @@ class GsCalendar:
         if self.__calendars and not self.__holidays:
             dataset = Dataset(Dataset.GS.HOLIDAY)
             for holiday_id in self.__calendars:
-                data = dataset.get_data(exchange=holiday_id, start=self.DATE_LOW_LIMIT, end=self.DATE_HIGH_LIMIT)
+                data = dataset.get_data(
+                    exchange=holiday_id,
+                    start=self.DATE_LOW_LIMIT,
+                    end=self.DATE_HIGH_LIMIT)
                 if not data.empty:
-                    self.__holidays.update(data.index.values.astype('datetime64[D]'))
+                    self.__holidays.update(
+                        data.index.values.astype('datetime64[D]'))
 
         return self.__holidays
 
-    def business_day_calendar(self, week_mask: str = None) -> np.busdaycalendar:
+    def business_day_calendar(
+            self,
+            week_mask: str = None) -> np.busdaycalendar:
         return self.__business_day_calendars.setdefault(week_mask, np.busdaycalendar(
             weekmask=week_mask or self.DEFAULT_WEEK_MASK, holidays=tuple(self.holidays)))

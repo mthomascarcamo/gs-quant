@@ -49,7 +49,8 @@ def test_get_many_portfolios(mocker):
 
     # run test
     response = GsPortfolioApi.get_portfolios()
-    GsSession.current._get.assert_called_with('/portfolios?limit=100', cls=Portfolio)
+    GsSession.current._get.assert_called_with(
+        '/portfolios?limit=100', cls=Portfolio)
     assert response == expected_response
 
 
@@ -69,7 +70,8 @@ def test_get_portfolio(mocker):
 
     # run test
     response = GsPortfolioApi.get_portfolio(id_1)
-    GsSession.current._get.assert_called_with('/portfolios/{id}'.format(id=id_1), cls=Portfolio)
+    GsSession.current._get.assert_called_with(
+        '/portfolios/{id}'.format(id=id_1), cls=Portfolio)
     assert response == mock_response
 
 
@@ -90,7 +92,8 @@ def test_create_portfolio(mocker):
 
     # run test
     response = GsPortfolioApi.create_portfolio(portfolio)
-    GsSession.current._post.assert_called_with('/portfolios', portfolio, cls=Portfolio)
+    GsSession.current._post.assert_called_with(
+        '/portfolios', portfolio, cls=Portfolio)
     assert response == portfolio
 
 
@@ -111,7 +114,8 @@ def test_update_portfolio(mocker):
 
     # run test
     response = GsPortfolioApi.update_portfolio(portfolio)
-    GsSession.current._put.assert_called_with('/portfolios/{id}'.format(id=id_1), portfolio, cls=Portfolio)
+    GsSession.current._put.assert_called_with(
+        '/portfolios/{id}'.format(id=id_1), portfolio, cls=Portfolio)
     assert response == portfolio
 
 
@@ -128,11 +132,15 @@ def test_delete_portfolio(mocker):
             Environment.QA,
             'client_id',
             'secret'))
-    mocker.patch.object(GsSession.current, '_delete', return_value=mock_response)
+    mocker.patch.object(
+        GsSession.current,
+        '_delete',
+        return_value=mock_response)
 
     # run test
     response = GsPortfolioApi.delete_portfolio(id_1)
-    GsSession.current._delete.assert_called_with('/portfolios/{id}'.format(id=id_1))
+    GsSession.current._delete.assert_called_with(
+        '/portfolios/{id}'.format(id=id_1))
     assert response == mock_response
 
 
@@ -195,7 +203,8 @@ def test_get_portfolio_positions(mocker):
     response = GsPortfolioApi.get_positions(id_1, start_date, end_date)
 
     GsSession.current._get.assert_called_with(
-        '/portfolios/{id}/positions?type=close&startDate={sd}&endDate={ed}'.format(id=id_1, sd=start_date, ed=end_date))
+        '/portfolios/{id}/positions?type=close&startDate={sd}&endDate={ed}'.format(
+            id=id_1, sd=start_date, ed=end_date))
 
     assert response == expected_response
 
@@ -293,7 +302,11 @@ def test_get_latest_portfolio_positions(mocker):
 def test_get_portfolio_position_dates(mocker):
     id_1 = 'MP1'
 
-    mock_response = {'results': ('2019-02-18', '2019-02-19'), 'totalResults': 2}
+    mock_response = {
+        'results': (
+            '2019-02-18',
+            '2019-02-19'),
+        'totalResults': 2}
 
     expected_response = (dt.date(2019, 2, 18), dt.date(2019, 2, 19))
 
@@ -310,6 +323,7 @@ def test_get_portfolio_position_dates(mocker):
     # run test
     response = GsPortfolioApi.get_position_dates(id_1)
 
-    GsSession.current._get.assert_called_with('/portfolios/{id}/positions/dates'.format(id=id_1))
+    GsSession.current._get.assert_called_with(
+        '/portfolios/{id}/positions/dates'.format(id=id_1))
 
     assert response == expected_response

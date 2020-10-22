@@ -23,12 +23,12 @@ from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 from enum import EnumMeta
 from functools import wraps
-from inspect import signature, Parameter
+from inspect import Parameter, signature
 from typing import Optional, Union, get_type_hints
 
 import inflection
-from dateutil.parser import isoparse
 import numpy as np
+from dateutil.parser import isoparse
 
 from gs_quant.context_base import ContextBase, ContextMeta, do_not_serialise
 
@@ -58,7 +58,9 @@ def camel_case_translate(f):
                 snake_case_arg = inflection.underscore(arg)
                 if snake_case_arg != arg:
                     if snake_case_arg in kwargs:
-                        raise ValueError('{} and {} both specified'.format(arg, snake_case_arg))
+                        raise ValueError(
+                            '{} and {} both specified'.format(
+                                arg, snake_case_arg))
 
                     normalised_kwargs[snake_case_arg] = value
                 else:
@@ -71,15 +73,35 @@ def camel_case_translate(f):
     return wrapper
 
 
-class RiskKey(namedtuple('RiskKey', ('provider', 'date', 'market', 'params', 'scenario', 'risk_measure'))):
+class RiskKey(
+    namedtuple(
+        'RiskKey',
+        ('provider',
+         'date',
+         'market',
+         'params',
+         'scenario',
+         'risk_measure'))):
 
     @property
     def ex_date_and_market(self):
-        return RiskKey(self.provider, None, None, self.params, self.scenario, self.risk_measure)
+        return RiskKey(
+            self.provider,
+            None,
+            None,
+            self.params,
+            self.scenario,
+            self.risk_measure)
 
     @property
     def ex_measure(self):
-        return RiskKey(self.provider, self.date, self.market, self.params, self.scenario, None)
+        return RiskKey(
+            self.provider,
+            self.date,
+            self.market,
+            self.params,
+            self.scenario,
+            None)
 
     @property
     def fields(self):
@@ -90,7 +112,8 @@ class EnumBase:
 
     @classmethod
     def _missing_(cls: EnumMeta, key):
-        return next((m for m in cls.__members__.values() if m.value.lower() == key.lower()), None)
+        return next((m for m in cls.__members__.values()
+                     if m.value.lower() == key.lower()), None)
 
     def __lt__(self: EnumMeta, other):
         return self.value < other.value
@@ -160,7 +183,7 @@ class Base(metaclass=ABCMeta):
 
     def __eq__(self, other) -> bool:
         return \
-            type(self) == type(other) and (self.name is None or other.name is None or self.name == other.name) and \
+            isinstance(self, type(other)) and (self.name is None or other.name is None or self.name == other.name) and \
             (self.__calced_hash is None or other.__calced_hash is None or self.__calced_hash == other.__calced_hash) \
             and all(super(Base, self).__getattribute__(p) == super(Base, other).__getattribute__(p)
                     for p in self.properties())
@@ -212,19 +235,30 @@ class Base(metaclass=ABCMeta):
     def properties(cls) -> set:
         """The public property names of this class"""
         if not cls.__properties:
-            cls.__properties = set(i for i in dir(cls) if isinstance(getattr(cls, i), property)
-                                   and not i.startswith('_') and not
-                                   getattr(getattr(cls, i).fget, 'do_not_serialise', False))
+            cls.__properties = set(
+                i for i in dir(cls) if isinstance(
+                    getattr(
+                        cls,
+                        i),
+                    property) and not i.startswith('_') and not getattr(
+                    getattr(
+                        cls,
+                        i).fget,
+                    'do_not_serialise',
+                    False))
         return cls.__properties
 
     def as_dict(self, as_camel_case: bool = False) -> dict:
         """Dictionary of the public, non-null properties and values"""
         if not self.__as_dict[as_camel_case]:
             raw_properties = self.properties()
-            properties = (inflection.camelize(p, uppercase_first_letter=False) for p in raw_properties) \
-                if as_camel_case else raw_properties
-            values = (super(Base, self).__getattribute__(p) for p in raw_properties)
-            self.__as_dict[as_camel_case] = dict((p, v) for p, v in zip(properties, values) if v is not None)
+            properties = (inflection.camelize(p, uppercase_first_letter=False)
+                          for p in raw_properties) if as_camel_case else raw_properties
+            values = (super(Base, self).__getattribute__(p)
+                      for p in raw_properties)
+            self.__as_dict[as_camel_case] = dict(
+                (p, v) for p, v in zip(
+                    properties, values) if v is not None)
 
         return copy.copy(self.__as_dict[as_camel_case])
 
@@ -237,14 +271,17 @@ class Base(metaclass=ABCMeta):
             prop_type = return_hints
 
         if prop_type == Union:
-            prop_type = next((a for a in return_hints.__args__ if issubclass(a, (Base, EnumBase))), None)
+            prop_type = next(
+                (a for a in return_hints.__args__ if issubclass(
+                    a, (Base, EnumBase))), None)
             if prop_type is None:
                 for typ in (dt.datetime, dt.date):
                     if typ in return_hints.__args__:
                         prop_type = typ
 
                         if additional is not None:
-                            additional.extend([a for a in return_hints.__args__ if a != prop_type])
+                            additional.extend(
+                                [a for a in return_hints.__args__ if a != prop_type])
                         break
 
             if prop_type is None and additional is not None:
@@ -263,9 +300,16 @@ class Base(metaclass=ABCMeta):
         return_hints = get_type_hints(getattr(cls, prop).fget).get('return')
         item_type = return_hints.__args__[0]
 
-        item_args = [i for i in getattr(item_type, '__args__', ()) if isinstance(i, type)]
+        item_args = [
+            i for i in getattr(
+                item_type,
+                '__args__',
+                ()) if isinstance(
+                i,
+                type)]
         if item_args:
-            item_type = next((a for a in item_args if issubclass(a, (Base, EnumBase))), item_args[-1])
+            item_type = next((a for a in item_args if issubclass(
+                a, (Base, EnumBase))), item_args[-1])
 
         return item_type
 
@@ -274,7 +318,10 @@ class Base(metaclass=ABCMeta):
             if getattr(type(self), prop).fset is None:
                 continue
 
-            prop_value = values.get(prop, values.get(inflection.camelize(prop, uppercase_first_letter=False)))
+            prop_value = values.get(
+                prop, values.get(
+                    inflection.camelize(
+                        prop, uppercase_first_letter=False)))
 
             if prop_value is not None:
                 if isinstance(prop_value, np.generic):
@@ -288,32 +335,37 @@ class Base(metaclass=ABCMeta):
                     setattr(self, prop, prop_value)
                 elif issubclass(prop_type, dt.datetime):
                     if isinstance(prop_value, int):
-                        setattr(self, prop, dt.datetime.fromtimestamp(prop_value / 1000).isoformat())
+                        setattr(
+                            self, prop, dt.datetime.fromtimestamp(
+                                prop_value / 1000).isoformat())
                     else:
                         import re
                         matcher = re.search('\\.([0-9]*)Z$', prop_value)
                         if matcher:
                             sub_seconds = matcher.group(1)
                             if len(sub_seconds) > 6:
-                                prop_value = re.sub(matcher.re, '.{}Z'.format(sub_seconds[:6]), prop_value)
+                                prop_value = re.sub(matcher.re, '.{}Z'.format(
+                                    sub_seconds[:6]), prop_value)
 
                         try:
                             setattr(self, prop, isoparse(prop_value))
                         except ValueError:
                             if str in additional_types:
                                 setattr(self, prop, prop_value)
-                elif issubclass(prop_type, dt.date) and type(prop_value) is not dt.date:
+                elif issubclass(prop_type, dt.date) and not isinstance(prop_value, dt.date):
                     date_value = None
 
                     if isinstance(prop_value, float):
                         # Assume it's an Excel date
                         if prop_value > 59:
                             prop_value -= 1  # Excel leap year bug, 1900 is not a leap year!
-                        date_value = dt.datetime(1899, 12, 31) + dt.timedelta(days=prop_value).date()
+                        date_value = dt.datetime(
+                            1899, 12, 31) + dt.timedelta(days=prop_value).date()
                     elif isinstance(prop_value, str):
                         for format in _valid_date_formats:
                             try:
-                                date_value = dt.datetime.strptime(prop_value, format).date()
+                                date_value = dt.datetime.strptime(
+                                    prop_value, format).date()
                                 break
                             except ValueError:
                                 pass
@@ -334,10 +386,12 @@ class Base(metaclass=ABCMeta):
                 elif issubclass(prop_type, (list, tuple)):
                     item_type = self.prop_item_type(prop)
                     if issubclass(item_type, Base):
-                        item_values = tuple(v if isinstance(v, (Base, EnumBase)) else item_type.from_dict(v)
-                                            for v in prop_value)
+                        item_values = tuple(
+                            v if isinstance(
+                                v, (Base, EnumBase)) else item_type.from_dict(v) for v in prop_value)
                     elif issubclass(item_type, EnumBase):
-                        item_values = tuple(get_enum_value(item_type, v) for v in prop_value)
+                        item_values = tuple(get_enum_value(
+                            item_type, v) for v in prop_value)
                     else:
                         item_values = tuple(prop_value)
                     setattr(self, prop, item_values)
@@ -346,12 +400,13 @@ class Base(metaclass=ABCMeta):
 
     @classmethod
     def _from_dict(cls, values: dict):
-        args = [k for k, v in signature(cls.__init__).parameters.items() if k not in ('kwargs', '_kwargs')
-                and v.default == Parameter.empty][1:]
+        args = [k for k, v in signature(cls.__init__).parameters.items() if k not in (
+            'kwargs', '_kwargs') and v.default == Parameter.empty][1:]
         required = {}
 
         for arg in args:
-            prop_name = arg[:-1] if arg.endswith('_') and not keyword.iskeyword(arg) else arg
+            prop_name = arg[:-
+                            1] if arg.endswith('_') and not keyword.iskeyword(arg) else arg
             prop_type = cls.prop_type(prop_name)
             value = values.pop(arg, None)
 
@@ -361,7 +416,9 @@ class Base(metaclass=ABCMeta):
                 elif issubclass(prop_type, (list, tuple)) and isinstance(value, (list, tuple)):
                     item_type = cls.prop_item_type(prop_name)
                     if issubclass(item_type, Base):
-                        value = tuple(v if isinstance(v, (Base, EnumBase)) else item_type.from_dict(v) for v in value)
+                        value = tuple(
+                            v if isinstance(
+                                v, (Base, EnumBase)) else item_type.from_dict(v) for v in value)
                 elif issubclass(prop_type, EnumBase):
                     value = get_enum_value(prop_type, value)
 
@@ -386,7 +443,8 @@ class Base(metaclass=ABCMeta):
         """
         Construct a default instance of this type
         """
-        args = [k for k, v in signature(cls.__init__).parameters.items() if v.default == Parameter.empty][1:]
+        args = [k for k, v in signature(
+            cls.__init__).parameters.items() if v.default == Parameter.empty][1:]
         required = {a: None for a in args}
         return cls(**required)
 
@@ -397,12 +455,16 @@ class Base(metaclass=ABCMeta):
         :return:
         """
         if not isinstance(instance, type(self)):
-            raise ValueError('Can only use from_instance with an object of the same type')
+            raise ValueError(
+                'Can only use from_instance with an object of the same type')
 
         for prop in self.properties():
             attr = getattr(super().__getattribute__('__class__'), prop)
             if attr.fset:
-                super(Base, self).__setattr__(prop, super(Base, instance).__getattribute__(prop))
+                super(
+                    Base, self).__setattr__(
+                    prop, super(
+                        Base, instance).__getattribute__(prop))
 
 
 class Priceable(Base, metaclass=ABCMeta):
@@ -623,7 +685,9 @@ def get_enum_value(enum_type: EnumMeta, value: Union[EnumBase, str]):
     try:
         enum_value = enum_type(value)
     except ValueError:
-        _logger.warning('Setting value to {}, which is not a valid entry in {}'.format(value, enum_type))
+        _logger.warning(
+            'Setting value to {}, which is not a valid entry in {}'.format(
+                value, enum_type))
         enum_value = value
 
     return enum_value

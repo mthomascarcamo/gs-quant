@@ -14,13 +14,14 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from typing import Union, Iterable, Optional
 import datetime
 from enum import Enum
+from typing import Iterable, Optional, Union
+
 import pandas as pd
 
 from gs_quant.backtests.actions import Action
-from gs_quant.backtests.backtest_utils import make_list, CalcType
+from gs_quant.backtests.backtest_utils import CalcType, make_list
 from gs_quant.backtests.generic_engine import BackTest
 
 
@@ -36,7 +37,12 @@ class TriggerRequirements(object):
 
 
 class PeriodicTriggerRequirements(TriggerRequirements):
-    def __init__(self, start_date=None, end_date=None, frequency=None, calendar=None):
+    def __init__(
+            self,
+            start_date=None,
+            end_date=None,
+            frequency=None,
+            calendar=None):
         super().__init__()
         self.start_date = start_date
         self.end_date = end_date
@@ -69,13 +75,19 @@ class AggregateTriggerRequirements(TriggerRequirements):
 
 class Trigger(object):
 
-    def __init__(self, trigger_requirements: Optional[TriggerRequirements], actions: Union[Action, Iterable[Action]]):
+    def __init__(self,
+                 trigger_requirements: Optional[TriggerRequirements],
+                 actions: Union[Action,
+                                Iterable[Action]]):
         self._trigger_requirements = trigger_requirements
         self._actions = make_list(actions)
         self._risks = [x.risk for x in self.actions if x.risk is not None]
         self._calc_type = CalcType.simple
 
-    def has_triggered(self, state: datetime.date, backtest: BackTest = None) -> bool:
+    def has_triggered(
+            self,
+            state: datetime.date,
+            backtest: BackTest = None) -> bool:
         """
         implemented by sub classes
         :param state:
@@ -110,13 +122,18 @@ class PeriodicTrigger(Trigger):
 
     def get_trigger_dates(self) -> [datetime.date]:
         if not self._trigger_dates:
-            self._trigger_dates = pd.date_range(start=self._trigger_requirements.start_date,
-                                                end=self._trigger_requirements.end_date,
-                                                freq=self._trigger_requirements.frequency).to_pydatetime().tolist()
-            self._trigger_dates = [my_date.date() for my_date in self._trigger_dates]
+            self._trigger_dates = pd.date_range(
+                start=self._trigger_requirements.start_date,
+                end=self._trigger_requirements.end_date,
+                freq=self._trigger_requirements.frequency).to_pydatetime().tolist()
+            self._trigger_dates = [my_date.date()
+                                   for my_date in self._trigger_dates]
         return self._trigger_dates
 
-    def has_triggered(self, state: datetime.date, backtest: BackTest = None) -> bool:
+    def has_triggered(
+            self,
+            state: datetime.date,
+            backtest: BackTest = None) -> bool:
         if not self._trigger_dates:
             self.get_trigger_dates()
         return state in self._trigger_dates
@@ -128,7 +145,10 @@ class MktTrigger(Trigger):
                  actions: Union[Action, Iterable[Action]]):
         super().__init__(trigger_requirements, actions)
 
-    def has_triggered(self, state: datetime.date, backtest: BackTest = None) -> bool:
+    def has_triggered(
+            self,
+            state: datetime.date,
+            backtest: BackTest = None) -> bool:
         data_value = self._trigger_requirements.data_source.get_data(state)
         if self._trigger_requirements.direction == TriggerDirection.ABOVE:
             if data_value > self._trigger_requirements.trigger_level:
@@ -150,7 +170,10 @@ class StrategyRiskTrigger(Trigger):
         self._calc_type = CalcType.path_dependent
         self._risks += [trigger_requirements.risk]
 
-    def has_triggered(self, state: datetime.date, backtest: BackTest = None) -> bool:
+    def has_triggered(
+            self,
+            state: datetime.date,
+            backtest: BackTest = None) -> bool:
         risk_value = backtest[state][self._trigger_requirements.risk]
         if self._trigger_requirements.direction == TriggerDirection.ABOVE:
             if risk_value > self._trigger_requirements.trigger_level:
@@ -171,7 +194,10 @@ class AggregateTrigger(Trigger):
             actions += [action for action in t.actions]
         super().__init__(AggregateTriggerRequirements(triggers), actions)
 
-    def has_triggered(self, state: datetime.date, backtest: BackTest = None) -> bool:
+    def has_triggered(
+            self,
+            state: datetime.date,
+            backtest: BackTest = None) -> bool:
         for trigger in self._trigger_requirements.triggers:
             if not trigger.has_triggered(state, backtest):
                 return False

@@ -40,15 +40,16 @@ class GsContentApi:
 
     @classmethod
     def get_contents(
-            cls,
-            channels: set = None,
-            asset_ids: set = None,
-            author_ids: set = None,
-            tags: set = None,
-            offset: int = 0,
-            limit: int = 10,
-            order_by: dict = {'direction': OrderBy.DESC, 'field': 'createdTime'}
-    ) -> List[ContentResponse]:
+        cls,
+        channels: set = None,
+        asset_ids: set = None,
+        author_ids: set = None,
+        tags: set = None,
+        offset: int = 0,
+        limit: int = 10,
+        order_by: dict = {
+            'direction': OrderBy.DESC,
+            'field': 'createdTime'}) -> List[ContentResponse]:
         """
         Get contents for given parameters
 
@@ -85,8 +86,11 @@ class GsContentApi:
             limit=[limit] if limit else None,
             order_by=[order_by] if order_by else None)
 
-        query_string = '' if not parameters_dict else cls._build_query_string(parameters_dict)
-        contents = GsSession.current._get(f'/content{query_string}', cls=GetManyContentsResponse)
+        query_string = '' if not parameters_dict else cls._build_query_string(
+            parameters_dict)
+        contents = GsSession.current._get(
+            f'/content{query_string}',
+            cls=GetManyContentsResponse)
         return contents.data
 
     @staticmethod
@@ -106,7 +110,8 @@ class GsContentApi:
         >>> contents = GsContentApi.get_contents(channels=['G10'])
         >>> text = gs_content_api.get_text(contents)
         """
-        return [(content.id, b64decode(content.content.body)) for content in contents]
+        return [(content.id, b64decode(content.content.body))
+                for content in contents]
 
     @classmethod
     def _build_parameters_dict(cls, **kwargs) -> dict:

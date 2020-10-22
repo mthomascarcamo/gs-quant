@@ -14,26 +14,28 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
-from typing import Tuple, Union
 from enum import Enum
-from gs_quant.base import Base, EnumBase, InstrumentBase, camel_case_translate, get_enum_value
+from typing import Tuple, Union
+
+from gs_quant.base import (Base, EnumBase, InstrumentBase,
+                           camel_case_translate, get_enum_value)
+from gs_quant.target.common import *
 
 
-class InvestmentRecommendationDirection(EnumBase, Enum):    
-    
+class InvestmentRecommendationDirection(EnumBase, Enum):
+
     Buy = 'Buy'
     Hold = 'Hold'
     Sell = 'Sell'
     Strategy = 'Strategy'
-    
+
     def __repr__(self):
         return self.value
 
 
 class Author(Base):
-        
+
     """Object containing author data"""
 
     @camel_case_translate
@@ -44,7 +46,7 @@ class Author(Base):
         division=None,
         email: str = None,
         title: str = None
-    ):        
+    ):
         super().__init__()
         self.__id = id_
         self.name = name
@@ -60,7 +62,7 @@ class Author(Base):
     @id.setter
     def id(self, value: str):
         self._property_changed('id')
-        self.__id = value        
+        self.__id = value
 
     @property
     def name(self) -> str:
@@ -70,7 +72,7 @@ class Author(Base):
     @name.setter
     def name(self, value: str):
         self._property_changed('name')
-        self.__name = value        
+        self.__name = value
 
     @property
     def division(self):
@@ -79,7 +81,7 @@ class Author(Base):
     @division.setter
     def division(self, value):
         self._property_changed('division')
-        self.__division = value        
+        self.__division = value
 
     @property
     def email(self) -> str:
@@ -88,7 +90,7 @@ class Author(Base):
     @email.setter
     def email(self, value: str):
         self._property_changed('email')
-        self.__email = value        
+        self.__email = value
 
     @property
     def title(self) -> str:
@@ -97,11 +99,11 @@ class Author(Base):
     @title.setter
     def title(self, value: str):
         self._property_changed('title')
-        self.__title = value        
+        self.__title = value
 
 
 class BulkDeleteContentResponse(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -109,7 +111,7 @@ class BulkDeleteContentResponse(Base):
         message: str = None,
         data: Tuple[str, ...] = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.status = status
         self.message = message
@@ -124,7 +126,7 @@ class BulkDeleteContentResponse(Base):
     @status.setter
     def status(self, value: int):
         self._property_changed('status')
-        self.__status = value        
+        self.__status = value
 
     @property
     def message(self) -> str:
@@ -134,7 +136,7 @@ class BulkDeleteContentResponse(Base):
     @message.setter
     def message(self, value: str):
         self._property_changed('message')
-        self.__message = value        
+        self.__message = value
 
     @property
     def data(self) -> Tuple[str, ...]:
@@ -144,11 +146,11 @@ class BulkDeleteContentResponse(Base):
     @data.setter
     def data(self, value: Tuple[str, ...]):
         self._property_changed('data')
-        self.__data = value        
+        self.__data = value
 
 
 class Content(Base):
-        
+
     """Body of the content piece"""
 
     @camel_case_translate
@@ -158,7 +160,7 @@ class Content(Base):
         mime_type,
         encoding,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.body = body
         self.mime_type = mime_type
@@ -173,7 +175,7 @@ class Content(Base):
     @body.setter
     def body(self, value: str):
         self._property_changed('body')
-        self.__body = value        
+        self.__body = value
 
     @property
     def mime_type(self):
@@ -183,7 +185,7 @@ class Content(Base):
     @mime_type.setter
     def mime_type(self, value):
         self._property_changed('mime_type')
-        self.__mime_type = value        
+        self.__mime_type = value
 
     @property
     def encoding(self):
@@ -193,11 +195,11 @@ class Content(Base):
     @encoding.setter
     def encoding(self, value):
         self._property_changed('encoding')
-        self.__encoding = value        
+        self.__encoding = value
 
 
 class DeleteContentResponse(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -205,7 +207,7 @@ class DeleteContentResponse(Base):
         message: str = None,
         data: str = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.status = status
         self.message = message
@@ -220,7 +222,7 @@ class DeleteContentResponse(Base):
     @status.setter
     def status(self, value: int):
         self._property_changed('status')
-        self.__status = value        
+        self.__status = value
 
     @property
     def message(self) -> str:
@@ -230,7 +232,7 @@ class DeleteContentResponse(Base):
     @message.setter
     def message(self, value: str):
         self._property_changed('message')
-        self.__message = value        
+        self.__message = value
 
     @property
     def data(self) -> str:
@@ -240,22 +242,22 @@ class DeleteContentResponse(Base):
     @data.setter
     def data(self, value: str):
         self._property_changed('data')
-        self.__data = value        
+        self.__data = value
 
 
 class Object(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.name = name
 
 
 class Certification(Base):
-        
+
     """Field to store SEAL certification object"""
 
     @camel_case_translate
@@ -268,7 +270,7 @@ class Certification(Base):
         etask_process_instance_id: str = None,
         tags: Tuple[None, ...] = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.submission_id = submission_id
         self.version = version
@@ -286,7 +288,7 @@ class Certification(Base):
     @submission_id.setter
     def submission_id(self, value: str):
         self._property_changed('submission_id')
-        self.__submission_id = value        
+        self.__submission_id = value
 
     @property
     def version(self) -> str:
@@ -296,7 +298,7 @@ class Certification(Base):
     @version.setter
     def version(self, value: str):
         self._property_changed('version')
-        self.__version = value        
+        self.__version = value
 
     @property
     def submission_state(self):
@@ -306,7 +308,7 @@ class Certification(Base):
     @submission_state.setter
     def submission_state(self, value):
         self._property_changed('submission_state')
-        self.__submission_state = value        
+        self.__submission_state = value
 
     @property
     def etask_process_instance_id(self) -> str:
@@ -316,7 +318,7 @@ class Certification(Base):
     @etask_process_instance_id.setter
     def etask_process_instance_id(self, value: str):
         self._property_changed('etask_process_instance_id')
-        self.__etask_process_instance_id = value        
+        self.__etask_process_instance_id = value
 
     @property
     def allowed_distribution(self) -> Tuple[Object, ...]:
@@ -326,7 +328,7 @@ class Certification(Base):
     @allowed_distribution.setter
     def allowed_distribution(self, value: Tuple[Object, ...]):
         self._property_changed('allowed_distribution')
-        self.__allowed_distribution = value        
+        self.__allowed_distribution = value
 
     @property
     def tags(self) -> Tuple[None, ...]:
@@ -336,11 +338,11 @@ class Certification(Base):
     @tags.setter
     def tags(self, value: Tuple[None, ...]):
         self._property_changed('tags')
-        self.__tags = value        
+        self.__tags = value
 
 
 class ContentResponse(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -354,7 +356,7 @@ class ContentResponse(Base):
         last_updated_time: datetime.datetime = None,
         channels: Tuple[str, ...] = None,
         content: Content = None
-    ):        
+    ):
         super().__init__()
         self.__id = id_
         self.version = version
@@ -375,7 +377,7 @@ class ContentResponse(Base):
     @id.setter
     def id(self, value: str):
         self._property_changed('id')
-        self.__id = value        
+        self.__id = value
 
     @property
     def version(self) -> str:
@@ -385,7 +387,7 @@ class ContentResponse(Base):
     @version.setter
     def version(self, value: str):
         self._property_changed('version')
-        self.__version = value        
+        self.__version = value
 
     @property
     def name(self) -> str:
@@ -395,7 +397,7 @@ class ContentResponse(Base):
     @name.setter
     def name(self, value: str):
         self._property_changed('name')
-        self.__name = value        
+        self.__name = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -405,7 +407,7 @@ class ContentResponse(Base):
     @entitlements.setter
     def entitlements(self, value: Entitlements):
         self._property_changed('entitlements')
-        self.__entitlements = value        
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -415,7 +417,7 @@ class ContentResponse(Base):
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
         self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self.__entitlement_exclusions = value
 
     @property
     def created_by_id(self) -> str:
@@ -425,7 +427,7 @@ class ContentResponse(Base):
     @created_by_id.setter
     def created_by_id(self, value: str):
         self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self.__created_by_id = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -435,7 +437,7 @@ class ContentResponse(Base):
     @created_time.setter
     def created_time(self, value: datetime.datetime):
         self._property_changed('created_time')
-        self.__created_time = value        
+        self.__created_time = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -445,7 +447,7 @@ class ContentResponse(Base):
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
         self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self.__last_updated_time = value
 
     @property
     def channels(self) -> Tuple[str, ...]:
@@ -455,7 +457,7 @@ class ContentResponse(Base):
     @channels.setter
     def channels(self, value: Tuple[str, ...]):
         self._property_changed('channels')
-        self.__channels = value        
+        self.__channels = value
 
     @property
     def content(self) -> Content:
@@ -465,11 +467,11 @@ class ContentResponse(Base):
     @content.setter
     def content(self, value: Content):
         self._property_changed('content')
-        self.__content = value        
+        self.__content = value
 
 
 class ContentUpdateRequest(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -477,7 +479,7 @@ class ContentUpdateRequest(Base):
         entitlements: Entitlements = None,
         entitlement_exclusions: EntitlementExclusions = None,
         content: Content = None
-    ):        
+    ):
         super().__init__()
         self.name = name
         self.entitlements = entitlements
@@ -492,7 +494,7 @@ class ContentUpdateRequest(Base):
     @name.setter
     def name(self, value: str):
         self._property_changed('name')
-        self.__name = value        
+        self.__name = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -502,7 +504,7 @@ class ContentUpdateRequest(Base):
     @entitlements.setter
     def entitlements(self, value: Entitlements):
         self._property_changed('entitlements')
-        self.__entitlements = value        
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -512,7 +514,7 @@ class ContentUpdateRequest(Base):
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
         self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self.__entitlement_exclusions = value
 
     @property
     def content(self) -> Content:
@@ -522,11 +524,11 @@ class ContentUpdateRequest(Base):
     @content.setter
     def content(self, value: Content):
         self._property_changed('content')
-        self.__content = value        
+        self.__content = value
 
 
 class InvestmentRecommendationAsset(Base):
-        
+
     """An asset that exists in the system."""
 
     @camel_case_translate
@@ -538,7 +540,7 @@ class InvestmentRecommendationAsset(Base):
         price: float = None,
         price_target: float = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.asset_id = asset_id
         self.direction = direction
@@ -555,7 +557,7 @@ class InvestmentRecommendationAsset(Base):
     @asset_id.setter
     def asset_id(self, value: str):
         self._property_changed('asset_id')
-        self.__asset_id = value        
+        self.__asset_id = value
 
     @property
     def direction(self) -> Union[InvestmentRecommendationDirection, str]:
@@ -564,7 +566,8 @@ class InvestmentRecommendationAsset(Base):
     @direction.setter
     def direction(self, value: Union[InvestmentRecommendationDirection, str]):
         self._property_changed('direction')
-        self.__direction = get_enum_value(InvestmentRecommendationDirection, value)        
+        self.__direction = get_enum_value(
+            InvestmentRecommendationDirection, value)
 
     @property
     def currency(self) -> str:
@@ -573,7 +576,7 @@ class InvestmentRecommendationAsset(Base):
     @currency.setter
     def currency(self, value: str):
         self._property_changed('currency')
-        self.__currency = value        
+        self.__currency = value
 
     @property
     def price(self) -> float:
@@ -582,7 +585,7 @@ class InvestmentRecommendationAsset(Base):
     @price.setter
     def price(self, value: float):
         self._property_changed('price')
-        self.__price = value        
+        self.__price = value
 
     @property
     def price_target(self) -> float:
@@ -591,11 +594,11 @@ class InvestmentRecommendationAsset(Base):
     @price_target.setter
     def price_target(self, value: float):
         self._property_changed('price_target')
-        self.__price_target = value        
+        self.__price_target = value
 
 
 class InvestmentRecommendationCustomAsset(Base):
-        
+
     """An asset that does not exist in the system."""
 
     @camel_case_translate
@@ -607,7 +610,7 @@ class InvestmentRecommendationCustomAsset(Base):
         price: float = None,
         price_target: float = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.asset_name = asset_name
         self.direction = direction
@@ -623,7 +626,7 @@ class InvestmentRecommendationCustomAsset(Base):
     @asset_name.setter
     def asset_name(self, value: str):
         self._property_changed('asset_name')
-        self.__asset_name = value        
+        self.__asset_name = value
 
     @property
     def direction(self) -> Union[InvestmentRecommendationDirection, str]:
@@ -632,7 +635,8 @@ class InvestmentRecommendationCustomAsset(Base):
     @direction.setter
     def direction(self, value: Union[InvestmentRecommendationDirection, str]):
         self._property_changed('direction')
-        self.__direction = get_enum_value(InvestmentRecommendationDirection, value)        
+        self.__direction = get_enum_value(
+            InvestmentRecommendationDirection, value)
 
     @property
     def currency(self) -> str:
@@ -641,7 +645,7 @@ class InvestmentRecommendationCustomAsset(Base):
     @currency.setter
     def currency(self, value: str):
         self._property_changed('currency')
-        self.__currency = value        
+        self.__currency = value
 
     @property
     def price(self) -> float:
@@ -650,7 +654,7 @@ class InvestmentRecommendationCustomAsset(Base):
     @price.setter
     def price(self, value: float):
         self._property_changed('price')
-        self.__price = value        
+        self.__price = value
 
     @property
     def price_target(self) -> float:
@@ -659,18 +663,18 @@ class InvestmentRecommendationCustomAsset(Base):
     @price_target.setter
     def price_target(self, value: float):
         self._property_changed('price_target')
-        self.__price_target = value        
+        self.__price_target = value
 
 
 class BulkContentUpdateRequestItem(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
         id_: str = None,
         update: ContentUpdateRequest = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.__id = id_
         self.update = update
@@ -684,7 +688,7 @@ class BulkContentUpdateRequestItem(Base):
     @id.setter
     def id(self, value: str):
         self._property_changed('id')
-        self.__id = value        
+        self.__id = value
 
     @property
     def update(self) -> ContentUpdateRequest:
@@ -693,11 +697,11 @@ class BulkContentUpdateRequestItem(Base):
     @update.setter
     def update(self, value: ContentUpdateRequest):
         self._property_changed('update')
-        self.__update = value        
+        self.__update = value
 
 
 class ContentAuditFields(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -710,7 +714,7 @@ class ContentAuditFields(Base):
         authors: Tuple[Author, ...] = None,
         created_time: datetime.datetime = None,
         last_updated_time: datetime.datetime = None
-    ):        
+    ):
         super().__init__()
         self.__id = id_
         self.version = version
@@ -730,7 +734,7 @@ class ContentAuditFields(Base):
     @id.setter
     def id(self, value: str):
         self._property_changed('id')
-        self.__id = value        
+        self.__id = value
 
     @property
     def version(self) -> str:
@@ -740,7 +744,7 @@ class ContentAuditFields(Base):
     @version.setter
     def version(self, value: str):
         self._property_changed('version')
-        self.__version = value        
+        self.__version = value
 
     @property
     def name(self) -> str:
@@ -750,7 +754,7 @@ class ContentAuditFields(Base):
     @name.setter
     def name(self, value: str):
         self._property_changed('name')
-        self.__name = value        
+        self.__name = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -760,7 +764,7 @@ class ContentAuditFields(Base):
     @entitlements.setter
     def entitlements(self, value: Entitlements):
         self._property_changed('entitlements')
-        self.__entitlements = value        
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -770,7 +774,7 @@ class ContentAuditFields(Base):
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
         self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self.__entitlement_exclusions = value
 
     @property
     def created_by_id(self) -> str:
@@ -780,7 +784,7 @@ class ContentAuditFields(Base):
     @created_by_id.setter
     def created_by_id(self, value: str):
         self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self.__created_by_id = value
 
     @property
     def authors(self) -> Tuple[Author, ...]:
@@ -790,7 +794,7 @@ class ContentAuditFields(Base):
     @authors.setter
     def authors(self, value: Tuple[Author, ...]):
         self._property_changed('authors')
-        self.__authors = value        
+        self.__authors = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -800,7 +804,7 @@ class ContentAuditFields(Base):
     @created_time.setter
     def created_time(self, value: datetime.datetime):
         self._property_changed('created_time')
-        self.__created_time = value        
+        self.__created_time = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -810,11 +814,11 @@ class ContentAuditFields(Base):
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
         self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self.__last_updated_time = value
 
 
 class GetManyContentsResponse(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -822,7 +826,7 @@ class GetManyContentsResponse(Base):
         message: str = None,
         data: Tuple[ContentResponse, ...] = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.status = status
         self.message = message
@@ -837,7 +841,7 @@ class GetManyContentsResponse(Base):
     @status.setter
     def status(self, value: int):
         self._property_changed('status')
-        self.__status = value        
+        self.__status = value
 
     @property
     def message(self) -> str:
@@ -847,7 +851,7 @@ class GetManyContentsResponse(Base):
     @message.setter
     def message(self, value: str):
         self._property_changed('message')
-        self.__message = value        
+        self.__message = value
 
     @property
     def data(self) -> Tuple[ContentResponse, ...]:
@@ -857,11 +861,11 @@ class GetManyContentsResponse(Base):
     @data.setter
     def data(self, value: Tuple[ContentResponse, ...]):
         self._property_changed('data')
-        self.__data = value        
+        self.__data = value
 
 
 class InvestmentRecommendations(Base):
-        
+
     """Investment recommendations for an article."""
 
     @camel_case_translate
@@ -870,7 +874,7 @@ class InvestmentRecommendations(Base):
         assets: Tuple[InvestmentRecommendationAsset, ...],
         custom_assets: Tuple[InvestmentRecommendationCustomAsset, ...] = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.assets = assets
         self.custom_assets = custom_assets
@@ -884,7 +888,7 @@ class InvestmentRecommendations(Base):
     @assets.setter
     def assets(self, value: Tuple[InvestmentRecommendationAsset, ...]):
         self._property_changed('assets')
-        self.__assets = value        
+        self.__assets = value
 
     @property
     def custom_assets(self) -> Tuple[InvestmentRecommendationCustomAsset, ...]:
@@ -892,13 +896,14 @@ class InvestmentRecommendations(Base):
         return self.__custom_assets
 
     @custom_assets.setter
-    def custom_assets(self, value: Tuple[InvestmentRecommendationCustomAsset, ...]):
+    def custom_assets(
+            self, value: Tuple[InvestmentRecommendationCustomAsset, ...]):
         self._property_changed('custom_assets')
-        self.__custom_assets = value        
+        self.__custom_assets = value
 
 
 class BulkContentUpdateResponse(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -906,7 +911,7 @@ class BulkContentUpdateResponse(Base):
         message: str = None,
         data: Tuple[ContentAuditFields, ...] = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.status = status
         self.message = message
@@ -921,7 +926,7 @@ class BulkContentUpdateResponse(Base):
     @status.setter
     def status(self, value: int):
         self._property_changed('status')
-        self.__status = value        
+        self.__status = value
 
     @property
     def message(self) -> str:
@@ -931,7 +936,7 @@ class BulkContentUpdateResponse(Base):
     @message.setter
     def message(self, value: str):
         self._property_changed('message')
-        self.__message = value        
+        self.__message = value
 
     @property
     def data(self) -> Tuple[ContentAuditFields, ...]:
@@ -941,11 +946,11 @@ class BulkContentUpdateResponse(Base):
     @data.setter
     def data(self, value: Tuple[ContentAuditFields, ...]):
         self._property_changed('data')
-        self.__data = value        
+        self.__data = value
 
 
 class ContentCreateResponse(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -953,7 +958,7 @@ class ContentCreateResponse(Base):
         message: str = None,
         data: ContentAuditFields = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.status = status
         self.message = message
@@ -968,7 +973,7 @@ class ContentCreateResponse(Base):
     @status.setter
     def status(self, value: int):
         self._property_changed('status')
-        self.__status = value        
+        self.__status = value
 
     @property
     def message(self) -> str:
@@ -978,7 +983,7 @@ class ContentCreateResponse(Base):
     @message.setter
     def message(self, value: str):
         self._property_changed('message')
-        self.__message = value        
+        self.__message = value
 
     @property
     def data(self) -> ContentAuditFields:
@@ -987,11 +992,11 @@ class ContentCreateResponse(Base):
     @data.setter
     def data(self, value: ContentAuditFields):
         self._property_changed('data')
-        self.__data = value        
+        self.__data = value
 
 
 class ContentParameters(Base):
-        
+
     """Parameters of the content piece"""
 
     @camel_case_translate
@@ -1013,7 +1018,7 @@ class ContentParameters(Base):
         is_research_summary: bool = None,
         is_restricted: bool = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.status = status
         self.namespace = namespace
@@ -1040,7 +1045,7 @@ class ContentParameters(Base):
     @status.setter
     def status(self, value):
         self._property_changed('status')
-        self.__status = value        
+        self.__status = value
 
     @property
     def namespace(self) -> str:
@@ -1050,7 +1055,7 @@ class ContentParameters(Base):
     @namespace.setter
     def namespace(self, value: str):
         self._property_changed('namespace')
-        self.__namespace = value        
+        self.__namespace = value
 
     @property
     def tags(self) -> Tuple[str, ...]:
@@ -1060,7 +1065,7 @@ class ContentParameters(Base):
     @tags.setter
     def tags(self, value: Tuple[str, ...]):
         self._property_changed('tags')
-        self.__tags = value        
+        self.__tags = value
 
     @property
     def slug(self) -> str:
@@ -1070,7 +1075,7 @@ class ContentParameters(Base):
     @slug.setter
     def slug(self, value: str):
         self._property_changed('slug')
-        self.__slug = value        
+        self.__slug = value
 
     @property
     def author_ids(self) -> Tuple[str, ...]:
@@ -1080,7 +1085,7 @@ class ContentParameters(Base):
     @author_ids.setter
     def author_ids(self, value: Tuple[str, ...]):
         self._property_changed('author_ids')
-        self.__author_ids = value        
+        self.__author_ids = value
 
     @property
     def attachments(self) -> Tuple[Content, ...]:
@@ -1090,7 +1095,7 @@ class ContentParameters(Base):
     @attachments.setter
     def attachments(self, value: Tuple[Content, ...]):
         self._property_changed('attachments')
-        self.__attachments = value        
+        self.__attachments = value
 
     @property
     def certification(self) -> Certification:
@@ -1100,7 +1105,7 @@ class ContentParameters(Base):
     @certification.setter
     def certification(self, value: Certification):
         self._property_changed('certification')
-        self.__certification = value        
+        self.__certification = value
 
     @property
     def certification_type(self):
@@ -1110,7 +1115,7 @@ class ContentParameters(Base):
     @certification_type.setter
     def certification_type(self, value):
         self._property_changed('certification_type')
-        self.__certification_type = value        
+        self.__certification_type = value
 
     @property
     def asset_ids(self) -> Tuple[str, ...]:
@@ -1120,7 +1125,7 @@ class ContentParameters(Base):
     @asset_ids.setter
     def asset_ids(self, value: Tuple[str, ...]):
         self._property_changed('asset_ids')
-        self.__asset_ids = value        
+        self.__asset_ids = value
 
     @property
     def origin(self):
@@ -1130,7 +1135,7 @@ class ContentParameters(Base):
     @origin.setter
     def origin(self, value):
         self._property_changed('origin')
-        self.__origin = value        
+        self.__origin = value
 
     @property
     def language(self):
@@ -1140,7 +1145,7 @@ class ContentParameters(Base):
     @language.setter
     def language(self, value):
         self._property_changed('language')
-        self.__language = value        
+        self.__language = value
 
     @property
     def investment_recommendations(self) -> InvestmentRecommendations:
@@ -1150,7 +1155,7 @@ class ContentParameters(Base):
     @investment_recommendations.setter
     def investment_recommendations(self, value: InvestmentRecommendations):
         self._property_changed('investment_recommendations')
-        self.__investment_recommendations = value        
+        self.__investment_recommendations = value
 
     @property
     def is_flow(self) -> bool:
@@ -1159,7 +1164,7 @@ class ContentParameters(Base):
     @is_flow.setter
     def is_flow(self, value: bool):
         self._property_changed('is_flow')
-        self.__is_flow = value        
+        self.__is_flow = value
 
     @property
     def is_research_summary(self) -> bool:
@@ -1168,7 +1173,7 @@ class ContentParameters(Base):
     @is_research_summary.setter
     def is_research_summary(self, value: bool):
         self._property_changed('is_research_summary')
-        self.__is_research_summary = value        
+        self.__is_research_summary = value
 
     @property
     def is_restricted(self) -> bool:
@@ -1177,11 +1182,11 @@ class ContentParameters(Base):
     @is_restricted.setter
     def is_restricted(self, value: bool):
         self._property_changed('is_restricted')
-        self.__is_restricted = value        
+        self.__is_restricted = value
 
 
 class ContentUpdateResponse(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -1189,7 +1194,7 @@ class ContentUpdateResponse(Base):
         message: str = None,
         data: ContentAuditFields = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.status = status
         self.message = message
@@ -1204,7 +1209,7 @@ class ContentUpdateResponse(Base):
     @status.setter
     def status(self, value: int):
         self._property_changed('status')
-        self.__status = value        
+        self.__status = value
 
     @property
     def message(self) -> str:
@@ -1214,7 +1219,7 @@ class ContentUpdateResponse(Base):
     @message.setter
     def message(self, value: str):
         self._property_changed('message')
-        self.__message = value        
+        self.__message = value
 
     @property
     def data(self) -> ContentAuditFields:
@@ -1223,11 +1228,11 @@ class ContentUpdateResponse(Base):
     @data.setter
     def data(self, value: ContentAuditFields):
         self._property_changed('data')
-        self.__data = value        
+        self.__data = value
 
 
 class ContentCreateRequest(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -1236,7 +1241,7 @@ class ContentCreateRequest(Base):
         entitlement_exclusions: EntitlementExclusions,
         content: Content,
         parameters: ContentParameters
-    ):        
+    ):
         super().__init__()
         self.name = name
         self.entitlements = entitlements
@@ -1252,7 +1257,7 @@ class ContentCreateRequest(Base):
     @name.setter
     def name(self, value: str):
         self._property_changed('name')
-        self.__name = value        
+        self.__name = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -1262,7 +1267,7 @@ class ContentCreateRequest(Base):
     @entitlements.setter
     def entitlements(self, value: Entitlements):
         self._property_changed('entitlements')
-        self.__entitlements = value        
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -1272,7 +1277,7 @@ class ContentCreateRequest(Base):
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
         self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self.__entitlement_exclusions = value
 
     @property
     def content(self) -> Content:
@@ -1282,7 +1287,7 @@ class ContentCreateRequest(Base):
     @content.setter
     def content(self, value: Content):
         self._property_changed('content')
-        self.__content = value        
+        self.__content = value
 
     @property
     def parameters(self) -> ContentParameters:
@@ -1292,4 +1297,4 @@ class ContentCreateRequest(Base):
     @parameters.setter
     def parameters(self, value: ContentParameters):
         self._property_changed('parameters')
-        self.__parameters = value        
+        self.__parameters = value

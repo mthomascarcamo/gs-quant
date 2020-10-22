@@ -16,14 +16,15 @@ under the License.
 import asyncio
 import base64
 import datetime as dt
-from itertools import chain
 import json
 import logging
 import math
-import msgpack
-from socket import gaierror
 import time
+from itertools import chain
+from socket import gaierror
 from typing import Iterable, Optional, Union
+
+import msgpack
 from websockets import ConnectionClosedError
 
 from gs_quant.api.risk import RiskApi
@@ -58,19 +59,29 @@ class GsRiskApi(RiskApi):
         return cls._exec(request)
 
     @classmethod
-    def _exec(cls, request: Union[RiskRequest, Iterable[RiskRequest]]) -> Union[Iterable, dict]:
+    def _exec(cls,
+              request: Union[RiskRequest,
+                             Iterable[RiskRequest]]) -> Union[Iterable,
+                                                              dict]:
         use_msgpack = cls.USE_MSGPACK and not isinstance(request, RiskRequest)
-        return GsSession.current._post(cls.__url(request),
-                                       request,
-                                       timeout=181,
-                                       request_headers={'Content-Type': 'application/x-msgpack'} if use_msgpack else {})
+        return GsSession.current._post(
+            cls.__url(request), request, timeout=181, request_headers={
+                'Content-Type': 'application/x-msgpack'} if use_msgpack else {})
 
     @classmethod
     def __url(cls, request: Union[RiskRequest, Iterable[RiskRequest]]):
         is_bulk = not isinstance(request, RiskRequest)
-        is_internal = any(hasattr(p.instrument, '_type') for p in
-                          chain.from_iterable(r.positions for r in (request if is_bulk else (request,))))
-        return '/risk{}/calculate{}'.format('-internal' if is_internal else '', '/bulk' if is_bulk else '')
+        is_internal = any(
+            hasattr(
+                p.instrument,
+                '_type') for p in chain.from_iterable(
+                r.positions for r in (
+                    request if is_bulk else (
+                        request,
+                    ))))
+        return '/risk{}/calculate{}'.format(
+            '-internal' if is_internal else '',
+            '/bulk' if is_bulk else '')
 
     @classmethod
     async def get_results(cls, responses: asyncio.Queue, results: asyncio.Queue, timeout: Optional[int] = None):
@@ -102,7 +113,8 @@ class GsRiskApi(RiskApi):
 
             if items:
                 # ... update the pending requests ...
-                pending_requests.update(((i[1]['reportId'], i[0]) for i in items))
+                pending_requests.update(
+                    ((i[1]['reportId'], i[0]) for i in items))
 
             if not pending_requests:
                 continue
@@ -110,14 +122,21 @@ class GsRiskApi(RiskApi):
             # ... poll for completed requests ...
 
             try:
-                calc_results = GsSession.current._post('/risk/calculate/results/bulk', list(pending_requests.keys()))
+                calc_results = GsSession.current._post(
+                    '/risk/calculate/results/bulk', list(pending_requests.keys()))
 
                 # ... enqueue the request and result for the listener to handle ...
                 for result in calc_results:
                     if 'error' in result:
-                        results.put_nowait((pending_requests.pop(result['requestId']), RuntimeError(result['error'])))
+                        results.put_nowait(
+                            (pending_requests.pop(
+                                result['requestId']), RuntimeError(
+                                result['error'])))
                     elif 'result' in result:
-                        results.put_nowait((pending_requests.pop(result['requestId']), result['result']))
+                        results.put_nowait(
+                            (pending_requests.pop(
+                                result['requestId']),
+                                result['result']))
             except Exception as e:
                 _logger.error(f'Fatal error: {e}')
                 cls.shutdown_queue_listener(results)
@@ -131,9 +150,11 @@ class GsRiskApi(RiskApi):
             try:
                 # If we're re-connecting then re-send any in-flight request ids
 
-                outstanding_request_ids = [i for i in pending_requests.keys() if i not in dispatched]
+                outstanding_request_ids = [
+                    i for i in pending_requests.keys() if i not in dispatched]
                 if outstanding_request_ids:
-                    _logger.info(f'Re-sending {len(outstanding_request_ids)} requests')
+                    _logger.info(
+                        f'Re-sending {len(outstanding_request_ids)} requests')
                     await asyncio.wait_for(ws.send(json.dumps(outstanding_request_ids)), timeout=send_timeout)
 
                 all_requests_dispatched = False
@@ -141,15 +162,18 @@ class GsRiskApi(RiskApi):
                 while pending_requests or not all_requests_dispatched:
                     # Continue while we have pending or un-dispatched requests
 
-                    request_listener = asyncio.ensure_future(cls.drain_queue_async(responses))\
-                        if not all_requests_dispatched else None
+                    request_listener = asyncio.ensure_future(
+                        cls.drain_queue_async(responses)) if not all_requests_dispatched else None
                     result_listener = asyncio.ensure_future(ws.recv())
-                    listeners = tuple(filter(None, (request_listener, result_listener)))
+                    listeners = tuple(
+                        filter(
+                            None, (request_listener, result_listener)))
 
                     # Wait for either a request or result
                     complete, pending = await asyncio.wait(listeners, return_when=asyncio.FIRST_COMPLETED)
 
-                    # Check results before sending more requests. Results can be lost otherwise
+                    # Check results before sending more requests. Results can
+                    # be lost otherwise
 
                     if result_listener in complete:
                         # New results have been received
@@ -164,13 +188,16 @@ class GsRiskApi(RiskApi):
                             # Unpack the result
 
                             try:
-                                result = msgpack.unpackb(base64.b64decode(result_str), raw=False)\
-                                    if cls.USE_MSGPACK else json.loads(result_str)
+                                result = msgpack.unpackb(
+                                    base64.b64decode(result_str),
+                                    raw=False) if cls.USE_MSGPACK else json.loads(result_str)
                             except Exception as ee:
                                 result = ee
 
-                        # Enqueue the request and result for the listener to handle
-                        results.put_nowait((pending_requests.pop(request_id), result))
+                        # Enqueue the request and result for the listener to
+                        # handle
+                        results.put_nowait(
+                            (pending_requests.pop(request_id), result))
                     else:
                         result_listener.cancel()
 
@@ -184,7 +211,8 @@ class GsRiskApi(RiskApi):
                                 request_ids = [i[1]['reportId'] for i in items]
 
                                 # ... update the pending requests ...
-                                pending_requests.update(zip(request_ids, (i[0] for i in items)))
+                                pending_requests.update(
+                                    zip(request_ids, (i[0] for i in items)))
 
                                 # ... add to our result subscription ...
                                 await asyncio.wait_for(ws.send(json.dumps(request_ids)), timeout=send_timeout)
@@ -208,7 +236,8 @@ class GsRiskApi(RiskApi):
         while attempts < max_attempts:
             if attempts > 0:
                 await asyncio.sleep(math.pow(2, attempts))
-                _logger.error(f'{error} error, retrying (attempt {attempts + 1} of {max_attempts})')
+                _logger.error(
+                    f'{error} error, retrying (attempt {attempts + 1} of {max_attempts})')
 
             try:
                 async with GsSession.current._connect_websocket('/risk/calculate/results/subscribe') as ws:
@@ -232,10 +261,14 @@ class GsRiskApi(RiskApi):
             cls.shutdown_queue_listener(results)
 
     @classmethod
-    def create_pretrade_execution_optimization(cls, request: OptimizationRequest) -> str:
+    def create_pretrade_execution_optimization(
+            cls, request: OptimizationRequest) -> str:
         try:
-            response = GsSession.current._post(r'/risk/execution/pretrade', request)
-            _logger.info('New optimization is created with id: {}'.format(response.get("optimizationId")))
+            response = GsSession.current._post(
+                r'/risk/execution/pretrade', request)
+            _logger.info(
+                'New optimization is created with id: {}'.format(
+                    response.get("optimizationId")))
             return response
         except Exception as e:
             error = str(e)
@@ -243,7 +276,8 @@ class GsRiskApi(RiskApi):
             return error
 
     @classmethod
-    def get_pretrade_execution_optimization(cls, optimization_id: str, max_attempts: int = 15):
+    def get_pretrade_execution_optimization(
+            cls, optimization_id: str, max_attempts: int = 15):
         url = '/risk/execution/pretrade/{}/results'.format(optimization_id)
         attempts = 0
         start = time.perf_counter()
@@ -252,7 +286,9 @@ class GsRiskApi(RiskApi):
         while attempts < max_attempts:
             if attempts > 0:
                 time.sleep(math.pow(2, attempts))
-                _logger.error('Retrying (attempt {} of {})'.format(attempts, max_attempts))
+                _logger.error(
+                    'Retrying (attempt {} of {})'.format(
+                        attempts, max_attempts))
             try:
                 results = GsSession.current._get(url)
                 if results.get('status') == 'Running':
@@ -265,8 +301,11 @@ class GsRiskApi(RiskApi):
                 return error
 
         if results.get('status') == 'Running':
-            _logger.info('Optimization is still running. Please retry fetching the results.')
+            _logger.info(
+                'Optimization is still running. Please retry fetching the results.')
             return results
         else:
-            _logger.info('Optimization is fetched in {:.3f}s.'.format(time.perf_counter() - start))
+            _logger.info(
+                'Optimization is fetched in {:.3f}s.'.format(
+                    time.perf_counter() - start))
             return results

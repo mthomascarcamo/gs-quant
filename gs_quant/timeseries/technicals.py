@@ -14,7 +14,8 @@
 # Marquee Plot Service will attempt to make public functions (not prefixed with _) from this module available.
 # Such functions should be fully documented: docstrings should describe parameters and the return value, and provide
 # a 1-line description. Type annotations should be provided for parameters.
-from gs_quant.timeseries import diff, annualize, returns
+from gs_quant.timeseries import annualize, diff, returns
+
 from .statistics import *
 
 """
@@ -25,7 +26,8 @@ statistical properties of trading activity, such as price movement and volume ch
 
 
 @plot_function
-def moving_average(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def moving_average(
+        x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Moving average over specified window
 
@@ -65,7 +67,8 @@ def moving_average(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -
 
 
 @plot_function
-def bollinger_bands(x: pd.Series, w: Union[Window, int, str] = Window(None, 0), k: float = 2) -> pd.DataFrame:
+def bollinger_bands(x: pd.Series, w: Union[Window, int, str] = Window(
+        None, 0), k: float = 2) -> pd.DataFrame:
     """
     Bollinger bands with given window and width
 
@@ -113,7 +116,8 @@ def bollinger_bands(x: pd.Series, w: Union[Window, int, str] = Window(None, 0), 
 
 
 @plot_function
-def smoothed_moving_average(x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
+def smoothed_moving_average(
+        x: pd.Series, w: Union[Window, int, str] = Window(None, 0)) -> pd.Series:
     """
     Smoothed moving average over specified window
 
@@ -165,13 +169,16 @@ def smoothed_moving_average(x: pd.Series, w: Union[Window, int, str] = Window(No
         if isinstance(window_size, int):
             window_num_elem = window_size
         else:
-            window_num_elem = len(x[(x.index > (x.index[i] - window_size)) & (x.index <= x.index[i])])
-        smoothed_moving_averages[i] = ((window_num_elem - 1) * smoothed_moving_averages[i - 1] + x[i]) / window_num_elem
+            window_num_elem = len(
+                x[(x.index > (x.index[i] - window_size)) & (x.index <= x.index[i])])
+        smoothed_moving_averages[i] = (
+            (window_num_elem - 1) * smoothed_moving_averages[i - 1] + x[i]) / window_num_elem
     return smoothed_moving_averages
 
 
 @plot_function
-def relative_strength_index(x: pd.Series, w: Union[Window, int, str] = 14) -> pd.DataFrame:
+def relative_strength_index(
+        x: pd.Series, w: Union[Window, int, str] = 14) -> pd.DataFrame:
     """
     Relative Strength Index
 
@@ -218,7 +225,8 @@ def relative_strength_index(x: pd.Series, w: Union[Window, int, str] = 14) -> pd
         if moving_avg_losses[index] == 0:
             rsi[index] = 100
         else:
-            relative_strength = moving_avg_gains[index] / moving_avg_losses[index]
+            relative_strength = moving_avg_gains[index] / \
+                moving_avg_losses[index]
             rsi[index] = 100 - (100 / (1 + relative_strength))
 
     return rsi
@@ -298,7 +306,9 @@ def exponential_volatility(x: pd.Series, beta: float = 0.75) -> pd.Series:
 
 
 @plot_function
-def exponential_spread_volatility(x: pd.Series, beta: float = 0.75) -> pd.Series:
+def exponential_spread_volatility(
+        x: pd.Series,
+        beta: float = 0.75) -> pd.Series:
     """
     Exponentially weighted spread volatility
 

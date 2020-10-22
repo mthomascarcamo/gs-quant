@@ -25,8 +25,19 @@ from gs_quant.instrument import EqOption
 from gs_quant.session import *
 from gs_quant.target.backtests import *
 
-underlierList = [EqOption("MA4B66MW5E27U8P32SB", "3m", 3000, 'Call', 'European'),
-                 EqOption("MA4B66MW5E27U8P32SB", "3m", 3000, 'Put', 'European')]
+underlierList = [
+    EqOption(
+        "MA4B66MW5E27U8P32SB",
+        "3m",
+        3000,
+        'Call',
+        'European'),
+    EqOption(
+        "MA4B66MW5E27U8P32SB",
+        "3m",
+        3000,
+        'Put',
+        'European')]
 
 hedge = DeltaHedgeParameters(frequency='Daily')
 
@@ -79,9 +90,19 @@ def test_eqstrategies_backtest(mocker):
 
     risk_data = (delta, vega, gamma, theta)
 
-    mock_response = BacktestResult('BT1', performance=data, risks=risk_data, stats=None, backtest_version=1)
+    mock_response = BacktestResult(
+        'BT1',
+        performance=data,
+        risks=risk_data,
+        stats=None,
+        backtest_version=1)
 
-    expected_response = BacktestResult('BT1', performance=data, risks=risk_data, stats=None, backtest_version=1)
+    expected_response = BacktestResult(
+        'BT1',
+        performance=data,
+        risks=risk_data,
+        stats=None,
+        backtest_version=1)
 
     set_session()
 
@@ -111,7 +132,8 @@ def test_eqstrategies_backtest(mocker):
 
     underliers = [l1, l2]
 
-    backtest_parameters_class: Base = getattr(backtests, 'VolatilityFlowBacktestParameters')
+    backtest_parameters_class: Base = getattr(
+        backtests, 'VolatilityFlowBacktestParameters')
 
     backtest_parameter_args = {
         'trading_parameters': trading_parameters,
@@ -120,7 +142,8 @@ def test_eqstrategies_backtest(mocker):
         'scaling_method': None,
         'index_initial_value': 0.0,
     }
-    backtest_parameters = backtest_parameters_class.from_dict(backtest_parameter_args)
+    backtest_parameters = backtest_parameters_class.from_dict(
+        backtest_parameter_args)
 
     params_dict = backtest_parameters.as_dict()
     params_dict["measures"] = [FlowVolBacktestMeasure.ALL_MEASURES]

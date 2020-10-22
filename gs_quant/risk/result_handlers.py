@@ -15,24 +15,40 @@ under the License.
 """
 import datetime as dt
 import logging
-import pandas as pd
 from typing import Iterable, Union
 
-from .core import DataFrameWithInfo, ErrorValue, FloatWithInfo, StringWithInfo, sort_risk
-from .measures import EqDelta, EqGamma, EqVega
+import pandas as pd
+
 from gs_quant.base import InstrumentBase, RiskKey
+
+from .core import (DataFrameWithInfo, ErrorValue, FloatWithInfo,
+                   StringWithInfo, sort_risk)
+from .measures import EqDelta, EqGamma, EqVega
 
 _logger = logging.getLogger(__name__)
 __scalar_risk_measures = (EqDelta, EqGamma, EqVega)
 
 
-def __dataframe_handler(result: Iterable, mappings: tuple, risk_key: RiskKey) -> DataFrameWithInfo:
-    records = [{k: datum.get(v, (None if v == 'value' else '')) for k, v in mappings} for datum in result]
+def __dataframe_handler(
+        result: Iterable,
+        mappings: tuple,
+        risk_key: RiskKey) -> DataFrameWithInfo:
+    records = [{k: datum.get(v, (None if v == 'value' else ''))
+                for k, v in mappings} for datum in result]
     df = pd.DataFrame.from_records(records)
-    return DataFrameWithInfo(sort_risk(df, tuple(k for k, _ in mappings)), risk_key=risk_key)
+    return DataFrameWithInfo(
+        sort_risk(
+            df,
+            tuple(
+                k for k,
+                _ in mappings)),
+        risk_key=risk_key)
 
 
-def cashflows_handler(result: dict, risk_key: RiskKey, _instrument: InstrumentBase) -> DataFrameWithInfo:
+def cashflows_handler(
+        result: dict,
+        risk_key: RiskKey,
+        _instrument: InstrumentBase) -> DataFrameWithInfo:
     mappings = (
         ('payment_date', 'payDate'),
         ('set_date', 'setDate'),
@@ -52,51 +68,89 @@ def cashflows_handler(result: dict, risk_key: RiskKey, _instrument: InstrumentBa
     for cashflow in result['cashflows']:
         for field in ('payDate', 'setDate', 'accStart', 'accEnd'):
             value = cashflow.get(field)
-            date = dt.datetime.strptime(value, '%Y-%m-%d').date() if value else dt.date.max
+            date = dt.datetime.strptime(
+                value, '%Y-%m-%d').date() if value else dt.date.max
             cashflow[field] = date
 
     return __dataframe_handler(result['cashflows'], mappings, risk_key)
 
 
-def error_handler(result: dict, risk_key: RiskKey, instrument: InstrumentBase) -> ErrorValue:
+def error_handler(
+        result: dict,
+        risk_key: RiskKey,
+        instrument: InstrumentBase) -> ErrorValue:
     error = result.get('errorString', 'Unknown error')
-    _logger.error(f'Error while computing {risk_key.risk_measure} on {instrument} for {risk_key.date}: {error}')
+    _logger.error(
+        f'Error while computing {risk_key.risk_measure} on {instrument} for {risk_key.date}: {error}')
     return ErrorValue(risk_key, error)
 
 
-def leg_definition_handler(result: dict, risk_key: RiskKey, instrument: InstrumentBase) -> InstrumentBase:
+def leg_definition_handler(
+        result: dict,
+        risk_key: RiskKey,
+        instrument: InstrumentBase) -> InstrumentBase:
     return instrument.resolved(result, risk_key)
 
 
-def message_handler(result: dict, risk_key: RiskKey, _instrument: InstrumentBase) -> StringWithInfo:
+def message_handler(
+        result: dict,
+        risk_key: RiskKey,
+        _instrument: InstrumentBase) -> StringWithInfo:
     return StringWithInfo(risk_key, result.get('message'))
 
 
-def number_and_unit_handler(result: dict, risk_key: RiskKey, _instrument: InstrumentBase) -> FloatWithInfo:
-    return FloatWithInfo(risk_key, result.get('value', float('nan')), unit=result.get('unit'))
+def number_and_unit_handler(
+        result: dict,
+        risk_key: RiskKey,
+        _instrument: InstrumentBase) -> FloatWithInfo:
+    return FloatWithInfo(
+        risk_key,
+        result.get(
+            'value',
+            float('nan')),
+        unit=result.get('unit'))
 
 
-def required_assets_handler(result: dict, risk_key: RiskKey, _instrument: InstrumentBase):
+def required_assets_handler(
+        result: dict,
+        risk_key: RiskKey,
+        _instrument: InstrumentBase):
     mappings = (('mkt_type', 'type'), ('mkt_asset', 'asset'))
     return __dataframe_handler(result['requiredAssets'], mappings, risk_key)
 
 
-def risk_handler(result: dict, risk_key: RiskKey, _instrument: InstrumentBase) -> FloatWithInfo:
-    return FloatWithInfo(risk_key, result.get('val', float('nan')), unit=result.get('unit'))
+def risk_handler(
+        result: dict,
+        risk_key: RiskKey,
+        _instrument: InstrumentBase) -> FloatWithInfo:
+    return FloatWithInfo(
+        risk_key,
+        result.get(
+            'val',
+            float('nan')),
+        unit=result.get('unit'))
 
 
-def risk_by_class_handler(result: dict, risk_key: RiskKey, _instrument: InstrumentBase) \
-        -> Union[DataFrameWithInfo, FloatWithInfo]:
+def risk_by_class_handler(result: dict,
+                          risk_key: RiskKey,
+                          _instrument: InstrumentBase) -> Union[DataFrameWithInfo,
+                                                                FloatWithInfo]:
     # TODO Remove this once we migrate parallel USD IRDelta measures
     types = [c['type'] for c in result['classes']]
     if len(types) <= 2 and len(set(types)) == 1:
-        return FloatWithInfo(risk_key, sum(result.get('values', (float('nan'),))), unit=result.get('unit'))
+        return FloatWithInfo(
+            risk_key, sum(
+                result.get(
+                    'values', (float('nan'),))), unit=result.get('unit'))
     else:
         classes = []
         skip = []
 
-        crosses_idx = next((i for i, c in enumerate(result['classes']) if c['type'] == 'CROSSES'), None)
-        for idx, (clazz, value) in enumerate(zip(result['classes'], result['values'])):
+        crosses_idx = next(
+            (i for i, c in enumerate(
+                result['classes']) if c['type'] == 'CROSSES'), None)
+        for idx, (clazz, value) in enumerate(
+                zip(result['classes'], result['values'])):
             mkt_type = clazz['type']
             if 'SPIKE' in mkt_type or 'JUMP' in mkt_type:
                 skip.append(idx)
@@ -119,7 +173,10 @@ def risk_by_class_handler(result: dict, risk_key: RiskKey, _instrument: Instrume
         return __dataframe_handler(classes, mappings, risk_key)
 
 
-def risk_vector_handler(result: dict, risk_key: RiskKey, _instrument: InstrumentBase) -> DataFrameWithInfo:
+def risk_vector_handler(
+        result: dict,
+        risk_key: RiskKey,
+        _instrument: InstrumentBase) -> DataFrameWithInfo:
     assets = result['asset']
     # Handle equity risk measures which are really scalars
     if len(assets) == 1 and risk_key.risk_measure in __scalar_risk_measures:
@@ -139,8 +196,13 @@ def risk_vector_handler(result: dict, risk_key: RiskKey, _instrument: Instrument
     return __dataframe_handler(result['points'], mappings, risk_key)
 
 
-def unsupported_handler(_result: dict, risk_key: RiskKey, instrument: InstrumentBase) -> ErrorValue:
-    return ErrorValue(risk_key, f'{risk_key.risk_measure} not supported for {type(instrument).__name__}')
+def unsupported_handler(
+        _result: dict,
+        risk_key: RiskKey,
+        instrument: InstrumentBase) -> ErrorValue:
+    return ErrorValue(
+        risk_key,
+        f'{risk_key.risk_measure} not supported for {type(instrument).__name__}')
 
 
 result_handlers = {

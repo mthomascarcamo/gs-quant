@@ -21,7 +21,10 @@ from gs_quant.session import *
 def test_get_asset(mocker):
 
     marquee_id = 'MA1234567890'
-    mock_response = GsAsset(AssetClass.Equity, GsAssetType.Single_Stock, 'Test Asset')
+    mock_response = GsAsset(
+        AssetClass.Equity,
+        GsAssetType.Single_Stock,
+        'Test Asset')
 
     # mock GsSession
     mocker.patch.object(
@@ -38,12 +41,18 @@ def test_get_asset(mocker):
     assert asset.name == "Test Asset"
     assert asset.get_type() == AssetType.STOCK
 
-    asset = SecurityMaster.get_asset(marquee_id, AssetIdentifier.MARQUEE_ID, as_of=dt.date.today())
+    asset = SecurityMaster.get_asset(
+        marquee_id,
+        AssetIdentifier.MARQUEE_ID,
+        as_of=dt.date.today())
 
     assert asset.name == "Test Asset"
     assert asset.get_type() == AssetType.STOCK
 
-    asset = SecurityMaster.get_asset(marquee_id, AssetIdentifier.MARQUEE_ID, as_of=dt.datetime.utcnow())
+    asset = SecurityMaster.get_asset(
+        marquee_id,
+        AssetIdentifier.MARQUEE_ID,
+        as_of=dt.datetime.utcnow())
 
     assert asset.name == "Test Asset"
     assert asset.get_type() == AssetType.STOCK
@@ -56,7 +65,10 @@ def test_get_asset(mocker):
     assert asset.name == "Test Asset"
     assert asset.get_type() == AssetType.INDEX
 
-    mock_response = GsAsset(AssetClass.Equity, GsAssetType.Future, 'Test Asset')
+    mock_response = GsAsset(
+        AssetClass.Equity,
+        GsAssetType.Future,
+        'Test Asset')
     mocker.patch.object(GsSession.current, '_get', return_value=mock_response)
 
     asset = SecurityMaster.get_asset(marquee_id, AssetIdentifier.MARQUEE_ID)
@@ -72,7 +84,10 @@ def test_get_asset(mocker):
     assert asset.name == "Test Asset"
     assert asset.get_type() == AssetType.ETF
 
-    mock_response = GsAsset(AssetClass.Equity, GsAssetType.Custom_Basket, 'Test Asset')
+    mock_response = GsAsset(
+        AssetClass.Equity,
+        GsAssetType.Custom_Basket,
+        'Test Asset')
     mocker.patch.object(GsSession.current, '_get', return_value=mock_response)
 
     asset = SecurityMaster.get_asset(marquee_id, AssetIdentifier.MARQUEE_ID)
@@ -81,7 +96,13 @@ def test_get_asset(mocker):
     assert asset.get_type() == AssetType.BASKET
 
     mock_response = {
-        'results': (GsAsset(id=marquee_id, assetClass='Equity', type='Single Stock', name='Test 1'),),
+        'results': (
+            GsAsset(
+                id=marquee_id,
+                assetClass='Equity',
+                type='Single Stock',
+                name='Test 1'),
+        ),
     }
 
     mocker.patch.object(GsSession.current, '_post', return_value=mock_response)
@@ -89,15 +110,25 @@ def test_get_asset(mocker):
     assert asset.name == "Test 1"
     assert asset.get_type() == AssetType.STOCK
 
-    asset = SecurityMaster.get_asset('GS', AssetIdentifier.TICKER, exchange_code=ExchangeCode.NYSE)
+    asset = SecurityMaster.get_asset(
+        'GS',
+        AssetIdentifier.TICKER,
+        exchange_code=ExchangeCode.NYSE)
     assert asset.name == "Test 1"
     assert asset.get_type() == AssetType.STOCK
 
-    asset = SecurityMaster.get_asset('GS', AssetIdentifier.TICKER, asset_type=AssetType.STOCK)
+    asset = SecurityMaster.get_asset(
+        'GS',
+        AssetIdentifier.TICKER,
+        asset_type=AssetType.STOCK)
     assert asset.name == "Test 1"
     assert asset.get_type() == AssetType.STOCK
 
-    mocker.patch.object(GsSession.current, '_post', return_value={'results': ()})
+    mocker.patch.object(
+        GsSession.current,
+        '_post',
+        return_value={
+            'results': ()})
     asset = SecurityMaster.get_asset(marquee_id, AssetIdentifier.REUTERS_ID)
     assert asset is None
 
@@ -112,7 +143,10 @@ def test_asset_identifiers(mocker):
             Environment.QA,
             'client_id',
             'secret'))
-    mock_response = GsAsset(AssetClass.Equity, GsAssetType.Custom_Basket, 'Test Asset')
+    mock_response = GsAsset(
+        AssetClass.Equity,
+        GsAssetType.Custom_Basket,
+        'Test Asset')
     mocker.patch.object(GsSession.current, '_get', return_value=mock_response)
 
     asset = SecurityMaster.get_asset(marquee_id, AssetIdentifier.MARQUEE_ID)
@@ -149,10 +183,18 @@ def test_asset_identifiers(mocker):
     assert identifiers[AssetIdentifier.CUSIP.value] == '9EQ24FPE5'
     assert identifiers[AssetIdentifier.TICKER.value] == 'GSTHHVIP'
 
-    assert asset.get_identifier(AssetIdentifier.REUTERS_ID, as_of=dt.date.today()) == '.GSTHHVIP'
-    assert asset.get_identifier(AssetIdentifier.BLOOMBERG_ID, as_of=dt.date.today()) == 'GSTHHVIP'
-    assert asset.get_identifier(AssetIdentifier.CUSIP, as_of=dt.date.today()) == '9EQ24FPE5'
-    assert asset.get_identifier(AssetIdentifier.TICKER, as_of=dt.date.today()) == 'GSTHHVIP'
+    assert asset.get_identifier(
+        AssetIdentifier.REUTERS_ID,
+        as_of=dt.date.today()) == '.GSTHHVIP'
+    assert asset.get_identifier(
+        AssetIdentifier.BLOOMBERG_ID,
+        as_of=dt.date.today()) == 'GSTHHVIP'
+    assert asset.get_identifier(
+        AssetIdentifier.CUSIP,
+        as_of=dt.date.today()) == '9EQ24FPE5'
+    assert asset.get_identifier(
+        AssetIdentifier.TICKER,
+        as_of=dt.date.today()) == 'GSTHHVIP'
 
     market = PricingContext(dt.date(2018, 3, 1))
 

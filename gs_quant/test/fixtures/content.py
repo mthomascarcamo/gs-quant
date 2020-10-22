@@ -18,7 +18,8 @@ import datetime as dt
 from base64 import b64encode
 
 from gs_quant.target.common import Entitlements
-from gs_quant.target.content import GetManyContentsResponse, ContentResponse, Content
+from gs_quant.target.content import (Content, ContentResponse,
+                                     GetManyContentsResponse)
 
 
 class ContentFixtures:
@@ -86,6 +87,9 @@ class ContentFixtures:
         )
 
     @classmethod
-    def get_many_contents_response(cls, status: int = 200, message: str = "Ok"):
+    def get_many_contents_response(
+            cls,
+            status: int = 200,
+            message: str = "Ok"):
         content = cls._get_content_response()
         return GetManyContentsResponse(status, message, (content,))

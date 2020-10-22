@@ -14,8 +14,9 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from aenum import Enum, extend_enum
 from typing import Optional
+
+from aenum import Enum, extend_enum
 
 
 class DataMeasure(Enum):

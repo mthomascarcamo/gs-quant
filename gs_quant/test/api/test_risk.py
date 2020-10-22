@@ -14,23 +14,25 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from unittest import mock
-
 import copy
 import datetime as dt
+from unittest import mock
+
 import pandas as pd
 
-from gs_quant.datetime.time import to_zulu_string
 import gs_quant.risk as risk
 from gs_quant.api.gs.risk import GsRiskApi
 from gs_quant.base import Priceable
 from gs_quant.common import AssetClass
-from gs_quant.instrument import CommodSwap, EqForward, EqOption, FXOption, IRBasisSwap, IRSwap, IRSwaption, IRCap,\
-    IRFloor
+from gs_quant.datetime.time import to_zulu_string
+from gs_quant.instrument import (CommodSwap, EqForward, EqOption, FXOption,
+                                 IRBasisSwap, IRCap, IRFloor, IRSwap,
+                                 IRSwaption)
 from gs_quant.markets import PricingContext
 from gs_quant.session import Environment, GsSession
-from gs_quant.target.risk import PricingDateAndMarketDataAsOf, RiskPosition, RiskRequestParameters, \
-    OptimizationRequest
+from gs_quant.target.risk import (OptimizationRequest,
+                                  PricingDateAndMarketDataAsOf, RiskPosition,
+                                  RiskRequestParameters)
 
 priceables = (
     CommodSwap('Electricity', '1y'),
@@ -72,13 +74,25 @@ def structured_calc(mocker, priceable: Priceable, measure: risk.RiskMeasure):
     current = PricingContext.current
     result = priceable.calc(measure)
     assert result.raw_value.equals(expected)
-    risk_requests = (risk.RiskRequest(
-        positions=(RiskPosition(instrument=priceable, quantity=1),),
-        measures=(measure,),
-        pricing_and_market_data_as_of=(PricingDateAndMarketDataAsOf(pricing_date=current.pricing_date,
-                                                                    market=current.market),),
-        parameters=RiskRequestParameters(raw_results=True),
-        wait_for_results=True),)
+    risk_requests = (
+        risk.RiskRequest(
+            positions=(
+                RiskPosition(
+                    instrument=priceable,
+                    quantity=1),
+            ),
+            measures=(
+                measure,
+            ),
+            pricing_and_market_data_as_of=(
+                PricingDateAndMarketDataAsOf(
+                    pricing_date=current.pricing_date,
+                    market=current.market),
+            ),
+            parameters=RiskRequestParameters(
+                raw_results=True),
+            wait_for_results=True),
+    )
     mocker.assert_called_with(risk_requests)
 
 
@@ -89,13 +103,25 @@ def scalar_calc(mocker, priceable: Priceable, measure: risk.RiskMeasure):
     current = PricingContext.current
     result = priceable.calc(measure)
     assert result == 0.01
-    risk_requests = (risk.RiskRequest(
-        positions=(RiskPosition(instrument=priceable, quantity=1),),
-        measures=(measure,),
-        pricing_and_market_data_as_of=(PricingDateAndMarketDataAsOf(pricing_date=current.pricing_date,
-                                                                    market=current.market),),
-        parameters=RiskRequestParameters(raw_results=True),
-        wait_for_results=True),)
+    risk_requests = (
+        risk.RiskRequest(
+            positions=(
+                RiskPosition(
+                    instrument=priceable,
+                    quantity=1),
+            ),
+            measures=(
+                measure,
+            ),
+            pricing_and_market_data_as_of=(
+                PricingDateAndMarketDataAsOf(
+                    pricing_date=current.pricing_date,
+                    market=current.market),
+            ),
+            parameters=RiskRequestParameters(
+                raw_results=True),
+            wait_for_results=True),
+    )
     mocker.assert_called_with(risk_requests)
 
 
@@ -106,13 +132,25 @@ def price(mocker, priceable: Priceable):
     current = PricingContext.current
     result = priceable.dollar_price()
     assert result == 0.01
-    risk_requests = (risk.RiskRequest(
-        positions=(RiskPosition(instrument=priceable, quantity=1),),
-        measures=(risk.DollarPrice,),
-        pricing_and_market_data_as_of=(PricingDateAndMarketDataAsOf(pricing_date=current.pricing_date,
-                                                                    market=current.market),),
-        parameters=RiskRequestParameters(raw_results=True),
-        wait_for_results=True),)
+    risk_requests = (
+        risk.RiskRequest(
+            positions=(
+                RiskPosition(
+                    instrument=priceable,
+                    quantity=1),
+            ),
+            measures=(
+                risk.DollarPrice,
+            ),
+            pricing_and_market_data_as_of=(
+                PricingDateAndMarketDataAsOf(
+                    pricing_date=current.pricing_date,
+                    market=current.market),
+            ),
+            parameters=RiskRequestParameters(
+                raw_results=True),
+            wait_for_results=True),
+    )
     mocker.assert_called_with(risk_requests)
 
 
@@ -146,7 +184,8 @@ def test_structured_calc(mocker):
     mocker.return_value = [[[[values]] * len(priceables)]]
 
     with PricingContext():
-        delta_f = [p.calc(risk.IRDelta) for p in priceables if not isinstance(p, EqOption)]
+        delta_f = [p.calc(risk.IRDelta)
+                   for p in priceables if not isinstance(p, EqOption)]
 
     delta = risk.aggregate_risk(delta_f, threshold=0)
 
@@ -157,10 +196,17 @@ def test_structured_calc(mocker):
 def test_scalar_calc(mocker):
     for priceable in priceables:
         if priceable.assetClass == AssetClass.Equity:
-            for measure in (risk.EqDelta, risk.EqGamma, risk.EqVega, risk.Theta):
+            for measure in (
+                    risk.EqDelta,
+                    risk.EqGamma,
+                    risk.EqVega,
+                    risk.Theta):
                 scalar_calc(mocker, priceable, measure)
         elif priceable.assetClass == AssetClass.Commod:
-            for measure in (risk.CommodDelta, risk.CommodVega, risk.CommodTheta):
+            for measure in (
+                    risk.CommodDelta,
+                    risk.CommodVega,
+                    risk.CommodTheta):
                 scalar_calc(mocker, priceable, measure)
 
 
@@ -168,7 +214,8 @@ def test_scalar_calc(mocker):
 def test_async_calc(mocker):
     set_session()
 
-    mocker.return_value = [[[[{'$type': 'Risk', 'val': 0.01 * idx}] for idx in range(len(priceables))]]]
+    mocker.return_value = [
+        [[[{'$type': 'Risk', 'val': 0.01 * idx}] for idx in range(len(priceables))]]]
 
     with PricingContext():
         dollar_price_f = [p.dollar_price() for p in priceables]
@@ -202,14 +249,16 @@ def test_resolution():
     assert 'fixed_rate' not in swap.as_dict()
 
     with mock.patch('gs_quant.api.gs.risk.GsRiskApi._exec') as mocker:
-        mocker.return_value = [[[[{'$type': 'LegDefinition', 'fixedRate': 0.01}]]]]
+        mocker.return_value = [
+            [[[{'$type': 'LegDefinition', 'fixedRate': 0.01}]]]]
         assert swap.fixed_rate == 0.01
 
     swap.notional_currency = 'GBP'
     assert 'fixed_rate' not in swap.as_dict()
 
     with mock.patch('gs_quant.api.gs.risk.GsRiskApi._exec') as mocker:
-        mocker.return_value = [[[[{'$type': 'LegDefinition', 'fixedRate': 0.007}]]]]
+        mocker.return_value = [
+            [[[{'$type': 'LegDefinition', 'fixedRate': 0.007}]]]]
         assert swap.fixed_rate == 0.007
 
 
@@ -221,29 +270,38 @@ def test_create_pretrade_execution_optimization():
     positions = [{"assetId": "MA4B66MW5E27UANLXW6", "quantity": 350},
                  {"assetId": "MA4B66MW5E27UAMFDDC", "quantity": 675}]
 
-    request = OptimizationRequest(positions,
-                                  type="APEX",
-                                  executionStartTime=to_zulu_string(start_time),
-                                  executionEndTime=to_zulu_string(end_time),
-                                  waitForResults=False,
-                                  parameters={"urgency": "MEDIUM", "participationRate": 0.1})
+    request = OptimizationRequest(
+        positions,
+        type="APEX",
+        executionStartTime=to_zulu_string(start_time),
+        executionEndTime=to_zulu_string(end_time),
+        waitForResults=False,
+        parameters={
+            "urgency": "MEDIUM",
+            "participationRate": 0.1})
 
     set_session()
     with mock.patch.object(GsSession.current, '_post') as mocker:
         mock_response = {'optimizationId': 'LI0D2ND2JCFANFAN'}
         mocker.return_value = mock_response
         response = GsRiskApi.create_pretrade_execution_optimization(request)
-        GsSession.current._post.assert_called_with('/risk/execution/pretrade', request)
+        GsSession.current._post.assert_called_with(
+            '/risk/execution/pretrade', request)
         assert response == mock_response
 
 
 def test_get_pretrade_execution_optimization():
     optimization_id = 'LI0D2ND2JCFANFAN'
-    mock_response = {'id': optimization_id, 'analytics': {}, 'status': 'Completed'}
+    mock_response = {
+        'id': optimization_id,
+        'analytics': {},
+        'status': 'Completed'}
 
     set_session()
     with mock.patch.object(GsSession.current, '_get') as mocker:
         mocker.return_value = mock_response
-        response = GsRiskApi.get_pretrade_execution_optimization(optimization_id)
-        GsSession.current._get.assert_called_with('/risk/execution/pretrade/{}/results'.format(optimization_id))
+        response = GsRiskApi.get_pretrade_execution_optimization(
+            optimization_id)
+        GsSession.current._get.assert_called_with(
+            '/risk/execution/pretrade/{}/results'.format(optimization_id))
         assert response == mock_response

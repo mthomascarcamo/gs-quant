@@ -20,7 +20,7 @@ from unittest import mock
 import pytest
 
 from gs_quant.api.gs.content import GsContentApi, OrderBy
-from gs_quant.session import GsSession, Environment
+from gs_quant.session import Environment, GsSession
 from gs_quant.target.content import GetManyContentsResponse
 from gs_quant.test.fixtures.content import ContentFixtures
 
@@ -97,7 +97,8 @@ def test_get_contents(
             print(actual)
 
             # Assert
-            mock_method.assert_called_with(expected_uri, cls=GetManyContentsResponse)
+            mock_method.assert_called_with(
+                expected_uri, cls=GetManyContentsResponse)
 
 
 def test_get_text():
@@ -109,4 +110,5 @@ def test_get_text():
     actual = target.get_text(contents)
 
     # Assert
-    assert actual == [(content.id, b64decode(content.content.body)) for content in contents]
+    assert actual == [(content.id, b64decode(content.content.body))
+                      for content in contents]

@@ -17,8 +17,8 @@ from abc import ABC, abstractmethod
 from typing import Type
 
 import numpy as np
+from lmfit import Parameters, minimize, report_fit
 from scipy.integrate import odeint
-from lmfit import minimize, Parameters, report_fit
 
 """
 Statistical models for the transmission of infectious diseases
@@ -44,7 +44,13 @@ class SIR(CompartmentalModel):
     """SIR Model"""
 
     @classmethod
-    def calibrate(cls, xs: tuple, t: float, parameters: [Parameters, tuple]) -> tuple:
+    def calibrate(
+        cls,
+        xs: tuple,
+        t: float,
+        parameters: [
+            Parameters,
+            tuple]) -> tuple:
         """
         SIR model derivatives at t.
 
@@ -71,11 +77,24 @@ class SIR(CompartmentalModel):
         return dSdt, dIdt, dRdt
 
     @classmethod
-    def get_parameters(cls, S0: float, I0: float, R0: float, N: float, beta: float = 0.2, gamma: float = 0.1,
-                       beta_max: float = 10, gamma_max: float = 1, S0_fixed: bool = True, S0_max: float = 1e6,
-                       beta_fixed: bool = False, gamma_fixed: bool = False, R0_fixed: bool = True, R0_max: float = 1e6,
-                       I0_fixed: bool = True, I0_max: float = 1e6)\
-            -> tuple:
+    def get_parameters(
+            cls,
+            S0: float,
+            I0: float,
+            R0: float,
+            N: float,
+            beta: float = 0.2,
+            gamma: float = 0.1,
+            beta_max: float = 10,
+            gamma_max: float = 1,
+            S0_fixed: bool = True,
+            S0_max: float = 1e6,
+            beta_fixed: bool = False,
+            gamma_fixed: bool = False,
+            R0_fixed: bool = True,
+            R0_max: float = 1e6,
+            I0_fixed: bool = True,
+            I0_max: float = 1e6) -> tuple:
         """
         Produce a set of parameters for the SIR model.
 
@@ -100,8 +119,18 @@ class SIR(CompartmentalModel):
         parameters.add('S0', value=S0, min=0, max=S0_max, vary=not S0_fixed)
         parameters.add('I0', value=I0, min=0, max=I0_max, vary=not I0_fixed)
         parameters.add('R0', value=R0, min=0, max=R0_max, vary=not R0_fixed)
-        parameters.add('beta', value=beta, min=0, max=beta_max, vary=not beta_fixed)
-        parameters.add('gamma', value=gamma, min=0, max=gamma_max, vary=not gamma_fixed)
+        parameters.add(
+            'beta',
+            value=beta,
+            min=0,
+            max=beta_max,
+            vary=not beta_fixed)
+        parameters.add(
+            'gamma',
+            value=gamma,
+            min=0,
+            max=gamma_max,
+            vary=not gamma_fixed)
         initial_conditions = ['S0', 'I0', 'R0']
 
         return parameters, initial_conditions
@@ -111,7 +140,13 @@ class SEIR(CompartmentalModel):
     """SEIR Model"""
 
     @classmethod
-    def calibrate(cls, xs: tuple, t: float, parameters: [Parameters, tuple]) -> tuple:
+    def calibrate(
+        cls,
+        xs: tuple,
+        t: float,
+        parameters: [
+            Parameters,
+            tuple]) -> tuple:
         """
         SEIR model derivatives at t.
 
@@ -140,11 +175,30 @@ class SEIR(CompartmentalModel):
         return dSdt, dEdt, dIdt, dRdt
 
     @classmethod
-    def get_parameters(cls, S0: float, E0: float, I0: float, R0: float, N: float, beta: float = 0.2, gamma: float = 0.1,
-                       sigma: float = 0.2, beta_max: float = 10, gamma_max: float = 1, sigma_max: float = 1,
-                       beta_fixed: bool = False, gamma_fixed: bool = False, sigma_fixed: bool = False,
-                       S0_fixed: bool = True, S0_max: float = 1e6, R0_fixed: bool = True, R0_max: float = 1e6,
-                       I0_fixed: bool = True, I0_max: float = 1e6, E0_fixed: bool = True, E0_max: float = 1e6) -> tuple:
+    def get_parameters(
+            cls,
+            S0: float,
+            E0: float,
+            I0: float,
+            R0: float,
+            N: float,
+            beta: float = 0.2,
+            gamma: float = 0.1,
+            sigma: float = 0.2,
+            beta_max: float = 10,
+            gamma_max: float = 1,
+            sigma_max: float = 1,
+            beta_fixed: bool = False,
+            gamma_fixed: bool = False,
+            sigma_fixed: bool = False,
+            S0_fixed: bool = True,
+            S0_max: float = 1e6,
+            R0_fixed: bool = True,
+            R0_max: float = 1e6,
+            I0_fixed: bool = True,
+            I0_max: float = 1e6,
+            E0_fixed: bool = True,
+            E0_max: float = 1e6) -> tuple:
         """
         Produce a set of parameters for the SIR model.
 
@@ -175,15 +229,35 @@ class SEIR(CompartmentalModel):
         parameters.add('E0', value=E0, min=0, max=E0_max, vary=not E0_fixed)
         parameters.add('I0', value=I0, min=0, max=I0_max, vary=not I0_fixed)
         parameters.add('R0', value=R0, min=0, max=R0_max, vary=not R0_fixed)
-        parameters.add('beta', value=beta, min=0, max=beta_max, vary=not beta_fixed)
-        parameters.add('gamma', value=gamma, min=0, max=gamma_max, vary=not gamma_fixed)
-        parameters.add('sigma', value=sigma, min=0, max=sigma_max, vary=not sigma_fixed)
+        parameters.add(
+            'beta',
+            value=beta,
+            min=0,
+            max=beta_max,
+            vary=not beta_fixed)
+        parameters.add(
+            'gamma',
+            value=gamma,
+            min=0,
+            max=gamma_max,
+            vary=not gamma_fixed)
+        parameters.add(
+            'sigma',
+            value=sigma,
+            min=0,
+            max=sigma_max,
+            vary=not sigma_fixed)
         initial_conditions = ['S0', 'E0', 'I0', 'R0']
 
         return parameters, initial_conditions
 
 
-def switch(t: float, T: float, eta: float = 0, xi: float = 0.1, nu: float = 0) -> float:
+def switch(
+        t: float,
+        T: float,
+        eta: float = 0,
+        xi: float = 0.1,
+        nu: float = 0) -> float:
     """
     Return a time-dependent factor that decreases exponentially, to scale parameters that are affected at some
     time point T.
@@ -214,7 +288,13 @@ class SEIRCM(CompartmentalModel):
         with cumulative cases (C) and cumulative fatalities (M) """
 
     @classmethod
-    def calibrate(cls, xs: tuple, t: float, parameters: [Parameters, tuple]) -> tuple:
+    def calibrate(
+        cls,
+        xs: tuple,
+        t: float,
+        parameters: [
+            Parameters,
+            tuple]) -> tuple:
         """
         SEIRCM model derivatives at t.
 
@@ -233,7 +313,8 @@ class SEIRCM(CompartmentalModel):
             sigma = parameters['sigma'].value  # infection rate
             eta = parameters['eta'].value  # control measure redux
             epsilon = parameters['sigma'].value  # case fatality rate
-            T_quarantine = parameters['T'].value  # time of quarantine policy, relative to t=0 (first reported case)
+            # time of quarantine policy, relative to t=0 (first reported case)
+            T_quarantine = parameters['T'].value
         elif isinstance(parameters, tuple):
             beta, gamma, sigma, eta, epsilon, T_quarantine = parameters
         else:
@@ -242,12 +323,17 @@ class SEIRCM(CompartmentalModel):
         # total population
         N = s + e + i + r
 
-        # if T_quarantine is 0, we are not considering effect of quarantine policy so scale factor is fixed at 1
-        quarantine_factor = switch(t, T_quarantine, eta=eta) if T_quarantine else 1
+        # if T_quarantine is 0, we are not considering effect of quarantine
+        # policy so scale factor is fixed at 1
+        quarantine_factor = switch(
+            t, T_quarantine, eta=eta) if T_quarantine else 1
 
-        dSdt = -(quarantine_factor * beta) * s * i / N  # susceptible -> exposed
-        dEdt = (quarantine_factor * beta) * s * i / N - sigma * e  # exposed -> infected AND recorded cases
-        dIdt = sigma * e - gamma * i  # infected -> removed (recovered AND dead)
+        dSdt = -(quarantine_factor * beta) * s * \
+            i / N  # susceptible -> exposed
+        dEdt = (quarantine_factor * beta) * s * i / N - sigma * \
+            e  # exposed -> infected AND recorded cases
+        # infected -> removed (recovered AND dead)
+        dIdt = sigma * e - gamma * i
         dRdt = (1 - epsilon) * gamma * i  # recovered (from removed)
         dCdt = sigma * e  # recorded cases (from infected)
         dMdt = epsilon * gamma * i  # dead (from removed)
@@ -255,21 +341,42 @@ class SEIRCM(CompartmentalModel):
         return dSdt, dEdt, dIdt, dRdt, dCdt, dMdt
 
     @classmethod
-    def get_parameters(cls,
-                       S0: float, E0: float, I0: float, R0: float, C0: float, M0: float,
-                       T_quarantine: float = 0,
-                       beta: float = 0.2, gamma: float = 0.1, sigma: float = 0.2,
-                       eta: float = 0.6, epsilon: float = 0.02,
-                       beta_max: float = 10, gamma_max: float = 1, sigma_max: float = 1,
-                       eta_max: float = 1, epsilon_max: float = 1,
-                       beta_fixed: bool = False, gamma_fixed: bool = False, sigma_fixed: bool = False,
-                       eta_fixed: bool = False, epsilon_fixed: bool = False,
-                       S0_fixed: bool = True, S0_max: float = 1e6,
-                       R0_fixed: bool = True, R0_max: float = 1e6,
-                       I0_fixed: bool = True, I0_max: float = 1e6,
-                       E0_fixed: bool = True, E0_max: float = 1e6,
-                       C0_fixed: bool = True, C0_max: float = 1e6,
-                       M0_fixed: bool = True, M0_max: float = 1e6) -> tuple:
+    def get_parameters(
+            cls,
+            S0: float,
+            E0: float,
+            I0: float,
+            R0: float,
+            C0: float,
+            M0: float,
+            T_quarantine: float = 0,
+            beta: float = 0.2,
+            gamma: float = 0.1,
+            sigma: float = 0.2,
+            eta: float = 0.6,
+            epsilon: float = 0.02,
+            beta_max: float = 10,
+            gamma_max: float = 1,
+            sigma_max: float = 1,
+            eta_max: float = 1,
+            epsilon_max: float = 1,
+            beta_fixed: bool = False,
+            gamma_fixed: bool = False,
+            sigma_fixed: bool = False,
+            eta_fixed: bool = False,
+            epsilon_fixed: bool = False,
+            S0_fixed: bool = True,
+            S0_max: float = 1e6,
+            R0_fixed: bool = True,
+            R0_max: float = 1e6,
+            I0_fixed: bool = True,
+            I0_max: float = 1e6,
+            E0_fixed: bool = True,
+            E0_max: float = 1e6,
+            C0_fixed: bool = True,
+            C0_max: float = 1e6,
+            M0_fixed: bool = True,
+            M0_max: float = 1e6) -> tuple:
         """
         Produce a set of parameters for the SIERCM model.
 
@@ -310,18 +417,48 @@ class SEIRCM(CompartmentalModel):
         :return: tuple[Parameters, list]: (parameters, a list of the names of the variables for initial conditions)
         """
         parameters = Parameters()
-        parameters.add('T', value=T_quarantine, min=0, max=T_quarantine, vary=False)
+        parameters.add(
+            'T',
+            value=T_quarantine,
+            min=0,
+            max=T_quarantine,
+            vary=False)
         parameters.add('S0', value=S0, min=0, max=S0_max, vary=not S0_fixed)
         parameters.add('E0', value=E0, min=0, max=E0_max, vary=not E0_fixed)
         parameters.add('I0', value=I0, min=0, max=I0_max, vary=not I0_fixed)
         parameters.add('R0', value=R0, min=0, max=R0_max, vary=not R0_fixed)
         parameters.add('C0', value=C0, min=0, max=C0_max, vary=not C0_fixed)
         parameters.add('M0', value=M0, min=0, max=M0_max, vary=not M0_fixed)
-        parameters.add('beta', value=beta, min=0, max=beta_max, vary=not beta_fixed)
-        parameters.add('gamma', value=gamma, min=0, max=gamma_max, vary=not gamma_fixed)
-        parameters.add('sigma', value=sigma, min=0, max=sigma_max, vary=not sigma_fixed)
-        parameters.add('eta', value=eta, min=0, max=eta_max, vary=not eta_fixed)
-        parameters.add('epsilon', value=epsilon, min=0, max=epsilon_max, vary=not epsilon_fixed)
+        parameters.add(
+            'beta',
+            value=beta,
+            min=0,
+            max=beta_max,
+            vary=not beta_fixed)
+        parameters.add(
+            'gamma',
+            value=gamma,
+            min=0,
+            max=gamma_max,
+            vary=not gamma_fixed)
+        parameters.add(
+            'sigma',
+            value=sigma,
+            min=0,
+            max=sigma_max,
+            vary=not sigma_fixed)
+        parameters.add(
+            'eta',
+            value=eta,
+            min=0,
+            max=eta_max,
+            vary=not eta_fixed)
+        parameters.add(
+            'epsilon',
+            value=epsilon,
+            min=0,
+            max=epsilon_max,
+            vary=not epsilon_fixed)
 
         initial_conditions = ['S0', 'E0', 'I0', 'R0', 'C0', 'M0']
 
@@ -347,49 +484,84 @@ class SEIRCMAgeStratified(CompartmentalModel):
         gamma = parameters['gamma'].value  # removal rate
         sigma = parameters['sigma'].value  # infection rate
         eta = parameters['eta'].value  # control measure redux
-        T_quarantine = parameters['T'].value  # time of quarantine policy, relative to t=0 (first reported case)
+        # time of quarantine policy, relative to t=0 (first reported case)
+        T_quarantine = parameters['T'].value
         K = parameters['K'].value  # number of age groups
 
-        # y is of dimension (6 * K) x 1, where the first K are 'S', next K are 'E', and so on for each age group...
-        assert len(y) == 6 * K, f'Error: SEIRCM states not organized into {K} age groups!'
+        # y is of dimension (6 * K) x 1, where the first K are 'S', next K are
+        # 'E', and so on for each age group...
+        assert len(y) == 6 * \
+            K, f'Error: SEIRCM states not organized into {K} age groups!'
         dydt = [0] * len(y)
 
         def epsilon(k):  # case fatality rate per age group
             return parameters[f'epsilon_{k}'].value
 
-        N = sum(y[:4 * K])  # sum(S) + sum(E) + sum(I) + sum(R) where sum is over age groups
-        I_total = sum(y[2 * K:3 * K])  # total number of infectious people across age groups
+        # sum(S) + sum(E) + sum(I) + sum(R) where sum is over age groups
+        N = sum(y[:4 * K])
+        # total number of infectious people across age groups
+        I_total = sum(y[2 * K:3 * K])
         s, e, i = lambda k: y[k], lambda k: y[K + k], lambda k: y[2 * K + k]
 
-        # if T_quarantine is 0, we are not considering effect of quarantine policy so scale factor is fixed at 1
-        quarantine_factor = switch(t, T_quarantine, eta=eta) if T_quarantine else 1
+        # if T_quarantine is 0, we are not considering effect of quarantine
+        # policy so scale factor is fixed at 1
+        quarantine_factor = switch(
+            t, T_quarantine, eta=eta) if T_quarantine else 1
 
         for k in range(K):
-            dydt[k] = -(quarantine_factor * beta) * s(k) * I_total / N  # susceptible -> exposed
-            dydt[K + k] = (quarantine_factor * beta) * s(k) * I_total / N - sigma * e(k)  # exposed -> infected
-            dydt[2 * K + k] = sigma * e(k) - gamma * i(k)  # infected -> removed
-            dydt[3 * K + k] = (1 - epsilon(k)) * gamma * i(k)  # -> cumulative recovered (from removed)
-            dydt[4 * K + k] = sigma * e(k)  # -> cumulative recorded cases (from infected)
-            dydt[5 * K + k] = epsilon(k) * gamma * i(k)  # -> cumulative fatalities (from removed)
+            dydt[k] = -(quarantine_factor * beta) * s(k) * \
+                I_total / N  # susceptible -> exposed
+            dydt[K + k] = (quarantine_factor * beta) * s(k) * \
+                I_total / N - sigma * e(k)  # exposed -> infected
+            dydt[2 * K + k] = sigma * \
+                e(k) - gamma * i(k)  # infected -> removed
+            # -> cumulative recovered (from removed)
+            dydt[3 * K + k] = (1 - epsilon(k)) * gamma * i(k)
+            # -> cumulative recorded cases (from infected)
+            dydt[4 * K + k] = sigma * e(k)
+            # -> cumulative fatalities (from removed)
+            dydt[5 * K + k] = epsilon(k) * gamma * i(k)
 
         return dydt
 
     @classmethod
-    def get_parameters(cls,
-                       S0: np.ndarray, E0: np.ndarray, I0: np.ndarray, R0: np.ndarray, C0: np.ndarray, M0: np.ndarray,
-                       K: int, T_quarantine: float = 0,
-                       beta: float = 0.2, gamma: float = 0.1, sigma: float = 0.2,
-                       eta: float = 0.6, epsilon: np.ndarray = None,
-                       beta_max: float = 10, gamma_max: float = 1, sigma_max: float = 1,
-                       eta_max: float = 1, epsilon_max: float = 1,
-                       beta_fixed: bool = False, gamma_fixed: bool = False, sigma_fixed: bool = False,
-                       eta_fixed: bool = False, epsilon_fixed: bool = False,
-                       S0_fixed: bool = True, S0_max: float = 1e6,
-                       R0_fixed: bool = True, R0_max: float = 1e6,
-                       I0_fixed: bool = True, I0_max: float = 1e6,
-                       E0_fixed: bool = True, E0_max: float = 1e6,
-                       C0_fixed: bool = True, C0_max: float = 1e6,
-                       M0_fixed: bool = True, M0_max: float = 1e6) -> tuple:
+    def get_parameters(
+            cls,
+            S0: np.ndarray,
+            E0: np.ndarray,
+            I0: np.ndarray,
+            R0: np.ndarray,
+            C0: np.ndarray,
+            M0: np.ndarray,
+            K: int,
+            T_quarantine: float = 0,
+            beta: float = 0.2,
+            gamma: float = 0.1,
+            sigma: float = 0.2,
+            eta: float = 0.6,
+            epsilon: np.ndarray = None,
+            beta_max: float = 10,
+            gamma_max: float = 1,
+            sigma_max: float = 1,
+            eta_max: float = 1,
+            epsilon_max: float = 1,
+            beta_fixed: bool = False,
+            gamma_fixed: bool = False,
+            sigma_fixed: bool = False,
+            eta_fixed: bool = False,
+            epsilon_fixed: bool = False,
+            S0_fixed: bool = True,
+            S0_max: float = 1e6,
+            R0_fixed: bool = True,
+            R0_max: float = 1e6,
+            I0_fixed: bool = True,
+            I0_max: float = 1e6,
+            E0_fixed: bool = True,
+            E0_max: float = 1e6,
+            C0_fixed: bool = True,
+            C0_max: float = 1e6,
+            M0_fixed: bool = True,
+            M0_max: float = 1e6) -> tuple:
         """
         Produce a set of parameters for the age-stratified SIERCM model.
 
@@ -432,22 +604,56 @@ class SEIRCMAgeStratified(CompartmentalModel):
         """
         parameters = Parameters()
         parameters.add('K', value=K, min=0, max=K, vary=False)
-        parameters.add('T', value=T_quarantine, min=-1, max=T_quarantine, vary=False)
-        parameters.add('beta', value=beta, min=0, max=beta_max, vary=not beta_fixed)
-        parameters.add('gamma', value=gamma, min=0, max=gamma_max, vary=not gamma_fixed)
-        parameters.add('sigma', value=sigma, min=0, max=sigma_max, vary=not sigma_fixed)
-        parameters.add('eta', value=eta, min=0, max=eta_max, vary=not eta_fixed)
+        parameters.add(
+            'T',
+            value=T_quarantine,
+            min=-1,
+            max=T_quarantine,
+            vary=False)
+        parameters.add(
+            'beta',
+            value=beta,
+            min=0,
+            max=beta_max,
+            vary=not beta_fixed)
+        parameters.add(
+            'gamma',
+            value=gamma,
+            min=0,
+            max=gamma_max,
+            vary=not gamma_fixed)
+        parameters.add(
+            'sigma',
+            value=sigma,
+            min=0,
+            max=sigma_max,
+            vary=not sigma_fixed)
+        parameters.add(
+            'eta',
+            value=eta,
+            min=0,
+            max=eta_max,
+            vary=not eta_fixed)
 
         # add parameters that vary by age group
         for k in range(K):
-            parameters.add(f'epsilon_{k}', value=epsilon[k], min=0, max=epsilon_max, vary=not epsilon_fixed)
+            parameters.add(
+                f'epsilon_{k}',
+                value=epsilon[k],
+                min=0,
+                max=epsilon_max,
+                vary=not epsilon_fixed)
 
         # add initial state conditions that vary by age group
         initial_conditions = []
         for param in ['S0', 'E0', 'I0', 'R0', 'C0', 'M0']:
             for k in range(K):
-                parameters.add(f'{param}_{k}', value=eval(param)[k], min=0, max=eval(f'{param}_max'),
-                               vary=not eval(f'{param}_fixed'))
+                parameters.add(
+                    f'{param}_{k}',
+                    value=eval(param)[k],
+                    min=0,
+                    max=eval(f'{param}_max'),
+                    vary=not eval(f'{param}_fixed'))
                 initial_conditions.append(f'{param}_{k}')
 
         return parameters, initial_conditions
@@ -457,9 +663,15 @@ class EpidemicModel:
 
     """Class to perform solutions and parameter-fitting of epidemic models"""
 
-    def __init__(self, model: Type[CompartmentalModel], parameters: tuple = None, data: np.array = None,
-                 initial_conditions: list = None, fit_method: str = 'leastsq', error: callable = None,
-                 fit_period: float = None):
+    def __init__(
+            self,
+            model: Type[CompartmentalModel],
+            parameters: tuple = None,
+            data: np.array = None,
+            initial_conditions: list = None,
+            fit_method: str = 'leastsq',
+            error: callable = None,
+            fit_period: float = None):
         """
         A class to standardize fitting and solving epidemiological models.
 
@@ -482,7 +694,13 @@ class EpidemicModel:
         self.result = None
         self.fitted_parameters = None
 
-    def solve(self, time_range: np.ndarray, initial_conditions: [list, tuple], parameters) -> np.ndarray:
+    def solve(
+            self,
+            time_range: np.ndarray,
+            initial_conditions: [
+                list,
+                tuple],
+            parameters) -> np.ndarray:
         """
         Integrate the model ODEs to get a solution.
 
@@ -491,11 +709,21 @@ class EpidemicModel:
         :param parameters: the parameters for the solution
         :return:
         """
-        x = odeint(self.model.calibrate, initial_conditions, time_range, args=(parameters,))
+        x = odeint(
+            self.model.calibrate,
+            initial_conditions,
+            time_range,
+            args=(
+                parameters,
+            ))
         x = np.array(x)
         return x
 
-    def residual(self, parameters: Parameters, time_range: np.arange, data: np.ndarray) -> np.ndarray:
+    def residual(
+            self,
+            parameters: Parameters,
+            time_range: np.arange,
+            data: np.ndarray) -> np.ndarray:
         """
         Obtain fit error (to minimize).
 
@@ -511,16 +739,27 @@ class EpidemicModel:
         # obtain solution given current initial conditions and parameters
         solution = self.solve(time_range, initial_conditions, parameters)
 
-        # compute residual, using custom error function if it has been passed in
-        residual = solution - data if self.error is None else self.error(solution, data, parameters)
+        # compute residual, using custom error function if it has been passed
+        # in
+        residual = solution - \
+            data if self.error is None else self.error(solution, data, parameters)
 
         if self.fit_period is not None:
             residual = residual[-self.fit_period:]
 
         return residual.ravel()
 
-    def fit(self, time_range: np.arange = None, parameters: [Parameters, tuple] = None, initial_conditions: list = None,
-            residual=None, verbose: bool = False, data: np.array = None, fit_period: float = None):
+    def fit(
+            self,
+            time_range: np.arange = None,
+            parameters: [
+                Parameters,
+                tuple] = None,
+            initial_conditions: list = None,
+            residual=None,
+            verbose: bool = False,
+            data: np.array = None,
+            fit_period: float = None):
         """
         Fit the model based on data in the form np.array([X1,...,Xn])
         """
@@ -543,7 +782,13 @@ class EpidemicModel:
         if residual is None:
             residual = self.residual
 
-        result = minimize(residual, parameters, args=(time_range, data), method=self.fit_method)
+        result = minimize(
+            residual,
+            parameters,
+            args=(
+                time_range,
+                data),
+            method=self.fit_method)
         self.result = result
         self.fitted_parameters = result.params.valuesdict()
 

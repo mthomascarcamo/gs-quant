@@ -17,27 +17,42 @@ under the License.
 import datetime as dt
 
 from gs_quant.api.gs.reports import GsReportApi
-from gs_quant.target.reports import Report, ReportScheduleRequest, ReportJob, ReportParameters
 from gs_quant.session import *
+from gs_quant.target.reports import (Report, ReportJob, ReportParameters,
+                                     ReportScheduleRequest)
 
 
 def test_get_reports(mocker):
     id_1 = 'RX1'
     id_2 = 'RX2'
 
-    mock_response = {'results': (
-        Report.from_dict({'id': id_1, 'positionSourceType': 'Portfolio', 'positionSourceId': 'MP1',
-                          'type': 'Portfolio Performance Analytics', 'parameters': {'transactionCostModel': 'FIXED'}}),
-        Report.from_dict({'id': id_2, 'positionSourceType': 'Portfolio', 'positionSourceId': 'MP2',
-                          'type': 'Portfolio Performance Analytics', 'parameters': {'transactionCostModel': 'FIXED'}})
-    ), 'totalResults': 2}
+    mock_response = {'results': (Report.from_dict({'id': id_1,
+                                                   'positionSourceType': 'Portfolio',
+                                                   'positionSourceId': 'MP1',
+                                                   'type': 'Portfolio Performance Analytics',
+                                                   'parameters': {'transactionCostModel': 'FIXED'}}),
+                                 Report.from_dict({'id': id_2,
+                                                   'positionSourceType': 'Portfolio',
+                                                   'positionSourceId': 'MP2',
+                                                   'type': 'Portfolio Performance Analytics',
+                                                   'parameters': {'transactionCostModel': 'FIXED'}})),
+                     'totalResults': 2}
 
     expected_response = (
-        Report(id=id_1, positionSourceType='Portfolio', positionSourceId='MP1', type='Portfolio Performance Analytics',
-               parameters=ReportParameters(transactionCostModel='FIXED')),
-        Report(id=id_2, positionSourceType='Portfolio', positionSourceId='MP2', type='Portfolio Performance Analytics',
-               parameters=ReportParameters(transactionCostModel='FIXED'))
-    )
+        Report(
+            id=id_1,
+            positionSourceType='Portfolio',
+            positionSourceId='MP1',
+            type='Portfolio Performance Analytics',
+            parameters=ReportParameters(
+                transactionCostModel='FIXED')),
+        Report(
+            id=id_2,
+            positionSourceType='Portfolio',
+            positionSourceId='MP2',
+            type='Portfolio Performance Analytics',
+            parameters=ReportParameters(
+                transactionCostModel='FIXED')))
 
     # mock GsSession
     mocker.patch.object(
@@ -57,7 +72,9 @@ def test_get_reports(mocker):
 
 def test_get_report(mocker):
     id_1 = 'MP1'
-    mock_response = Report.from_dict({'id': id_1, 'positionSourceType': 'Portfolio', 'positionSourceId': 'MP1',
+    mock_response = Report.from_dict({'id': id_1,
+                                      'positionSourceType': 'Portfolio',
+                                      'positionSourceId': 'MP1',
                                       'type': 'Portfolio Performance Analytics',
                                       'parameters': {'transactionCostModel': 'FIXED'}})
 
@@ -73,14 +90,17 @@ def test_get_report(mocker):
 
     # run test
     response = GsReportApi.get_report(id_1)
-    GsSession.current._get.assert_called_with('/reports/{id}'.format(id=id_1), cls=Report)
+    GsSession.current._get.assert_called_with(
+        '/reports/{id}'.format(id=id_1), cls=Report)
     assert response == mock_response
 
 
 def test_create_report(mocker):
     id_1 = 'RX1'
 
-    report = Report.from_dict({'id': id_1, 'positionSourceType': 'Portfolio', 'positionSourceId': 'MP1',
+    report = Report.from_dict({'id': id_1,
+                               'positionSourceType': 'Portfolio',
+                               'positionSourceId': 'MP1',
                                'type': 'Portfolio Performance Analytics',
                                'parameters': {'transactionCostModel': 'FIXED'}})
 
@@ -103,7 +123,9 @@ def test_create_report(mocker):
 def test_update_report(mocker):
     id_1 = 'RX1'
 
-    report = Report.from_dict({'id': id_1, 'positionSourceType': 'Portfolio', 'positionSourceId': 'MP25',
+    report = Report.from_dict({'id': id_1,
+                               'positionSourceType': 'Portfolio',
+                               'positionSourceId': 'MP25',
                                'type': 'Portfolio Performance Analytics',
                                'parameters': {'transactionCostModel': 'FIXED'}})
 
@@ -119,7 +141,8 @@ def test_update_report(mocker):
 
     # run test
     response = GsReportApi.update_report(report)
-    GsSession.current._put.assert_called_with('/reports/{id}'.format(id=id_1), report, cls=Report)
+    GsSession.current._put.assert_called_with(
+        '/reports/{id}'.format(id=id_1), report, cls=Report)
     assert response == report
 
 
@@ -136,11 +159,15 @@ def test_delete_portfolio(mocker):
             Environment.QA,
             'client_id',
             'secret'))
-    mocker.patch.object(GsSession.current, '_delete', return_value=mock_response)
+    mocker.patch.object(
+        GsSession.current,
+        '_delete',
+        return_value=mock_response)
 
     # run test
     response = GsReportApi.delete_report(id_1)
-    GsSession.current._delete.assert_called_with('/reports/{id}'.format(id=id_1))
+    GsSession.current._delete.assert_called_with(
+        '/reports/{id}'.format(id=id_1))
     assert response == mock_response
 
 
@@ -164,7 +191,8 @@ def test_schedule_report(mocker):
     # run test
     response = GsReportApi.schedule_report(id_1, start_date, end_date)
 
-    report_schedule_request = ReportScheduleRequest(startDate=start_date, endDate=end_date)
+    report_schedule_request = ReportScheduleRequest(
+        startDate=start_date, endDate=end_date)
     GsSession.current._post.assert_called_with(
         '/reports/{id}/schedule'.format(id=id_1), report_schedule_request, cls=ReportScheduleRequest)
 
@@ -174,8 +202,14 @@ def test_schedule_report(mocker):
 def test_get_report_status(mocker):
     id_1 = 'RJW55950MF0S0HKN'
 
-    mock_response = ({'reportJobId': id_1, 'startDate': dt.date(2018, 12, 12), 'endDate': dt.date(2018, 12, 18)},
-                     {'reportJobId': id_1, 'startDate': dt.date(2017, 12, 12), 'endDate': dt.date(2017, 12, 16)})
+    mock_response = (
+        {
+            'reportJobId': id_1, 'startDate': dt.date(
+                2018, 12, 12), 'endDate': dt.date(
+                2018, 12, 18)}, {
+                    'reportJobId': id_1, 'startDate': dt.date(
+                        2017, 12, 12), 'endDate': dt.date(
+                            2017, 12, 16)})
 
     # mock GsSession
     mocker.patch.object(
@@ -189,26 +223,37 @@ def test_get_report_status(mocker):
 
     # run test
     response = GsReportApi.get_report_status(id_1)
-    GsSession.current._get.assert_called_with('/reports/{id}/status'.format(id=id_1))
+    GsSession.current._get.assert_called_with(
+        '/reports/{id}/status'.format(id=id_1))
     assert response == mock_response
 
 
 def test_get_report_jobs(mocker):
     id_1 = 'RJW55950MF0S0HKN'
 
-    mock_response = {'results': (
-        ReportJob.from_dict({'id': id_1, 'positionSourceType': 'Portfolio', 'positionSourceId': 'MP1',
-                             'parameters': {'transactionCostModel': 'FIXED'}}),
-        ReportJob.from_dict({'id': id_1, 'positionSourceType': 'Portfolio', 'positionSourceId': 'MP2',
-                             'parameters': {'transactionCostModel': 'FIXED'}})
-    ), 'totalResults': 2}
+    mock_response = {'results': (ReportJob.from_dict({'id': id_1,
+                                                      'positionSourceType': 'Portfolio',
+                                                      'positionSourceId': 'MP1',
+                                                      'parameters': {'transactionCostModel': 'FIXED'}}),
+                                 ReportJob.from_dict({'id': id_1,
+                                                      'positionSourceType': 'Portfolio',
+                                                      'positionSourceId': 'MP2',
+                                                      'parameters': {'transactionCostModel': 'FIXED'}})),
+                     'totalResults': 2}
 
     expected_response = (
-        ReportJob(id=id_1, positionSourceType='Portfolio', positionSourceId='MP1',
-                  parameters=ReportParameters(transactionCostModel='FIXED')),
-        ReportJob(id=id_1, positionSourceType='Portfolio', positionSourceId='MP2',
-                  parameters=ReportParameters(transactionCostModel='FIXED'))
-    )
+        ReportJob(
+            id=id_1,
+            positionSourceType='Portfolio',
+            positionSourceId='MP1',
+            parameters=ReportParameters(
+                transactionCostModel='FIXED')),
+        ReportJob(
+            id=id_1,
+            positionSourceType='Portfolio',
+            positionSourceId='MP2',
+            parameters=ReportParameters(
+                transactionCostModel='FIXED')))
 
     # mock GsSession
     mocker.patch.object(
@@ -222,14 +267,19 @@ def test_get_report_jobs(mocker):
 
     # run test
     response = GsReportApi.get_report_jobs(id_1)
-    GsSession.current._get.assert_called_with('/reports/{id}/jobs'.format(id=id_1))
+    GsSession.current._get.assert_called_with(
+        '/reports/{id}/jobs'.format(id=id_1))
     assert response == expected_response
 
 
 def test_report_job(mocker):
     id_1 = 'RX1'
-    mock_response = ReportJob(id=id_1, positionSourceType='Portfolio', positionSourceId='MP1',
-                              parameters=ReportParameters(transactionCostModel='FIXED'))
+    mock_response = ReportJob(
+        id=id_1,
+        positionSourceType='Portfolio',
+        positionSourceId='MP1',
+        parameters=ReportParameters(
+            transactionCostModel='FIXED'))
 
     # mock GsSession
     mocker.patch.object(
@@ -243,7 +293,8 @@ def test_report_job(mocker):
 
     # run test
     response = GsReportApi.get_report_job(id_1)
-    GsSession.current._get.assert_called_with('/reports/jobs/{id}'.format(id=id_1))
+    GsSession.current._get.assert_called_with(
+        '/reports/jobs/{id}'.format(id=id_1))
     assert response == mock_response
 
 
@@ -264,7 +315,8 @@ def test_cancel_report_job(mocker):
 
     # run test
     response = GsReportApi.cancel_report_job(id_1)
-    GsSession.current._post.assert_called_with('/reports/jobs/{id}/cancel'.format(id=id_1))
+    GsSession.current._post.assert_called_with(
+        '/reports/jobs/{id}/cancel'.format(id=id_1))
     assert response == mock_response
 
 
@@ -288,5 +340,6 @@ def test_update_report_job(mocker):
     status_body = {
         "status": 'done'
     }
-    GsSession.current._post.assert_called_with('/reports/jobs/{id}/update'.format(id=id_1), status_body)
+    GsSession.current._post.assert_called_with(
+        '/reports/jobs/{id}/update'.format(id=id_1), status_body)
     assert response == mock_response

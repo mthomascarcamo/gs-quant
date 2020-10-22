@@ -13,15 +13,16 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
-from abc import ABCMeta, abstractmethod
 import asyncio
-from concurrent.futures import TimeoutError
 import logging
 import queue
 import sys
+from abc import ABCMeta, abstractmethod
+from concurrent.futures import TimeoutError
 from threading import Thread
+from typing import Iterable, Optional, Tuple, Union
+
 from tqdm import tqdm
-from typing import Iterable, Optional, Union, Tuple
 
 from gs_quant.base import RiskKey, Sentinel
 from gs_quant.risk import ErrorValue, RiskRequest
@@ -72,7 +73,8 @@ class RiskApi(metaclass=ABCMeta):
         return shutdown, ret
 
     @classmethod
-    def drain_queue(cls, q: queue.Queue, timeout: Optional[int] = None) -> Tuple[bool, list]:
+    def drain_queue(cls, q: queue.Queue,
+                    timeout: Optional[int] = None) -> Tuple[bool, list]:
         try:
             return cls.__handle_queue_update(q, q.get(timeout=timeout))
         except queue.Empty:
@@ -120,20 +122,25 @@ class RiskApi(metaclass=ABCMeta):
             with session:
                 shutdown = False
                 while not shutdown:
-                    shutdown, requests_chunk = cls.drain_queue(outstanding_requests)
+                    shutdown, requests_chunk = cls.drain_queue(
+                        outstanding_requests)
                     if requests_chunk:
                         try:
                             # Get the responses for our requests chunk
                             responses_chunk = cls.calc_multi(requests_chunk)
 
-                            # Enqueue the replies for either the result subscriber (if async requests) or directly
-                            cls.enqueue(responses, responses_chunk.items(), loop=loop)
+                            # Enqueue the replies for either the result
+                            # subscriber (if async requests) or directly
+                            cls.enqueue(
+                                responses, responses_chunk.items(), loop=loop)
                         except Exception as e:
                             # Enqueue the error as a reply
-                            cls.enqueue(raw_results, ((r, e) for r in requests_chunk), loop=loop)
+                            cls.enqueue(raw_results, ((r, e)
+                                                      for r in requests_chunk), loop=loop)
 
                 if responses != raw_results:
-                    # If we are in async mode, indicate to the result subscriber that there are no more requests
+                    # If we are in async mode, indicate to the result
+                    # subscriber that there are no more requests
                     cls.shutdown_queue_listener(responses, loop=loop)
 
         async def run_async():
@@ -144,14 +151,22 @@ class RiskApi(metaclass=ABCMeta):
             outstanding_requests = queue.Queue()
             results_handler = None
 
-            # The requests library (which we use for dispatching) is not async, so we need a thread for concurrency
-            Thread(daemon=True,
-                   target=execute_requests,
-                   args=(outstanding_requests, responses, raw_results, GsSession.current, loop)).start()
+            # The requests library (which we use for dispatching) is not async,
+            # so we need a thread for concurrency
+            Thread(
+                daemon=True,
+                target=execute_requests,
+                args=(
+                    outstanding_requests,
+                    responses,
+                    raw_results,
+                    GsSession.current,
+                    loop)).start()
 
             if is_async:
                 # If async we need a task to handle result subscription
-                results_handler = loop.create_task(cls.get_results(responses, raw_results, timeout=timeout))
+                results_handler = loop.create_task(
+                    cls.get_results(responses, raw_results, timeout=timeout))
 
             results = {}
             expected = len(requests)
@@ -161,10 +176,13 @@ class RiskApi(metaclass=ABCMeta):
             while received < expected:
                 if requests:
                     # Enqueue requests for dispatch
-                    cls.enqueue(outstanding_requests, (requests.pop(0) for _ in range(chunk_size)), loop=loop)
+                    cls.enqueue(outstanding_requests, (requests.pop(0)
+                                                       for _ in range(chunk_size)), loop=loop)
                     if not requests:
-                        # No more requests - shutdown the listener queue, the thread will exit
-                        cls.shutdown_queue_listener(outstanding_requests, loop=loop)
+                        # No more requests - shutdown the listener queue, the
+                        # thread will exit
+                        cls.shutdown_queue_listener(
+                            outstanding_requests, loop=loop)
 
                 # Wait for results
                 shutdown, completed = await cls.drain_queue_async(raw_results)
@@ -172,7 +190,8 @@ class RiskApi(metaclass=ABCMeta):
                     # Only happens on error
                     break
 
-                # Enable as many new requests as we've received results, to keep the outstanding number constant
+                # Enable as many new requests as we've received results, to
+                # keep the outstanding number constant
                 chunk_size = min(len(completed), len(requests))
 
                 # Handle the results
@@ -215,18 +234,23 @@ class RiskApi(metaclass=ABCMeta):
                     asyncio.set_event_loop(None)
 
     @classmethod
-    def _handle_results(cls, request: RiskRequest, results: Union[Iterable, Exception]) -> dict:
+    def _handle_results(cls,
+                        request: RiskRequest,
+                        results: Union[Iterable,
+                                       Exception]) -> dict:
         formatted_results = {}
 
         if isinstance(results, Exception):
-            date_results = [
-                {'$type': 'Error', 'errorString': str(results)}] * len(request.pricing_and_market_data_as_of)
+            date_results = [{'$type': 'Error', 'errorString': str(
+                results)}] * len(request.pricing_and_market_data_as_of)
             position_results = [date_results] * len(request.positions)
             results = [position_results] * len(request.measures)
 
         for risk_measure, position_results in zip(request.measures, results):
-            for position, date_results in zip(request.positions, position_results):
-                for as_of, date_result in zip(request.pricing_and_market_data_as_of, date_results):
+            for position, date_results in zip(
+                    request.positions, position_results):
+                for as_of, date_result in zip(
+                        request.pricing_and_market_data_as_of, date_results):
                     handler = result_handlers.get(date_result.get('$type'))
                     risk_key = RiskKey(
                         cls,
@@ -238,7 +262,8 @@ class RiskApi(metaclass=ABCMeta):
                     )
 
                     try:
-                        result = handler(date_result, risk_key, position.instrument) if handler else date_result
+                        result = handler(
+                            date_result, risk_key, position.instrument) if handler else date_result
                     except Exception as e:
                         result = ErrorValue(risk_key, str(e))
                         _logger.error(result)

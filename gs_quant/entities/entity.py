@@ -76,7 +76,8 @@ class Entity(metaclass=ABCMeta):
             id_value: str,
             id_type: EntityIdentifier) -> Optional['Entity']:
         if id_type.value == 'MQID':
-            result = GsSession.current._get(f'/{cls._entity_to_endpoint[cls.entity_type()]}/{id_value}')
+            result = GsSession.current._get(
+                f'/{cls._entity_to_endpoint[cls.entity_type()]}/{id_value}')
         else:
             result = get(GsSession.current._get(
                 f'/{cls._entity_to_endpoint[cls.entity_type()]}?{id_type.value.lower()}={id_value}'), 'results.0')
@@ -104,22 +105,31 @@ class Entity(metaclass=ABCMeta):
     def get_unique_entity_key(self) -> EntityKey:
         return EntityKey(self.__id, self.__entity_type)
 
-    def get_data_coordinate(self,
-                            measure: DataMeasure,
-                            dimensions: Optional[DataDimensions] = None,
-                            frequency: Optional[DataFrequency] = None) -> DataCoordinate:
+    def get_data_coordinate(
+            self,
+            measure: DataMeasure,
+            dimensions: Optional[DataDimensions] = None,
+            frequency: Optional[DataFrequency] = None) -> DataCoordinate:
         id_ = self.get_marquee_id()
         dimensions = dimensions or {}
         dimensions[self.data_dimension] = id_
-        available: Dict = GsDataApi.get_data_providers(id_).get(measure.value, {})
+        available: Dict = GsDataApi.get_data_providers(
+            id_).get(measure.value, {})
 
         if frequency == DataFrequency.DAILY:
             daily_dataset_id = available.get(DataFrequency.DAILY)
-            return DataCoordinate(dataset_id=daily_dataset_id, measure=measure, dimensions=dimensions,
-                                  frequency=frequency)
+            return DataCoordinate(
+                dataset_id=daily_dataset_id,
+                measure=measure,
+                dimensions=dimensions,
+                frequency=frequency)
         if frequency == DataFrequency.REAL_TIME:
             rt_dataset_id = available.get(DataFrequency.REAL_TIME)
-            return DataCoordinate(dataset_id=rt_dataset_id, measure=measure, dimensions=dimensions, frequency=frequency)
+            return DataCoordinate(
+                dataset_id=rt_dataset_id,
+                measure=measure,
+                dimensions=dimensions,
+                frequency=frequency)
 
 
 class Country(Entity):

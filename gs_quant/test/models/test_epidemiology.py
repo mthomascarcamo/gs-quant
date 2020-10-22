@@ -30,7 +30,10 @@ def test_SIR():
                                                         S0_max=10e6,
                                                         I0_max=5e6,
                                                         R0_max=10e6)
-    sir = EpidemicModel(SIR, parameters=parameters, initial_conditions=initial_conditions)
+    sir = EpidemicModel(
+        SIR,
+        parameters=parameters,
+        initial_conditions=initial_conditions)
 
     # Solve a problem with an independently checkable solution
     N = 100
@@ -49,7 +52,8 @@ def test_SIR():
     R_data = forecast[:, 2]
     data = np.array([S_data, I_data, R_data]).T
 
-    # slightly perturbed parameters, to check if the fitting finds the original (optimal) parameters
+    # slightly perturbed parameters, to check if the fitting finds the
+    # original (optimal) parameters
     parameters, initial_conditions = SIR.get_parameters(S_data[0], I_data[0], R_data[0], N, beta=beta + 0.4,
                                                         gamma=gamma + 0.2,
                                                         S0_fixed=True,
@@ -69,7 +73,12 @@ def test_SIR():
     assert np.isclose(beta, beta_fitted)
     assert np.isclose(gamma, gamma_fitted)
 
-    sir = EpidemicModel(SIR, parameters=parameters, data=data, initial_conditions=initial_conditions, fit_period=10)
+    sir = EpidemicModel(
+        SIR,
+        parameters=parameters,
+        data=data,
+        initial_conditions=initial_conditions,
+        fit_period=10)
     sir.fit()
 
     # check fitted parameters
@@ -96,7 +105,10 @@ def test_SEIR():
                                                          S0_max=10e6,
                                                          I0_max=5e6,
                                                          R0_max=10e6)
-    sir = EpidemicModel(SEIR, parameters=parameters, initial_conditions=initial_conditions)
+    sir = EpidemicModel(
+        SEIR,
+        parameters=parameters,
+        initial_conditions=initial_conditions)
 
     # Solve a problem with an independently checkable solution
     N = 100
@@ -118,7 +130,8 @@ def test_SEIR():
     R_data = forecast[:, 3]
     data = np.array([S_data, E_data, I_data, R_data]).T
 
-    # slightly perturbed parameters, to check if the fitting finds the original (optimal) parameters
+    # slightly perturbed parameters, to check if the fitting finds the
+    # original (optimal) parameters
     parameters, initial_conditions = SEIR.get_parameters(S_data[0], E_data[0], I_data[0], R_data[0], N,
                                                          beta=beta + 0.4,
                                                          gamma=gamma + 0.2,
@@ -130,7 +143,11 @@ def test_SEIR():
                                                          S0_max=10e6,
                                                          I0_max=5e6,
                                                          R0_max=10e6)
-    seir = EpidemicModel(SEIR, parameters=parameters, data=data, initial_conditions=initial_conditions)
+    seir = EpidemicModel(
+        SEIR,
+        parameters=parameters,
+        data=data,
+        initial_conditions=initial_conditions)
     seir.fit()
 
     # check fitted parameters
@@ -142,7 +159,12 @@ def test_SEIR():
     assert np.isclose(gamma, gamma_fitted)
     assert np.isclose(sigma, sigma_fitted)
 
-    seir = EpidemicModel(SEIR, parameters=parameters, data=data, initial_conditions=initial_conditions, fit_period=10)
+    seir = EpidemicModel(
+        SEIR,
+        parameters=parameters,
+        data=data,
+        initial_conditions=initial_conditions,
+        fit_period=10)
     seir.fit()
 
     # check fitted parameters

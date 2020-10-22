@@ -27,12 +27,14 @@ import gs_quant.timeseries.measures_rates as tm_rates
 from gs_quant.api.gs.data import MarketDataResponseFrame, QueryType
 from gs_quant.data.core import DataContext
 from gs_quant.errors import MqValueError
-from gs_quant.session import GsSession, Environment
+from gs_quant.session import Environment, GsSession
 from gs_quant.test.timeseries.utils import mock_request
-from gs_quant.timeseries import TdapiRatesDefaultsProvider, SWAPTION_DEFAULTS, Currency, CurrencyEnum, SecurityMaster, \
-    ExtendedSeries
-from gs_quant.timeseries.measures_rates import _swaption_build_asset_query, _currency_to_tdapi_swaption_rate_asset, \
-    _check_strike_reference
+from gs_quant.timeseries import (SWAPTION_DEFAULTS, Currency, CurrencyEnum,
+                                 ExtendedSeries, SecurityMaster,
+                                 TdapiRatesDefaultsProvider)
+from gs_quant.timeseries.measures_rates import (
+    _check_strike_reference, _currency_to_tdapi_swaption_rate_asset,
+    _swaption_build_asset_query)
 
 _index = [pd.Timestamp('2019-01-01')]
 _test_datasets = ('TEST_DATASET',)
@@ -40,37 +42,43 @@ _test_datasets = ('TEST_DATASET',)
 
 def test_get_swaption_parameter_floating_rate_option_returns_default():
     provider = TdapiRatesDefaultsProvider(SWAPTION_DEFAULTS)
-    value = provider.get_swaption_parameter(CurrencyEnum.GBP, "floatingRateTenor")
+    value = provider.get_swaption_parameter(
+        CurrencyEnum.GBP, "floatingRateTenor")
     assert value == "6m"
 
 
 def test_get_swaption_parameter_floating_rate_option_returns_given_value():
     provider = TdapiRatesDefaultsProvider(SWAPTION_DEFAULTS)
-    value = provider.get_swaption_parameter(CurrencyEnum.GBP, "floatingRateTenor", "66m")
+    value = provider.get_swaption_parameter(
+        CurrencyEnum.GBP, "floatingRateTenor", "66m")
     assert value == "66m"
 
 
 def test_get_swaption_parameter_strike_reference_option_returns_default():
     provider = TdapiRatesDefaultsProvider(SWAPTION_DEFAULTS)
-    value = provider.get_swaption_parameter(CurrencyEnum.GBP, "strikeReference")
+    value = provider.get_swaption_parameter(
+        CurrencyEnum.GBP, "strikeReference")
     assert value == "ATM"
 
 
 def test_get_swaption_parameter_strike_reference_option_returns_given_value():
     provider = TdapiRatesDefaultsProvider(SWAPTION_DEFAULTS)
-    value = provider.get_swaption_parameter(CurrencyEnum.GBP, "strikeReference", "ATM+666")
+    value = provider.get_swaption_parameter(
+        CurrencyEnum.GBP, "strikeReference", "ATM+666")
     assert value == "ATM+666"
 
 
 def test_get_floating_rate_option_for_benchmark_retuns_rate():
     provider = TdapiRatesDefaultsProvider(SWAPTION_DEFAULTS)
-    value = provider.get_floating_rate_option_for_benchmark(CurrencyEnum.GBP, "LIBOR")
+    value = provider.get_floating_rate_option_for_benchmark(
+        CurrencyEnum.GBP, "LIBOR")
     assert value == "GBP-LIBOR-BBA"
 
 
 def test_get_floating_rate_option_for_benchmark_retuns_rate_usd():
     provider = TdapiRatesDefaultsProvider(SWAPTION_DEFAULTS)
-    value = provider.get_floating_rate_option_for_benchmark(CurrencyEnum.USD, "LIBOR")
+    value = provider.get_floating_rate_option_for_benchmark(
+        CurrencyEnum.USD, "LIBOR")
     assert value == "USD-LIBOR-BBA"
 
 
@@ -142,7 +150,9 @@ def test_check_strike_reference_invalid_list():
 
 def test_currency_to_tdapi_swaption_rate_asset_retuns_throws():
     replace = Replacer()
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "ZAR"
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "ZAR"
     asset = Currency("MA1", "ZAR")
 
     assert _currency_to_tdapi_swaption_rate_asset(asset) == "MA1"
@@ -150,11 +160,18 @@ def test_currency_to_tdapi_swaption_rate_asset_retuns_throws():
 
 def test_currency_to_tdapi_swaption_rate_asset_retuns_asset_id(mocker):
     replace = Replacer()
-    mocker.patch.object(GsSession.__class__, 'current',
-                        return_value=GsSession.get(Environment.QA, 'client_id', 'secret'))
+    mocker.patch.object(
+        GsSession.__class__,
+        'current',
+        return_value=GsSession.get(
+            Environment.QA,
+            'client_id',
+            'secret'))
     mocker.patch.object(GsSession.current, '_get', side_effect=mock_request)
     mocker.patch.object(SecurityMaster, 'get_asset', side_effect=mock_request)
-    bbid_mock = replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock())
+    bbid_mock = replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock())
 
     with tm.PricingContext(dt.date.today()):
         cur = [
@@ -188,7 +205,8 @@ def test_currency_to_tdapi_swaption_rate_asset_retuns_asset_id(mocker):
             assert mqid == c.get("swaption_id")
 
         bbid_mock.return_value = None
-        assert _currency_to_tdapi_swaption_rate_asset(asset) == c.get("currency_assetId")
+        assert _currency_to_tdapi_swaption_rate_asset(
+            asset) == c.get("currency_assetId")
         replace.restore()
 
 
@@ -208,8 +226,8 @@ def test_swaption_build_asset_query_usd():
 
 
 def test_swaption_build_asset_query_strike_reference():
-    defautls = _swaption_build_asset_query(CurrencyEnum.USD, None, None, None, None,
-                                           "ATM+50")
+    defautls = _swaption_build_asset_query(
+        CurrencyEnum.USD, None, None, None, None, "ATM+50")
     assert defautls["asset_parameters_floating_rate_option"] == "USD-LIBOR-BBA"
     assert defautls["asset_parameters_clearing_house"] == "LCH"
     assert defautls["asset_parameters_floating_rate_designated_maturity"] == "3m"
@@ -220,8 +238,8 @@ def test_swaption_build_asset_query_strike_reference():
 
 
 def test_swaption_build_asset_query_clearing_house():
-    defautls = _swaption_build_asset_query(CurrencyEnum.USD, None, None, None, "12m",
-                                           "ATM+50", None, "ABC")
+    defautls = _swaption_build_asset_query(
+        CurrencyEnum.USD, None, None, None, "12m", "ATM+50", None, "ABC")
     assert defautls["asset_parameters_floating_rate_option"] == "USD-LIBOR-BBA"
     assert defautls["asset_parameters_floating_rate_designated_maturity"] == "12m"
     assert defautls["asset_parameters_clearing_house"] == "ABC"
@@ -232,7 +250,15 @@ def test_swaption_build_asset_query_clearing_house():
 
 
 def test_swaption_build_asset_query_custom():
-    defautls = _swaption_build_asset_query(CurrencyEnum.USD, "LIBOR", "12y", "66y", "12m", "ATM+50", "120y", "ABC")
+    defautls = _swaption_build_asset_query(
+        CurrencyEnum.USD,
+        "LIBOR",
+        "12y",
+        "66y",
+        "12m",
+        "ATM+50",
+        "120y",
+        "ABC")
     assert defautls["asset_parameters_floating_rate_option"] == "USD-LIBOR-BBA"
     assert defautls["asset_parameters_floating_rate_designated_maturity"] == "12m"
     assert defautls["asset_parameters_clearing_house"] == "ABC"
@@ -244,30 +270,73 @@ def test_swaption_build_asset_query_custom():
 
 def test_swaption_build_asset_query_custom_throws():
     with pytest.raises(MqValueError):
-        _swaption_build_asset_query(CurrencyEnum.USD, "NIBOR", "12y", "66y", "12m", "ATM+50", "120y", "ABC")
+        _swaption_build_asset_query(
+            CurrencyEnum.USD,
+            "NIBOR",
+            "12y",
+            "66y",
+            "12m",
+            "ATM+50",
+            "120y",
+            "ABC")
 
 
 def test_swaption_swaption_vol_term2_returns_data():
     replace = Replacer()
     df = MarketDataResponseFrame(
-        data=dict(expirationTenor=['1m', '6m', '1y'], terminationTenor=['1y', '2y', '3y'], swaptionVol=[1, 2, 3]),
-        index=_index * 3)
+        data=dict(
+            expirationTenor=[
+                '1m', '6m', '1y'], terminationTenor=[
+                '1y', '2y', '3y'], swaptionVol=[
+                    1, 2, 3]), index=_index * 3)
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2020, 1, 2), dt.date(2020, 1, 2)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2020,
+            1,
+            2),
+        dt.date(
+            2020,
+            1,
+            2)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     with DataContext('2019-01-01', '2025-01-01'):
-        actual = tm_rates.swaption_vol_term(Currency("GBP", name="GBP"), tm.SwaptionTenorType.SWAP_MATURITY, '5y', 0)
-    expected = pd.Series([1, 2, 3], index=pd.to_datetime(['2019-02-01', '2019-07-01', '2020-01-01']))
+        actual = tm_rates.swaption_vol_term(
+            Currency(
+                "GBP",
+                name="GBP"),
+            tm.SwaptionTenorType.SWAP_MATURITY,
+            '5y',
+            0)
+    expected = pd.Series([1, 2, 3], index=pd.to_datetime(
+        ['2019-02-01', '2019-07-01', '2020-01-01']))
     assert_series_equal(expected, pd.Series(actual), check_names=False)
 
     with DataContext('2019-01-01', '2025-01-01'):
-        actual = tm_rates.swaption_vol_term(Currency("GBP", name="GBP"), tm.SwaptionTenorType.OPTION_EXPIRY, '5y', 0)
-    expected = pd.Series([1, 2, 3], index=pd.to_datetime(['2020-01-01', '2021-01-01', '2021-12-31']))
+        actual = tm_rates.swaption_vol_term(
+            Currency(
+                "GBP",
+                name="GBP"),
+            tm.SwaptionTenorType.OPTION_EXPIRY,
+            '5y',
+            0)
+    expected = pd.Series([1, 2, 3], index=pd.to_datetime(
+        ['2020-01-01', '2021-01-01', '2021-12-31']))
     assert_series_equal(expected, pd.Series(actual), check_names=False)
     replace.restore()
 
@@ -275,15 +344,39 @@ def test_swaption_swaption_vol_term2_returns_data():
 def test_swaption_swaption_vol_term2_returns_empty():
     replace = Replacer()
     df = ExtendedSeries()
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2020, 1, 2), dt.date(2020, 1, 2)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2020,
+            1,
+            2),
+        dt.date(
+            2020,
+            1,
+            2)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     with DataContext('2019-01-01', '2025-01-01'):
-        actual = tm_rates.swaption_vol_term(Currency("GBP", name="GBP"), tm.SwaptionTenorType.SWAP_MATURITY, '5y', 0)
+        actual = tm_rates.swaption_vol_term(
+            Currency(
+                "GBP",
+                name="GBP"),
+            tm.SwaptionTenorType.SWAP_MATURITY,
+            '5y',
+            0)
 
     assert_series_equal(ExtendedSeries(), actual, check_names=False)
     replace.restore()
@@ -291,40 +384,93 @@ def test_swaption_swaption_vol_term2_returns_empty():
 
 def test_swaption_swaption_vol_term2_throws():
     with pytest.raises(NotImplementedError):
-        tm_rates.swaption_vol_term(Currency("GBP", name="GBP"), tm.SwaptionTenorType.SWAP_MATURITY, '5y', 0,
-                                   real_time=True)
+        tm_rates.swaption_vol_term(
+            Currency(
+                "GBP",
+                name="GBP"),
+            tm.SwaptionTenorType.SWAP_MATURITY,
+            '5y',
+            0,
+            real_time=True)
 
 
 def test_swaption_vol_smile2_returns_data():
     replace = Replacer()
-    test_data = dict(strikeRelative=["ATM", "ATM+50", "ATM+100"], swaptionVol=[1, 2, 3])
+    test_data = dict(
+        strikeRelative=[
+            "ATM",
+            "ATM+50",
+            "ATM+100"],
+        swaptionVol=[
+            1,
+            2,
+            3])
     df = MarketDataResponseFrame(data=test_data, index=_index * 3)
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2020, 1, 2), dt.date(2020, 1, 2)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2020,
+            1,
+            2),
+        dt.date(
+            2020,
+            1,
+            2)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     with DataContext('2019-01-01', '2025-01-01'):
-        actual = tm_rates.swaption_vol_smile(Currency("GBP", name="GBP"), '3m', '10y')
-    assert_series_equal(pd.Series([1, 2, 3], index=[0.0, 50.0, 100.0]), pd.Series(actual))
+        actual = tm_rates.swaption_vol_smile(
+            Currency("GBP", name="GBP"), '3m', '10y')
+    assert_series_equal(
+        pd.Series([1, 2, 3], index=[0.0, 50.0, 100.0]), pd.Series(actual))
     replace.restore()
 
 
 def test_swaption_vol_smile2_returns_no_data():
     replace = Replacer()
     df = ExtendedSeries()
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2020, 1, 2), dt.date(2020, 1, 2)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2020,
+            1,
+            2),
+        dt.date(
+            2020,
+            1,
+            2)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     with DataContext('2019-01-01', '2025-01-01'):
-        actual = tm_rates.swaption_vol_smile(Currency("GBP", name="GBP"), '3m', '10y')
+        actual = tm_rates.swaption_vol_smile(
+            Currency("GBP", name="GBP"), '3m', '10y')
     assert_series_equal(ExtendedSeries(), actual)
     replace.restore()
 
@@ -338,18 +484,42 @@ def test_swaption_vol_smile2_returns_throws():
 def test_swaption_vol2_return_data():
     replace = Replacer()
     test_data = dict(swaptionVol=[1, 2, 3])
-    df = MarketDataResponseFrame(data=test_data, index=[dt.date(2019, 1, 1), dt.date(2019, 1, 2),
-                                                        dt.date(2019, 1, 3)])
+    df = MarketDataResponseFrame(
+        data=test_data, index=[
+            dt.date(
+                2019, 1, 1), dt.date(
+                2019, 1, 2), dt.date(
+                    2019, 1, 3)])
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     actual = tm_rates.swaption_vol(Currency("GBP", name="GBP"))
-    assert_series_equal(tm._extract_series_from_df(df, QueryType.SWAPTION_VOL), actual)
+    assert_series_equal(
+        tm._extract_series_from_df(
+            df, QueryType.SWAPTION_VOL), actual)
     replace.restore()
 
 
@@ -357,12 +527,30 @@ def test_swaption_vol2_return__empty_data():
     replace = Replacer()
     df = ExtendedSeries()
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     actual = tm_rates.swaption_vol(Currency("GBP", name="GBP"))
     assert_series_equal(ExtendedSeries(), actual)
@@ -372,36 +560,80 @@ def test_swaption_vol2_return__empty_data():
 def test_swaption_annuity_return_data():
     replace = Replacer()
     test_data = dict(swaptionAnnuity=[1, 2, 3])
-    df = MarketDataResponseFrame(data=test_data, index=[dt.date(2019, 1, 1), dt.date(2019, 1, 2),
-                                                        dt.date(2019, 1, 3)])
+    df = MarketDataResponseFrame(
+        data=test_data, index=[
+            dt.date(
+                2019, 1, 1), dt.date(
+                2019, 1, 2), dt.date(
+                    2019, 1, 3)])
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     actual = tm_rates.swaption_annuity(Currency("GBP", name="GBP"))
-    assert_series_equal(tm._extract_series_from_df(df, QueryType.SWAPTION_ANNUITY), actual)
+    assert_series_equal(
+        tm._extract_series_from_df(
+            df, QueryType.SWAPTION_ANNUITY), actual)
     replace.restore()
 
 
 def test_swaption_premium_return_data():
     replace = Replacer()
     test_data = dict(swaptionPremium=[1, 2, 3])
-    df = MarketDataResponseFrame(data=test_data, index=[dt.date(2019, 1, 1), dt.date(2019, 1, 2),
-                                                        dt.date(2019, 1, 3)])
+    df = MarketDataResponseFrame(
+        data=test_data, index=[
+            dt.date(
+                2019, 1, 1), dt.date(
+                2019, 1, 2), dt.date(
+                    2019, 1, 3)])
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(),
-            Mock()).return_value = "MADWG3WHCKNE1DJA"
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+            Mock(), Mock()).return_value = "MADWG3WHCKNE1DJA"
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     actual = tm_rates.swaption_premium(Currency("GBP", name="GBP"))
-    assert_series_equal(tm._extract_series_from_df(df, QueryType.SWAPTION_PREMIUM), actual)
+    assert_series_equal(
+        tm._extract_series_from_df(
+            df, QueryType.SWAPTION_PREMIUM), actual)
     replace.restore()
 
 
@@ -426,90 +658,219 @@ def test_swaption_premium_throws_for_unsupported_ccy():
 def test_swaption_atmFwdRate_return_data():
     replace = Replacer()
     test_data = dict(atmFwdRate=[1, 2, 3])
-    df = MarketDataResponseFrame(data=test_data, index=[dt.date(2019, 1, 1), dt.date(2019, 1, 2),
-                                                        dt.date(2019, 1, 3)])
+    df = MarketDataResponseFrame(
+        data=test_data, index=[
+            dt.date(
+                2019, 1, 1), dt.date(
+                2019, 1, 2), dt.date(
+                    2019, 1, 3)])
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
     actual = tm_rates.swaption_atm_fwd_rate(Currency("GBP", name="GBP"))
-    assert_series_equal(tm._extract_series_from_df(df, QueryType.ATM_FWD_RATE), actual)
+    assert_series_equal(
+        tm._extract_series_from_df(
+            df, QueryType.ATM_FWD_RATE), actual)
     replace.restore()
 
 
 def test_midcurve_atmFwdRate_return_data():
     replace = Replacer()
     test_data = dict(midcurveAtmFwdRate=[1, 2, 3])
-    df = MarketDataResponseFrame(data=test_data, index=[dt.date(2019, 1, 1), dt.date(2019, 1, 2),
-                                                        dt.date(2019, 1, 3)])
+    df = MarketDataResponseFrame(
+        data=test_data, index=[
+            dt.date(
+                2019, 1, 1), dt.date(
+                2019, 1, 2), dt.date(
+                    2019, 1, 3)])
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
-    actual = tm_rates.midcurve_atm_fwd_rate(Currency("GBP", name="GBP"), "1y", "1y", "1y")
-    assert_series_equal(tm._extract_series_from_df(df, QueryType.MIDCURVE_ATM_FWD_RATE), actual)
+    actual = tm_rates.midcurve_atm_fwd_rate(
+        Currency("GBP", name="GBP"), "1y", "1y", "1y")
+    assert_series_equal(tm._extract_series_from_df(
+        df, QueryType.MIDCURVE_ATM_FWD_RATE), actual)
     replace.restore()
 
 
 def test_midcurve_annuity_return_data():
     replace = Replacer()
     test_data = dict(midcurveAnnuity=[1, 2, 3])
-    df = MarketDataResponseFrame(data=test_data, index=[dt.date(2019, 1, 1), dt.date(2019, 1, 2),
-                                                        dt.date(2019, 1, 3)])
+    df = MarketDataResponseFrame(
+        data=test_data, index=[
+            dt.date(
+                2019, 1, 1), dt.date(
+                2019, 1, 2), dt.date(
+                    2019, 1, 3)])
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
-    actual = tm_rates.midcurve_annuity(Currency("GBP", name="GBP"), "1y", "1y", "1y", 0)
-    assert_series_equal(tm._extract_series_from_df(df, QueryType.MIDCURVE_ANNUITY), actual)
+    actual = tm_rates.midcurve_annuity(
+        Currency("GBP", name="GBP"), "1y", "1y", "1y", 0)
+    assert_series_equal(
+        tm._extract_series_from_df(
+            df, QueryType.MIDCURVE_ANNUITY), actual)
     replace.restore()
 
 
 def test_midcurve_premium_return_data():
     replace = Replacer()
     test_data = dict(midcurvePremium=[1, 2, 3])
-    df = MarketDataResponseFrame(data=test_data, index=[dt.date(2019, 1, 1), dt.date(2019, 1, 2),
-                                                        dt.date(2019, 1, 3)])
+    df = MarketDataResponseFrame(
+        data=test_data, index=[
+            dt.date(
+                2019, 1, 1), dt.date(
+                2019, 1, 2), dt.date(
+                    2019, 1, 3)])
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
-    actual = tm_rates.midcurve_premium(Currency("GBP", name="GBP"), "1y", "1y", "1y", 0)
-    assert_series_equal(tm._extract_series_from_df(df, QueryType.MIDCURVE_PREMIUM), actual)
+    actual = tm_rates.midcurve_premium(
+        Currency("GBP", name="GBP"), "1y", "1y", "1y", 0)
+    assert_series_equal(
+        tm._extract_series_from_df(
+            df, QueryType.MIDCURVE_PREMIUM), actual)
     replace.restore()
 
 
 def test_midcurve_vol_return_data():
     replace = Replacer()
     test_data = dict(midcurveVol=[1, 2, 3])
-    df = MarketDataResponseFrame(data=test_data, index=[dt.date(2019, 1, 1), dt.date(2019, 1, 2),
-                                                        dt.date(2019, 1, 3)])
+    df = MarketDataResponseFrame(
+        data=test_data, index=[
+            dt.date(
+                2019, 1, 1), dt.date(
+                2019, 1, 2), dt.date(
+                    2019, 1, 3)])
 
-    replace('gs_quant.timeseries.measures.Asset.get_identifier', Mock()).return_value = "GBP"
-    replace('gs_quant.timeseries.measures_rates._get_tdapi_rates_assets', Mock(), Mock()).return_value = [
-        "MADWG3WHCKNE1DJA", "MAH6JK3TZJJGFQ65"]
-    replace('gs_quant.timeseries.measures_rates._range_from_pricing_date', Mock(), Mock()).return_value = [
-        dt.date(2019, 1, 2), dt.date(2019, 1, 5)]
-    replace('gs_quant.timeseries.measures_rates._market_data_timed', Mock()).return_value = df
+    replace(
+        'gs_quant.timeseries.measures.Asset.get_identifier',
+        Mock()).return_value = "GBP"
+    replace(
+        'gs_quant.timeseries.measures_rates._get_tdapi_rates_assets',
+        Mock(),
+        Mock()).return_value = [
+        "MADWG3WHCKNE1DJA",
+        "MAH6JK3TZJJGFQ65"]
+    replace(
+        'gs_quant.timeseries.measures_rates._range_from_pricing_date',
+        Mock(),
+        Mock()).return_value = [
+        dt.date(
+            2019,
+            1,
+            2),
+        dt.date(
+            2019,
+            1,
+            5)]
+    replace(
+        'gs_quant.timeseries.measures_rates._market_data_timed',
+        Mock()).return_value = df
 
-    actual = tm_rates.midcurve_vol(Currency("GBP", name="GBP"), "1y", "1y", "1y", 0)
-    assert_series_equal(tm._extract_series_from_df(df, QueryType.MIDCURVE_VOL), actual)
+    actual = tm_rates.midcurve_vol(
+        Currency(
+            "GBP",
+            name="GBP"),
+        "1y",
+        "1y",
+        "1y",
+        0)
+    assert_series_equal(
+        tm._extract_series_from_df(
+            df, QueryType.MIDCURVE_VOL), actual)
     replace.restore()
 
 

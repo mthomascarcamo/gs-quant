@@ -39,8 +39,10 @@ def test_align():
     x = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0], index=dates1)
     y = pd.Series([20.0, 40.0, 60.0], index=dates2)
 
-    expectedl = pd.Series([2.0, 4.0], index=[date(2019, 1, 2), date(2019, 1, 4)])
-    expectedr = pd.Series([20.0, 40.0], index=[date(2019, 1, 2), date(2019, 1, 4)])
+    expectedl = pd.Series(
+        [2.0, 4.0], index=[date(2019, 1, 2), date(2019, 1, 4)])
+    expectedr = pd.Series([20.0, 40.0], index=[
+                          date(2019, 1, 2), date(2019, 1, 4)])
 
     result = align(x, y, Interpolate.INTERSECT)
     assert_series_equal(result[0], expectedl, obj="Align intersect left")
@@ -60,7 +62,8 @@ def test_align():
     ]
 
     expected1 = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0, np.nan], index=union_dates)
-    expected2 = pd.Series([np.nan, 20.0, np.nan, 40.0, np.nan, 60.0], index=union_dates)
+    expected2 = pd.Series(
+        [np.nan, 20.0, np.nan, 40.0, np.nan, 60.0], index=union_dates)
 
     result = align(x, y, Interpolate.NAN)
     assert_series_equal(result[0], expected1, obj="Align NaN left")
@@ -82,7 +85,8 @@ def test_align():
     assert_series_equal(result[1], expected1, obj="Align zero right")
 
     expected1 = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0, 5.0], index=union_dates)
-    expected2 = pd.Series([20.0, 20.0, 20.0, 40.0, 40.0, 60.0], index=union_dates)
+    expected2 = pd.Series(
+        [20.0, 20.0, 20.0, 40.0, 40.0, 60.0], index=union_dates)
 
     result = align(x, y, Interpolate.STEP)
     assert_series_equal(result[0], expected1, obj="Align step left")
@@ -109,20 +113,34 @@ def test_align():
     assert_series_equal(result[0], expected2, obj="Align time right")
     assert_series_equal(result[1], expected1, obj="Align time right")
 
-    a = pd.Series([0, 100, 110], index=pd.DatetimeIndex(['2019-07-01', '2019-07-08', '2019-07-10']))
-    b = pd.Series([20, 60, 70], index=pd.DatetimeIndex(['2019-07-02', '2019-07-10', '2019-07-11']))
+    a = pd.Series([0, 100, 110], index=pd.DatetimeIndex(
+        ['2019-07-01', '2019-07-08', '2019-07-10']))
+    b = pd.Series([20, 60, 70], index=pd.DatetimeIndex(
+        ['2019-07-02', '2019-07-10', '2019-07-11']))
     result = align(a, b, Interpolate.TIME)
 
     u_index = a.index.union(b.index)
-    assert_series_equal(result[0], pd.Series([0, 100 / 7, 100, 110, np.nan], index=u_index))
-    assert_series_equal(result[1], pd.Series([np.nan, 20, 50, 60, 70], index=u_index))
+    assert_series_equal(result[0], pd.Series(
+        [0, 100 / 7, 100, 110, np.nan], index=u_index))
+    assert_series_equal(result[1], pd.Series(
+        [np.nan, 20, 50, 60, 70], index=u_index))
 
     result = align(x, 3)
     assert_series_equal(result[0], x, obj="Align scalar left")
-    assert_series_equal(result[1], pd.Series(3, index=dates1), obj="Align scalar left")
+    assert_series_equal(
+        result[1],
+        pd.Series(
+            3,
+            index=dates1),
+        obj="Align scalar left")
 
     result = align(3, x)
-    assert_series_equal(result[0], pd.Series(3, index=dates1), obj="Align scalar left")
+    assert_series_equal(
+        result[0],
+        pd.Series(
+            3,
+            index=dates1),
+        obj="Align scalar left")
     assert_series_equal(result[1], x, obj="Align scalar right")
 
     result = align(1, 2)
@@ -184,31 +202,40 @@ def test_interpolate():
     assert_series_equal(result, expected, obj="Interpolate intersect")
 
     result = interpolate(x, select_dates, Interpolate.NAN)
-    expected = pd.Series([np.nan, 2.0, np.nan, 5.0, np.nan, 7.0, np.nan], index=select_dates)
+    expected = pd.Series([np.nan, 2.0, np.nan, 5.0, np.nan,
+                          7.0, np.nan], index=select_dates)
     assert_series_equal(result, expected, obj="Interpolate nan")
 
     result = interpolate(x, select_dates, Interpolate.ZERO)
-    expected = pd.Series([0.0, 2.0, 0.0, 5.0, 0.0, 7.0, 0.0], index=select_dates)
+    expected = pd.Series(
+        [0.0, 2.0, 0.0, 5.0, 0.0, 7.0, 0.0], index=select_dates)
     assert_series_equal(result, expected, obj="Interpolate zero")
 
     result = interpolate(x, select_dates, Interpolate.STEP)
-    expected = pd.Series([2.0, 2.0, 2.0, 5.0, 5.0, 7.0, 7.0], index=select_dates)
+    expected = pd.Series(
+        [2.0, 2.0, 2.0, 5.0, 5.0, 7.0, 7.0], index=select_dates)
     assert_series_equal(result, expected, obj="Interpolate step dates")
 
     result = interpolate(x, pd.Series(np.nan, select_dates), Interpolate.STEP)
-    expected = pd.Series([2.0, 2.0, 2.0, 5.0, 5.0, 7.0, 7.0], index=select_dates)
+    expected = pd.Series(
+        [2.0, 2.0, 2.0, 5.0, 5.0, 7.0, 7.0], index=select_dates)
     assert_series_equal(result, expected, obj="Interpolate step series")
 
     xnan = pd.Series([np.nan, 3.0, 5.0, 7.0], index=dates)
 
     result = interpolate(xnan, select_dates, Interpolate.STEP)
-    expected = pd.Series([np.nan, np.nan, np.nan, 5.0, 5.0, 7.0, 7.0], index=select_dates)
+    expected = pd.Series([np.nan, np.nan, np.nan, 5.0,
+                          5.0, 7.0, 7.0], index=select_dates)
     assert_series_equal(result, expected, obj="Interpolate flat nan start")
 
     x = pd.Series([2.0, 3.0, 5.0, 7.0], index=pd.DatetimeIndex(dates))
     result = interpolate(x, select_dates, Interpolate.STEP)
-    expected = pd.Series([2.0, 2.0, 2.0, 5.0, 5.0, 7.0, 7.0], index=pd.DatetimeIndex(select_dates))
-    assert_series_equal(result, expected, obj="Interpolate step dates to series with timestamps")
+    expected = pd.Series([2.0, 2.0, 2.0, 5.0, 5.0, 7.0, 7.0],
+                         index=pd.DatetimeIndex(select_dates))
+    assert_series_equal(
+        result,
+        expected,
+        obj="Interpolate step dates to series with timestamps")
 
     with pytest.raises(MqValueError, match="Unknown intersection type: None"):
         interpolate(x, x, "None")
@@ -347,7 +374,8 @@ def test_day_count_fractions():
     x = pd.Series([])
     assert_series_equal(x, day_count_fractions(x))
 
-    x = pd.Series([100.0, 101, 103.02, 100.9596, 100.9596, 102.978792], index=dates)
+    x = pd.Series([100.0, 101, 103.02, 100.9596,
+                   100.9596, 102.978792], index=dates)
 
     result = day_count_fractions(x, DayCountConvention.ACTUAL_360)
     result2 = day_count_fractions(x.index, DayCountConvention.ACTUAL_360)
@@ -381,47 +409,72 @@ def test_date_range():
     assert date_range(x, 0, date(2019, 1, 3)).index[-1] == date(2019, 1, 3)
     assert (date_range(x, 0, date(2019, 1, 3)) == x.iloc[:3]).all()
 
-    assert date_range(x, date(2019, 1, 3), date(2019, 1, 6)).index[0] == date(2019, 1, 3)
-    assert date_range(x, date(2019, 1, 3), date(2019, 1, 6)).index[-1] == date(2019, 1, 6)
-    assert (date_range(x, date(2019, 1, 3), date(2019, 1, 6)) == x.iloc[2:6]).all()
+    assert date_range(
+        x, date(
+            2019, 1, 3), date(
+            2019, 1, 6)).index[0] == date(
+                2019, 1, 3)
+    assert date_range(x, date(2019, 1, 3), date(
+        2019, 1, 6)).index[-1] == date(2019, 1, 6)
+    assert (date_range(x, date(2019, 1, 3), date(
+        2019, 1, 6)) == x.iloc[2:6]).all()
 
 
 def test_prepend():
-    x = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0, 7.0], index=pd.date_range('2019-01-01', "2019-01-06"))
-    y = pd.Series([3.1, 4.1, 5.1], index=pd.date_range('2019-01-03', '2019-01-05'))
+    x = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0, 7.0],
+                  index=pd.date_range('2019-01-01', "2019-01-06"))
+    y = pd.Series([3.1, 4.1, 5.1], index=pd.date_range(
+        '2019-01-03', '2019-01-05'))
 
-    assert_series_equal(prepend([]), pd.Series(dtype='float64'), obj='prepend empty')
+    assert_series_equal(
+        prepend(
+            []), pd.Series(
+            dtype='float64'), obj='prepend empty')
 
     assert_series_equal(prepend([x]), x, obj='prepend one series')
 
     actual = prepend([x, y])
-    expected = pd.Series([1.0, 2.0, 3.1, 4.1, 5.1], index=pd.date_range('2019-01-01', '2019-01-05'))
+    expected = pd.Series([1.0, 2.0, 3.1, 4.1, 5.1],
+                         index=pd.date_range('2019-01-01', '2019-01-05'))
     assert_series_equal(actual, expected, obj='prepend two series')
 
-    x = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0, 7.0], index=pd.date_range('2019-01-01', periods=6, freq='H'))
-    y = pd.Series([3.1, 4.1, 5.1], index=pd.date_range('2019-01-01 02:00', periods=3, freq='H'))
+    x = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0, 7.0],
+                  index=pd.date_range('2019-01-01', periods=6, freq='H'))
+    y = pd.Series([3.1, 4.1, 5.1], index=pd.date_range(
+        '2019-01-01 02:00', periods=3, freq='H'))
 
     actual = prepend([x, y])
-    expected = pd.Series([1.0, 2.0, 3.1, 4.1, 5.1], index=pd.date_range('2019-01-01', periods=5, freq='H'))
+    expected = pd.Series([1.0, 2.0, 3.1, 4.1, 5.1], index=pd.date_range(
+        '2019-01-01', periods=5, freq='H'))
     assert_series_equal(actual, expected, obj='prepend two real-time series')
 
 
 def test_union():
-    x = pd.Series([3.1, 4.1, np.nan], index=pd.date_range('2019-01-03', '2019-01-05'))
-    y = pd.Series([1.0, np.nan, 3.0, 4.0, 5.0, 6.0], index=pd.date_range('2019-01-01', "2019-01-06"))
-    z = pd.Series([60.0, 70.0], index=pd.date_range('2019-01-06', "2019-01-07"))
+    x = pd.Series([3.1, 4.1, np.nan], index=pd.date_range(
+        '2019-01-03', '2019-01-05'))
+    y = pd.Series([1.0, np.nan, 3.0, 4.0, 5.0, 6.0],
+                  index=pd.date_range('2019-01-01', "2019-01-06"))
+    z = pd.Series([60.0, 70.0], index=pd.date_range(
+        '2019-01-06', "2019-01-07"))
 
-    assert_series_equal(union([]), pd.Series(dtype='float64'), obj='union empty')
+    assert_series_equal(
+        union(
+            []), pd.Series(
+            dtype='float64'), obj='union empty')
 
     assert_series_equal(union([x]), x, obj='union of one series')
 
     actual = union([x, y, z])
-    expected = pd.Series([1.0, np.nan, 3.1, 4.1, 5.0, 6.0, 70], index=pd.date_range('2019-01-01', '2019-01-07'))
+    expected = pd.Series([1.0, np.nan, 3.1, 4.1, 5.0, 6.0, 70],
+                         index=pd.date_range('2019-01-01', '2019-01-07'))
     assert_series_equal(actual, expected, obj='union of three series')
 
-    x = pd.Series([3.1, 4.1, np.nan], index=pd.date_range('2019-01-01 02:00', periods=3, freq='H'))
-    y = pd.Series([1.0, np.nan, 3.0, 4.0, 5.0, 6.0], index=pd.date_range('2019-01-01', periods=6, freq='H'))
+    x = pd.Series([3.1, 4.1, np.nan], index=pd.date_range(
+        '2019-01-01 02:00', periods=3, freq='H'))
+    y = pd.Series([1.0, np.nan, 3.0, 4.0, 5.0, 6.0],
+                  index=pd.date_range('2019-01-01', periods=6, freq='H'))
 
     actual = union([x, y])
-    expected = pd.Series([1.0, np.nan, 3.1, 4.1, 5.0, 6.0], index=pd.date_range('2019-01-01', periods=6, freq='H'))
+    expected = pd.Series([1.0, np.nan, 3.1, 4.1, 5.0, 6.0],
+                         index=pd.date_range('2019-01-01', periods=6, freq='H'))
     assert_series_equal(actual, expected, obj='union of two real-time series')

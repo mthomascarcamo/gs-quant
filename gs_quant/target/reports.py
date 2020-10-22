@@ -14,15 +14,17 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.target.common import *
 import datetime
-from typing import Tuple, Union
 from enum import Enum
-from gs_quant.base import Base, EnumBase, InstrumentBase, camel_case_translate, get_enum_value
+from typing import Tuple, Union
+
+from gs_quant.base import (Base, EnumBase, InstrumentBase,
+                           camel_case_translate, get_enum_value)
+from gs_quant.target.common import *
 
 
-class PositionSourceType(EnumBase, Enum):    
-    
+class PositionSourceType(EnumBase, Enum):
+
     """Source object for position data"""
 
     Portfolio = 'Portfolio'
@@ -30,13 +32,13 @@ class PositionSourceType(EnumBase, Enum):
     Backtest = 'Backtest'
     RiskRequest = 'RiskRequest'
     Hedge = 'Hedge'
-    
+
     def __repr__(self):
         return self.value
 
 
-class ReportMeasures(EnumBase, Enum):    
-    
+class ReportMeasures(EnumBase, Enum):
+
     """Enums for measures to be outputted for the report"""
 
     _ = ''
@@ -58,13 +60,13 @@ class ReportMeasures(EnumBase, Enum):
     mctr = 'mctr'
     price = 'price'
     basePrice = 'basePrice'
-    
+
     def __repr__(self):
         return self.value
 
 
-class ReportStatus(EnumBase, Enum):    
-    
+class ReportStatus(EnumBase, Enum):
+
     """Status of report run"""
 
     new = 'new'
@@ -75,13 +77,13 @@ class ReportStatus(EnumBase, Enum):
     error = 'error'
     cancelled = 'cancelled'
     waiting = 'waiting'
-    
+
     def __repr__(self):
         return self.value
 
 
-class ReportType(EnumBase, Enum):    
-    
+class ReportType(EnumBase, Enum):
+
     """Type of report to execute"""
 
     Portfolio_Performance_Analytics = 'Portfolio Performance Analytics'
@@ -95,13 +97,13 @@ class ReportType(EnumBase, Enum):
     Backtest_Run = 'Backtest Run'
     Analytics = 'Analytics'
     Risk_Calculation = 'Risk Calculation'
-    
+
     def __repr__(self):
         return self.value
 
 
 class ReportBatchScheduleRequest(Base):
-        
+
     """Parameters in order to schedule a batch of reports"""
 
     @camel_case_translate
@@ -112,7 +114,7 @@ class ReportBatchScheduleRequest(Base):
         start_date: datetime.date = None,
         parameters: ReportParameters = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.reports = reports
         self.end_date = end_date
@@ -128,7 +130,7 @@ class ReportBatchScheduleRequest(Base):
     @reports.setter
     def reports(self, value: Tuple[str, ...]):
         self._property_changed('reports')
-        self.__reports = value        
+        self.__reports = value
 
     @property
     def end_date(self) -> datetime.date:
@@ -138,7 +140,7 @@ class ReportBatchScheduleRequest(Base):
     @end_date.setter
     def end_date(self, value: datetime.date):
         self._property_changed('end_date')
-        self.__end_date = value        
+        self.__end_date = value
 
     @property
     def start_date(self) -> datetime.date:
@@ -148,7 +150,7 @@ class ReportBatchScheduleRequest(Base):
     @start_date.setter
     def start_date(self, value: datetime.date):
         self._property_changed('start_date')
-        self.__start_date = value        
+        self.__start_date = value
 
     @property
     def parameters(self) -> ReportParameters:
@@ -158,11 +160,11 @@ class ReportBatchScheduleRequest(Base):
     @parameters.setter
     def parameters(self, value: ReportParameters):
         self._property_changed('parameters')
-        self.__parameters = value        
+        self.__parameters = value
 
 
 class ReportRescheduleRequest(Base):
-        
+
     """Parameters in order to re-schedule a report"""
 
     @camel_case_translate
@@ -170,7 +172,7 @@ class ReportRescheduleRequest(Base):
         self,
         report_ids: Tuple[str, ...] = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.report_ids = report_ids
         self.name = name
@@ -183,11 +185,11 @@ class ReportRescheduleRequest(Base):
     @report_ids.setter
     def report_ids(self, value: Tuple[str, ...]):
         self._property_changed('report_ids')
-        self.__report_ids = value        
+        self.__report_ids = value
 
 
 class User(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -231,7 +233,7 @@ class User(Base):
         last_updated_time: datetime.datetime = None,
         entitlements: Entitlements = None,
         app_managers: Tuple[str, ...] = None
-    ):        
+    ):
         super().__init__()
         self.internal = internal
         self.system_user = system_user
@@ -282,7 +284,7 @@ class User(Base):
     @internal.setter
     def internal(self, value: bool):
         self._property_changed('internal')
-        self.__internal = value        
+        self.__internal = value
 
     @property
     def system_user(self) -> bool:
@@ -292,7 +294,7 @@ class User(Base):
     @system_user.setter
     def system_user(self, value: bool):
         self._property_changed('system_user')
-        self.__system_user = value        
+        self.__system_user = value
 
     @property
     def app_user(self) -> bool:
@@ -302,7 +304,7 @@ class User(Base):
     @app_user.setter
     def app_user(self, value: bool):
         self._property_changed('app_user')
-        self.__app_user = value        
+        self.__app_user = value
 
     @property
     def analytics_id(self) -> str:
@@ -312,7 +314,7 @@ class User(Base):
     @analytics_id.setter
     def analytics_id(self, value: str):
         self._property_changed('analytics_id')
-        self.__analytics_id = value        
+        self.__analytics_id = value
 
     @property
     def city(self) -> str:
@@ -321,7 +323,7 @@ class User(Base):
     @city.setter
     def city(self, value: str):
         self._property_changed('city')
-        self.__city = value        
+        self.__city = value
 
     @property
     def company(self) -> str:
@@ -330,7 +332,7 @@ class User(Base):
     @company.setter
     def company(self, value: str):
         self._property_changed('company')
-        self.__company = value        
+        self.__company = value
 
     @property
     def eaa_company(self) -> str:
@@ -339,7 +341,7 @@ class User(Base):
     @eaa_company.setter
     def eaa_company(self, value: str):
         self._property_changed('eaa_company')
-        self.__eaa_company = value        
+        self.__eaa_company = value
 
     @property
     def root_oe_id(self) -> str:
@@ -349,7 +351,7 @@ class User(Base):
     @root_oe_id.setter
     def root_oe_id(self, value: str):
         self._property_changed('root_oe_id')
-        self.__root_oe_id = value        
+        self.__root_oe_id = value
 
     @property
     def oe_id(self) -> str:
@@ -359,7 +361,7 @@ class User(Base):
     @oe_id.setter
     def oe_id(self, value: str):
         self._property_changed('oe_id')
-        self.__oe_id = value        
+        self.__oe_id = value
 
     @property
     def root_oe_name(self) -> str:
@@ -369,7 +371,7 @@ class User(Base):
     @root_oe_name.setter
     def root_oe_name(self, value: str):
         self._property_changed('root_oe_name')
-        self.__root_oe_name = value        
+        self.__root_oe_name = value
 
     @property
     def oe_name(self) -> str:
@@ -379,7 +381,7 @@ class User(Base):
     @oe_name.setter
     def oe_name(self, value: str):
         self._property_changed('oe_name')
-        self.__oe_name = value        
+        self.__oe_name = value
 
     @property
     def oe_alias(self) -> int:
@@ -389,7 +391,7 @@ class User(Base):
     @oe_alias.setter
     def oe_alias(self, value: int):
         self._property_changed('oe_alias')
-        self.__oe_alias = value        
+        self.__oe_alias = value
 
     @property
     def country(self) -> str:
@@ -398,7 +400,7 @@ class User(Base):
     @country.setter
     def country(self, value: str):
         self._property_changed('country')
-        self.__country = value        
+        self.__country = value
 
     @property
     def coverage(self) -> Tuple[dict, ...]:
@@ -407,7 +409,7 @@ class User(Base):
     @coverage.setter
     def coverage(self, value: Tuple[dict, ...]):
         self._property_changed('coverage')
-        self.__coverage = value        
+        self.__coverage = value
 
     @property
     def email(self) -> str:
@@ -416,7 +418,7 @@ class User(Base):
     @email.setter
     def email(self, value: str):
         self._property_changed('email')
-        self.__email = value        
+        self.__email = value
 
     @property
     def internal_email(self) -> str:
@@ -425,7 +427,7 @@ class User(Base):
     @internal_email.setter
     def internal_email(self, value: str):
         self._property_changed('internal_email')
-        self.__internal_email = value        
+        self.__internal_email = value
 
     @property
     def kerberos(self) -> str:
@@ -434,7 +436,7 @@ class User(Base):
     @kerberos.setter
     def kerberos(self, value: str):
         self._property_changed('kerberos')
-        self.__kerberos = value        
+        self.__kerberos = value
 
     @property
     def id(self) -> str:
@@ -444,7 +446,7 @@ class User(Base):
     @id.setter
     def id(self, value: str):
         self._property_changed('id')
-        self.__id = value        
+        self.__id = value
 
     @property
     def name(self) -> str:
@@ -453,7 +455,7 @@ class User(Base):
     @name.setter
     def name(self, value: str):
         self._property_changed('name')
-        self.__name = value        
+        self.__name = value
 
     @property
     def first_name(self) -> str:
@@ -462,7 +464,7 @@ class User(Base):
     @first_name.setter
     def first_name(self, value: str):
         self._property_changed('first_name')
-        self.__first_name = value        
+        self.__first_name = value
 
     @property
     def last_name(self) -> str:
@@ -471,7 +473,7 @@ class User(Base):
     @last_name.setter
     def last_name(self, value: str):
         self._property_changed('last_name')
-        self.__last_name = value        
+        self.__last_name = value
 
     @property
     def internal_id(self) -> str:
@@ -480,7 +482,7 @@ class User(Base):
     @internal_id.setter
     def internal_id(self, value: str):
         self._property_changed('internal_id')
-        self.__internal_id = value        
+        self.__internal_id = value
 
     @property
     def region(self) -> str:
@@ -489,7 +491,7 @@ class User(Base):
     @region.setter
     def region(self, value: str):
         self._property_changed('region')
-        self.__region = value        
+        self.__region = value
 
     @property
     def mi_fidii_trade_idea_declined(self) -> str:
@@ -498,7 +500,7 @@ class User(Base):
     @mi_fidii_trade_idea_declined.setter
     def mi_fidii_trade_idea_declined(self, value: str):
         self._property_changed('mi_fidii_trade_idea_declined')
-        self.__mi_fidii_trade_idea_declined = value        
+        self.__mi_fidii_trade_idea_declined = value
 
     @property
     def department_code(self) -> str:
@@ -507,7 +509,7 @@ class User(Base):
     @department_code.setter
     def department_code(self, value: str):
         self._property_changed('department_code')
-        self.__department_code = value        
+        self.__department_code = value
 
     @property
     def department_name(self) -> str:
@@ -516,7 +518,7 @@ class User(Base):
     @department_name.setter
     def department_name(self, value: str):
         self._property_changed('department_name')
-        self.__department_name = value        
+        self.__department_name = value
 
     @property
     def division_name(self) -> str:
@@ -525,7 +527,7 @@ class User(Base):
     @division_name.setter
     def division_name(self, value: str):
         self._property_changed('division_name')
-        self.__division_name = value        
+        self.__division_name = value
 
     @property
     def business_unit(self) -> str:
@@ -534,7 +536,7 @@ class User(Base):
     @business_unit.setter
     def business_unit(self, value: str):
         self._property_changed('business_unit')
-        self.__business_unit = value        
+        self.__business_unit = value
 
     @property
     def title(self) -> str:
@@ -543,7 +545,7 @@ class User(Base):
     @title.setter
     def title(self, value: str):
         self._property_changed('title')
-        self.__title = value        
+        self.__title = value
 
     @property
     def pmd(self) -> bool:
@@ -553,7 +555,7 @@ class User(Base):
     @pmd.setter
     def pmd(self, value: bool):
         self._property_changed('pmd')
-        self.__pmd = value        
+        self.__pmd = value
 
     @property
     def login(self) -> str:
@@ -562,7 +564,7 @@ class User(Base):
     @login.setter
     def login(self, value: str):
         self._property_changed('login')
-        self.__login = value        
+        self.__login = value
 
     @property
     def tokens(self) -> Tuple[str, ...]:
@@ -571,7 +573,7 @@ class User(Base):
     @tokens.setter
     def tokens(self, value: Tuple[str, ...]):
         self._property_changed('tokens')
-        self.__tokens = value        
+        self.__tokens = value
 
     @property
     def roles(self) -> Tuple[str, ...]:
@@ -581,7 +583,7 @@ class User(Base):
     @roles.setter
     def roles(self, value: Tuple[str, ...]):
         self._property_changed('roles')
-        self.__roles = value        
+        self.__roles = value
 
     @property
     def groups(self) -> Tuple[str, ...]:
@@ -591,7 +593,7 @@ class User(Base):
     @groups.setter
     def groups(self, value: Tuple[str, ...]):
         self._property_changed('groups')
-        self.__groups = value        
+        self.__groups = value
 
     @property
     def created_by_id(self) -> str:
@@ -601,7 +603,7 @@ class User(Base):
     @created_by_id.setter
     def created_by_id(self, value: str):
         self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self.__created_by_id = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -611,7 +613,7 @@ class User(Base):
     @created_time.setter
     def created_time(self, value: datetime.datetime):
         self._property_changed('created_time')
-        self.__created_time = value        
+        self.__created_time = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -621,7 +623,7 @@ class User(Base):
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
         self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self.__last_updated_by_id = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -631,7 +633,7 @@ class User(Base):
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
         self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self.__last_updated_time = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -641,7 +643,7 @@ class User(Base):
     @entitlements.setter
     def entitlements(self, value: Entitlements):
         self._property_changed('entitlements')
-        self.__entitlements = value        
+        self.__entitlements = value
 
     @property
     def app_managers(self) -> Tuple[str, ...]:
@@ -651,11 +653,11 @@ class User(Base):
     @app_managers.setter
     def app_managers(self, value: Tuple[str, ...]):
         self._property_changed('app_managers')
-        self.__app_managers = value        
+        self.__app_managers = value
 
 
 class Report(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -680,7 +682,7 @@ class Report(Base):
         latest_execution_time: datetime.datetime = None,
         latest_end_date: datetime.date = None,
         percentage_complete: float = None
-    ):        
+    ):
         super().__init__()
         self.calculation_time = calculation_time
         self.data_set_id = data_set_id
@@ -712,7 +714,7 @@ class Report(Base):
     @calculation_time.setter
     def calculation_time(self, value: float):
         self._property_changed('calculation_time')
-        self.__calculation_time = value        
+        self.__calculation_time = value
 
     @property
     def data_set_id(self) -> str:
@@ -722,7 +724,7 @@ class Report(Base):
     @data_set_id.setter
     def data_set_id(self, value: str):
         self._property_changed('data_set_id')
-        self.__data_set_id = value        
+        self.__data_set_id = value
 
     @property
     def asset_id(self) -> str:
@@ -732,7 +734,7 @@ class Report(Base):
     @asset_id.setter
     def asset_id(self, value: str):
         self._property_changed('asset_id')
-        self.__asset_id = value        
+        self.__asset_id = value
 
     @property
     def created_by_id(self) -> str:
@@ -742,7 +744,7 @@ class Report(Base):
     @created_by_id.setter
     def created_by_id(self, value: str):
         self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self.__created_by_id = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -752,7 +754,7 @@ class Report(Base):
     @created_time.setter
     def created_time(self, value: datetime.datetime):
         self._property_changed('created_time')
-        self.__created_time = value        
+        self.__created_time = value
 
     @property
     def entitlements(self) -> Entitlements:
@@ -762,7 +764,7 @@ class Report(Base):
     @entitlements.setter
     def entitlements(self, value: Entitlements):
         self._property_changed('entitlements')
-        self.__entitlements = value        
+        self.__entitlements = value
 
     @property
     def entitlement_exclusions(self) -> EntitlementExclusions:
@@ -772,7 +774,7 @@ class Report(Base):
     @entitlement_exclusions.setter
     def entitlement_exclusions(self, value: EntitlementExclusions):
         self._property_changed('entitlement_exclusions')
-        self.__entitlement_exclusions = value        
+        self.__entitlement_exclusions = value
 
     @property
     def id(self) -> str:
@@ -782,7 +784,7 @@ class Report(Base):
     @id.setter
     def id(self, value: str):
         self._property_changed('id')
-        self.__id = value        
+        self.__id = value
 
     @property
     def last_updated_by_id(self) -> str:
@@ -792,7 +794,7 @@ class Report(Base):
     @last_updated_by_id.setter
     def last_updated_by_id(self, value: str):
         self._property_changed('last_updated_by_id')
-        self.__last_updated_by_id = value        
+        self.__last_updated_by_id = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -802,7 +804,7 @@ class Report(Base):
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
         self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self.__last_updated_time = value
 
     @property
     def measures(self) -> Tuple[Union[ReportMeasures, str], ...]:
@@ -812,7 +814,7 @@ class Report(Base):
     @measures.setter
     def measures(self, value: Tuple[Union[ReportMeasures, str], ...]):
         self._property_changed('measures')
-        self.__measures = value        
+        self.__measures = value
 
     @property
     def name(self) -> str:
@@ -822,7 +824,7 @@ class Report(Base):
     @name.setter
     def name(self, value: str):
         self._property_changed('name')
-        self.__name = value        
+        self.__name = value
 
     @property
     def owner_id(self) -> str:
@@ -832,7 +834,7 @@ class Report(Base):
     @owner_id.setter
     def owner_id(self, value: str):
         self._property_changed('owner_id')
-        self.__owner_id = value        
+        self.__owner_id = value
 
     @property
     def parameters(self) -> ReportParameters:
@@ -842,7 +844,7 @@ class Report(Base):
     @parameters.setter
     def parameters(self, value: ReportParameters):
         self._property_changed('parameters')
-        self.__parameters = value        
+        self.__parameters = value
 
     @property
     def position_source_id(self) -> str:
@@ -852,7 +854,7 @@ class Report(Base):
     @position_source_id.setter
     def position_source_id(self, value: str):
         self._property_changed('position_source_id')
-        self.__position_source_id = value        
+        self.__position_source_id = value
 
     @property
     def position_source_type(self) -> Union[PositionSourceType, str]:
@@ -862,7 +864,7 @@ class Report(Base):
     @position_source_type.setter
     def position_source_type(self, value: Union[PositionSourceType, str]):
         self._property_changed('position_source_type')
-        self.__position_source_type = get_enum_value(PositionSourceType, value)        
+        self.__position_source_type = get_enum_value(PositionSourceType, value)
 
     @property
     def type(self) -> Union[ReportType, str]:
@@ -872,7 +874,7 @@ class Report(Base):
     @type.setter
     def type(self, value: Union[ReportType, str]):
         self._property_changed('type')
-        self.__type = get_enum_value(ReportType, value)        
+        self.__type = get_enum_value(ReportType, value)
 
     @property
     def status(self) -> Union[ReportStatus, str]:
@@ -882,7 +884,7 @@ class Report(Base):
     @status.setter
     def status(self, value: Union[ReportStatus, str]):
         self._property_changed('status')
-        self.__status = get_enum_value(ReportStatus, value)        
+        self.__status = get_enum_value(ReportStatus, value)
 
     @property
     def latest_execution_time(self) -> datetime.datetime:
@@ -892,7 +894,7 @@ class Report(Base):
     @latest_execution_time.setter
     def latest_execution_time(self, value: datetime.datetime):
         self._property_changed('latest_execution_time')
-        self.__latest_execution_time = value        
+        self.__latest_execution_time = value
 
     @property
     def latest_end_date(self) -> datetime.date:
@@ -902,7 +904,7 @@ class Report(Base):
     @latest_end_date.setter
     def latest_end_date(self, value: datetime.date):
         self._property_changed('latest_end_date')
-        self.__latest_end_date = value        
+        self.__latest_end_date = value
 
     @property
     def percentage_complete(self) -> float:
@@ -912,11 +914,11 @@ class Report(Base):
     @percentage_complete.setter
     def percentage_complete(self, value: float):
         self._property_changed('percentage_complete')
-        self.__percentage_complete = value        
+        self.__percentage_complete = value
 
 
 class ReportJob(Base):
-        
+
     @camel_case_translate
     def __init__(
         self,
@@ -940,7 +942,7 @@ class ReportJob(Base):
         last_updated_time: datetime.datetime = None,
         report_ids: Tuple[str, ...] = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.start_date = start_date
         self.end_date = end_date
@@ -971,7 +973,7 @@ class ReportJob(Base):
     @start_date.setter
     def start_date(self, value: datetime.date):
         self._property_changed('start_date')
-        self.__start_date = value        
+        self.__start_date = value
 
     @property
     def end_date(self) -> datetime.date:
@@ -981,7 +983,7 @@ class ReportJob(Base):
     @end_date.setter
     def end_date(self, value: datetime.date):
         self._property_changed('end_date')
-        self.__end_date = value        
+        self.__end_date = value
 
     @property
     def elapsed_time(self) -> float:
@@ -991,7 +993,7 @@ class ReportJob(Base):
     @elapsed_time.setter
     def elapsed_time(self, value: float):
         self._property_changed('elapsed_time')
-        self.__elapsed_time = value        
+        self.__elapsed_time = value
 
     @property
     def percentage_complete(self) -> float:
@@ -1001,7 +1003,7 @@ class ReportJob(Base):
     @percentage_complete.setter
     def percentage_complete(self, value: float):
         self._property_changed('percentage_complete')
-        self.__percentage_complete = value        
+        self.__percentage_complete = value
 
     @property
     def execution_time(self) -> datetime.datetime:
@@ -1011,7 +1013,7 @@ class ReportJob(Base):
     @execution_time.setter
     def execution_time(self, value: datetime.datetime):
         self._property_changed('execution_time')
-        self.__execution_time = value        
+        self.__execution_time = value
 
     @property
     def id(self) -> str:
@@ -1021,7 +1023,7 @@ class ReportJob(Base):
     @id.setter
     def id(self, value: str):
         self._property_changed('id')
-        self.__id = value        
+        self.__id = value
 
     @property
     def measures(self) -> Tuple[Union[ReportMeasures, str], ...]:
@@ -1031,7 +1033,7 @@ class ReportJob(Base):
     @measures.setter
     def measures(self, value: Tuple[Union[ReportMeasures, str], ...]):
         self._property_changed('measures')
-        self.__measures = value        
+        self.__measures = value
 
     @property
     def parameters(self) -> ReportParameters:
@@ -1041,7 +1043,7 @@ class ReportJob(Base):
     @parameters.setter
     def parameters(self, value: ReportParameters):
         self._property_changed('parameters')
-        self.__parameters = value        
+        self.__parameters = value
 
     @property
     def parent_id(self) -> str:
@@ -1051,7 +1053,7 @@ class ReportJob(Base):
     @parent_id.setter
     def parent_id(self, value: str):
         self._property_changed('parent_id')
-        self.__parent_id = value        
+        self.__parent_id = value
 
     @property
     def position_source_id(self) -> str:
@@ -1061,7 +1063,7 @@ class ReportJob(Base):
     @position_source_id.setter
     def position_source_id(self, value: str):
         self._property_changed('position_source_id')
-        self.__position_source_id = value        
+        self.__position_source_id = value
 
     @property
     def position_source_type(self) -> Union[PositionSourceType, str]:
@@ -1071,7 +1073,7 @@ class ReportJob(Base):
     @position_source_type.setter
     def position_source_type(self, value: Union[PositionSourceType, str]):
         self._property_changed('position_source_type')
-        self.__position_source_type = get_enum_value(PositionSourceType, value)        
+        self.__position_source_type = get_enum_value(PositionSourceType, value)
 
     @property
     def report_id(self) -> str:
@@ -1081,7 +1083,7 @@ class ReportJob(Base):
     @report_id.setter
     def report_id(self, value: str):
         self._property_changed('report_id')
-        self.__report_id = value        
+        self.__report_id = value
 
     @property
     def report_type(self) -> Union[ReportType, str]:
@@ -1091,7 +1093,7 @@ class ReportJob(Base):
     @report_type.setter
     def report_type(self, value: Union[ReportType, str]):
         self._property_changed('report_type')
-        self.__report_type = get_enum_value(ReportType, value)        
+        self.__report_type = get_enum_value(ReportType, value)
 
     @property
     def status(self) -> Union[ReportStatus, str]:
@@ -1101,7 +1103,7 @@ class ReportJob(Base):
     @status.setter
     def status(self, value: Union[ReportStatus, str]):
         self._property_changed('status')
-        self.__status = get_enum_value(ReportStatus, value)        
+        self.__status = get_enum_value(ReportStatus, value)
 
     @property
     def owner_id(self) -> str:
@@ -1111,7 +1113,7 @@ class ReportJob(Base):
     @owner_id.setter
     def owner_id(self, value: str):
         self._property_changed('owner_id')
-        self.__owner_id = value        
+        self.__owner_id = value
 
     @property
     def created_by_id(self) -> str:
@@ -1121,7 +1123,7 @@ class ReportJob(Base):
     @created_by_id.setter
     def created_by_id(self, value: str):
         self._property_changed('created_by_id')
-        self.__created_by_id = value        
+        self.__created_by_id = value
 
     @property
     def created_time(self) -> datetime.datetime:
@@ -1131,7 +1133,7 @@ class ReportJob(Base):
     @created_time.setter
     def created_time(self, value: datetime.datetime):
         self._property_changed('created_time')
-        self.__created_time = value        
+        self.__created_time = value
 
     @property
     def last_updated_time(self) -> datetime.datetime:
@@ -1141,7 +1143,7 @@ class ReportJob(Base):
     @last_updated_time.setter
     def last_updated_time(self, value: datetime.datetime):
         self._property_changed('last_updated_time')
-        self.__last_updated_time = value        
+        self.__last_updated_time = value
 
     @property
     def report_ids(self) -> Tuple[str, ...]:
@@ -1151,11 +1153,11 @@ class ReportJob(Base):
     @report_ids.setter
     def report_ids(self, value: Tuple[str, ...]):
         self._property_changed('report_ids')
-        self.__report_ids = value        
+        self.__report_ids = value
 
 
 class ReportToggleEntityRequest(Base):
-        
+
     """Toggle entity"""
 
     @camel_case_translate
@@ -1166,7 +1168,7 @@ class ReportToggleEntityRequest(Base):
         user: User = None,
         is_delete: bool = None,
         name: str = None
-    ):        
+    ):
         super().__init__()
         self.__type = type_
         self.__id = id_
@@ -1182,7 +1184,7 @@ class ReportToggleEntityRequest(Base):
     @type.setter
     def type(self, value: str):
         self._property_changed('type')
-        self.__type = value        
+        self.__type = value
 
     @property
     def id(self) -> str:
@@ -1192,7 +1194,7 @@ class ReportToggleEntityRequest(Base):
     @id.setter
     def id(self, value: str):
         self._property_changed('id')
-        self.__id = value        
+        self.__id = value
 
     @property
     def user(self) -> User:
@@ -1201,7 +1203,7 @@ class ReportToggleEntityRequest(Base):
     @user.setter
     def user(self, value: User):
         self._property_changed('user')
-        self.__user = value        
+        self.__user = value
 
     @property
     def is_delete(self) -> bool:
@@ -1210,4 +1212,4 @@ class ReportToggleEntityRequest(Base):
     @is_delete.setter
     def is_delete(self, value: bool):
         self._property_changed('is_delete')
-        self.__is_delete = value        
+        self.__is_delete = value

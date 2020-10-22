@@ -62,24 +62,38 @@ def test_smoothed_moving_average():
     x = pd.Series([3.0, 2.0, 3.0, 1.0, 3.0, 6.0], index=dates)
 
     result = smoothed_moving_average(x)
-    expected = pd.Series([3.00000, 2.83333, 2.86111, 2.55093, 2.62577, 3.18814], index=dates)
+    expected = pd.Series(
+        [3.00000, 2.83333, 2.86111, 2.55093, 2.62577, 3.18814], index=dates)
     assert_series_equal(result, expected, obj="Smoothed moving average")
 
     result = smoothed_moving_average(x, Window(1, 0))
     expected = pd.Series([3.0, 2.0, 3.0, 1.0, 3.0, 6.0], index=dates)
-    assert_series_equal(result, expected, obj="Smoothed moving average window 1")
+    assert_series_equal(
+        result,
+        expected,
+        obj="Smoothed moving average window 1")
 
     result = smoothed_moving_average(x, Window(2, 0))
-    expected = pd.Series([3.00000, 2.50000, 2.75000, 1.87500, 2.43750, 4.21875], index=dates)
-    assert_series_equal(result, expected, obj="Smoothed moving average window 2")
+    expected = pd.Series(
+        [3.00000, 2.50000, 2.75000, 1.87500, 2.43750, 4.21875], index=dates)
+    assert_series_equal(
+        result,
+        expected,
+        obj="Smoothed moving average window 2")
 
     result = smoothed_moving_average(x, "2d")
     expected = pd.Series([2.5, 1.75, 2.375, 4.1875], index=dates[2:])
-    assert_series_equal(result, expected, obj="Smoothed moving average window strdate")
+    assert_series_equal(
+        result,
+        expected,
+        obj="Smoothed moving average window strdate")
 
     result = smoothed_moving_average(x, "1m")
     expected = pd.Series()
-    assert_series_equal(result, expected, obj="Smoothed moving average with wider window than series")
+    assert_series_equal(
+        result,
+        expected,
+        obj="Smoothed moving average with wider window than series")
 
 
 def test_bollinger_bands():
@@ -94,16 +108,28 @@ def test_bollinger_bands():
 
     x = pd.Series([3.0, 2.0, 3.0, 1.0, 3.0, 6.0], index=dates)
 
-    expected_low = pd.Series([np.nan, 1.085786, 1.511966, 0.335146, 0.611146, -0.346640], index=dates)
-    expected_high = pd.Series([np.nan, 3.914214, 3.821367, 4.164854, 4.188854, 6.346640], index=dates)
+    expected_low = pd.Series(
+        [np.nan, 1.085786, 1.511966, 0.335146, 0.611146, -0.346640], index=dates)
+    expected_high = pd.Series(
+        [np.nan, 3.914214, 3.821367, 4.164854, 4.188854, 6.346640], index=dates)
 
     result = bollinger_bands(x)
 
     low = result[0].squeeze()
     high = result[1].squeeze()
 
-    assert_series_equal(low, expected_low, check_names=False, check_less_precise=True, obj="Bollinger bands low")
-    assert_series_equal(high, expected_high, check_names=False, check_less_precise=True, obj="Bollinger bands high")
+    assert_series_equal(
+        low,
+        expected_low,
+        check_names=False,
+        check_less_precise=True,
+        obj="Bollinger bands low")
+    assert_series_equal(
+        high,
+        expected_high,
+        check_names=False,
+        check_less_precise=True,
+        obj="Bollinger bands high")
 
     result = bollinger_bands(x, "2d")
     print(result)
@@ -168,12 +194,22 @@ def test_relative_strength_index():
     SPX = pd.Series(data=SPX_values, index=dates)
     expected = pd.Series(data=target_vals, index=dates[w + 1:])
     result = relative_strength_index(SPX, w)
-    assert_series_equal(result, expected, check_names=False, check_less_precise=True, obj="Relative Strength Index")
+    assert_series_equal(
+        result,
+        expected,
+        check_names=False,
+        check_less_precise=True,
+        obj="Relative Strength Index")
 
     increasing_series = pd.Series(np.arange(1, 23, 1), index=dates)
     expected = pd.Series(data=np.ones(7) * 100, index=dates[15:])
     result = relative_strength_index(increasing_series, w)
-    assert_series_equal(result, expected, check_names=False, check_less_precise=True, obj="Relative Strength Index")
+    assert_series_equal(
+        result,
+        expected,
+        check_names=False,
+        check_less_precise=True,
+        obj="Relative Strength Index")
 
     result = relative_strength_index(SPX, "2w")
     print(result)
@@ -206,18 +242,25 @@ def test_exponential_moving_average():
 
     result = exponential_moving_average(x, 0.6)
     expected = ema_by_hand(x, 0.6)
-    assert_series_equal(result, expected, obj="Exponential moving average weight 1")
+    assert_series_equal(
+        result,
+        expected,
+        obj="Exponential moving average weight 1")
 
     result = exponential_moving_average(x, 0)
     expected = x
-    assert_series_equal(result, expected, obj="Exponential moving average weight 2")
+    assert_series_equal(
+        result,
+        expected,
+        obj="Exponential moving average weight 2")
 
 
 def test_exponential_volatility():
     dates = pd.date_range('2019-1-1', periods=6)
     x = pd.Series([3.0, 2.0, 3.0, 1.0, 3.0, 6.0], index=dates)
     result = exponential_volatility(x)
-    expected = pd.Series([np.nan, np.nan, 935.41, 810.31, 1958.56, 1710.02], index=dates)
+    expected = pd.Series([np.nan, np.nan, 935.41, 810.31,
+                          1958.56, 1710.02], index=dates)
     assert_series_equal(result, expected, obj="Exponential volatility")
 
 
@@ -225,7 +268,8 @@ def test_exponential_spread_volatility():
     dates = pd.date_range('2019-1-1', periods=6)
     x = pd.Series([3.0, 2.0, 3.0, 1.0, 3.0, 6.0], index=dates)
     result = exponential_spread_volatility(x)
-    expected = pd.Series([np.nan, np.nan, 22.4499, 20.5757, 28.6067, 34.2183], index=dates)
+    expected = pd.Series(
+        [np.nan, np.nan, 22.4499, 20.5757, 28.6067, 34.2183], index=dates)
     assert_series_equal(result, expected, obj="Exponential spread volatility")
 
 

@@ -18,10 +18,11 @@ from enum import Enum
 from typing import Tuple
 
 from gs_quant.base import EnumBase
-from gs_quant.target.backtests import Backtest as __Backtest, BacktestResult
-
+from gs_quant.target.backtests import Backtest as __Backtest
+from gs_quant.target.backtests import BacktestResult
 
 # TODO add these in Studio as a standalone JSON, so they will be generated
+
 
 class QuantityType(EnumBase, Enum):
     Notional = 'notional'

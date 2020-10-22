@@ -18,9 +18,10 @@
 
 import math
 
+from gs_quant.errors import MqTypeError
+
 from .datetime import *
 from .helper import plot_function
-from gs_quant.errors import MqTypeError
 
 """
 Algebra library contains basic numerical and algebraic operations, including addition, division, multiplication,
@@ -38,8 +39,8 @@ class FilterOperator(Enum):
 
 
 @plot_function
-def add(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def add(x: Union[pd.Series, Real], y: Union[pd.Series, Real],
+        method: Interpolate = Interpolate.STEP) -> Union[pd.Series, Real]:
     """
     Add two series or scalars
 
@@ -96,8 +97,8 @@ def add(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolat
 
 
 @plot_function
-def subtract(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def subtract(x: Union[pd.Series, Real], y: Union[pd.Series, Real],
+             method: Interpolate = Interpolate.STEP) -> Union[pd.Series, Real]:
     """
     Add two series or scalars
 
@@ -156,8 +157,8 @@ def subtract(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Inter
 
 
 @plot_function
-def multiply(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def multiply(x: Union[pd.Series, Real], y: Union[pd.Series, Real],
+             method: Interpolate = Interpolate.STEP) -> Union[pd.Series, Real]:
     """
     Multiply two series or scalars
 
@@ -214,8 +215,8 @@ def multiply(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Inter
 
 
 @plot_function
-def divide(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def divide(x: Union[pd.Series, Real], y: Union[pd.Series, Real],
+           method: Interpolate = Interpolate.STEP) -> Union[pd.Series, Real]:
     """
     Divide two series or scalars
 
@@ -272,8 +273,8 @@ def divide(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpo
 
 
 @plot_function
-def floordiv(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.STEP) \
-        -> Union[pd.Series, Real]:
+def floordiv(x: Union[pd.Series, Real], y: Union[pd.Series, Real],
+             method: Interpolate = Interpolate.STEP) -> Union[pd.Series, Real]:
     """
     Floor divide two series or scalars
 
@@ -551,7 +552,10 @@ def ceil(x: pd.Series, value: float = 0) -> pd.Series:
 
 
 @plot_function
-def filter_(x: pd.Series, operator: Optional[FilterOperator] = None, value: Optional[Real] = None) -> pd.Series:
+def filter_(
+        x: pd.Series,
+        operator: Optional[FilterOperator] = None,
+        value: Optional[Real] = None) -> pd.Series:
     """
     Removes values where comparison with the operator and value combination results in true, defaults to removing
     missing values from the series
@@ -648,7 +652,8 @@ def smooth_spikes(x: pd.Series, threshold: float) -> pd.Series:
         next_ = x.iloc[i + 1]
 
         scaled = current * multiplier
-        if (current > previous * multiplier and current > next_ * multiplier) or (previous > scaled and next_ > scaled):
+        if (current > previous * multiplier and current > next_ *
+                multiplier) or (previous > scaled and next_ > scaled):
             result.iloc[i] = (previous + next_) / 2
 
     return result[1:-1]
@@ -682,7 +687,8 @@ def _sum_boolean_series(*series):
         if not isinstance(s, pd.Series):
             raise MqTypeError('all arguments must be series')
         if not all(map(lambda a: a in (0, 1), s.values)):
-            raise MqValueError(f'cannot perform operation on series with value(s) other than 1 and 0: {s.values}')
+            raise MqValueError(
+                f'cannot perform operation on series with value(s) other than 1 and 0: {s.values}')
 
     current = series[0].add(series[1], fill_value=0)
     for s in series[2:]:
@@ -723,12 +729,14 @@ def not_(series: pd.Series) -> pd.Series:
     :return: result series (of numeric type, with booleans represented as 1s and 0s)
     """
     if not all(map(lambda a: a in (0, 1), series.values)):
-        raise MqValueError(f'cannot negate series with value(s) other than 1 and 0: {series.values}')
+        raise MqValueError(
+            f'cannot negate series with value(s) other than 1 and 0: {series.values}')
     return series.replace([0, 1], [1, 0])
 
 
 @plot_function
-def if_(flags: pd.Series, x: Union[pd.Series, float], y: Union[pd.Series, float]) -> pd.Series:
+def if_(flags: pd.Series, x: Union[pd.Series, float],
+        y: Union[pd.Series, float]) -> pd.Series:
     """
     Returns a series s. For i in the index of flags, s[i] = x[i] if flags[i] == 1 else y[i].
 
@@ -738,7 +746,8 @@ def if_(flags: pd.Series, x: Union[pd.Series, float], y: Union[pd.Series, float]
     :return: result series
     """
     if not all(map(lambda a: a in (0, 1), flags.values)):
-        raise MqValueError(f'cannot perform "if" on series with value(s) other than 1 and 0: {flags.values}')
+        raise MqValueError(
+            f'cannot perform "if" on series with value(s) other than 1 and 0: {flags.values}')
 
     def ensure_series(s):
         if isinstance(s, (float, int)):

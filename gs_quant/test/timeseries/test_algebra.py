@@ -405,11 +405,17 @@ def test_filter():
 
     result = filter_(all_pos)
     expected = all_pos
-    assert_series_equal(result, expected, obj="zap: remove nulls when no nulls are in TS")
+    assert_series_equal(
+        result,
+        expected,
+        obj="zap: remove nulls when no nulls are in TS")
 
     result = filter_(all_pos, FilterOperator.EQUALS, 0)
     expected = all_pos
-    assert_series_equal(result, expected, obj="zap: remove 0s when no 0s are in TS")
+    assert_series_equal(
+        result,
+        expected,
+        obj="zap: remove 0s when no 0s are in TS")
 
     result = filter_(with_null)
     expected = pd.Series([1.0, 1.0, 1.0],
@@ -424,24 +430,42 @@ def test_filter():
     assert_series_equal(result, expected, obj="zap: remove 0s in TS")
 
     result = filter_(zero_neg_pos, FilterOperator.GREATER, 0)
-    expected = pd.Series([-1.0, 0.0], index=[date(2019, 1, 1), date(2019, 1, 2)])
-    assert_series_equal(result, expected, obj="zap: remove positive values in TS")
+    expected = pd.Series(
+        [-1.0, 0.0], index=[date(2019, 1, 1), date(2019, 1, 2)])
+    assert_series_equal(
+        result,
+        expected,
+        obj="zap: remove positive values in TS")
 
     result = filter_(zero_neg_pos, FilterOperator.LESS, 0)
-    expected = pd.Series([0.0, 10.0, 1.0], index=[date(2019, 1, 2), date(2019, 1, 3), date(2019, 1, 4)])
-    assert_series_equal(result, expected, obj="zap: remove negative values in TS")
+    expected = pd.Series([0.0, 10.0, 1.0], index=[date(
+        2019, 1, 2), date(2019, 1, 3), date(2019, 1, 4)])
+    assert_series_equal(
+        result,
+        expected,
+        obj="zap: remove negative values in TS")
 
     result = filter_(zero_neg_pos, FilterOperator.L_EQUALS, 0)
-    expected = pd.Series([10.0, 1.0], index=[date(2019, 1, 3), date(2019, 1, 4)])
-    assert_series_equal(result, expected, obj="zap: remove values less than or eq to 0 in TS")
+    expected = pd.Series([10.0, 1.0], index=[
+                         date(2019, 1, 3), date(2019, 1, 4)])
+    assert_series_equal(
+        result,
+        expected,
+        obj="zap: remove values less than or eq to 0 in TS")
 
     result = filter_(zero_neg_pos, FilterOperator.G_EQUALS, 0)
     expected = pd.Series([-1.0], index=[date(2019, 1, 1)])
-    assert_series_equal(result, expected, obj="zap: remove values greater than or eq to 0 in TS")
+    assert_series_equal(
+        result,
+        expected,
+        obj="zap: remove values greater than or eq to 0 in TS")
 
     result = filter_(zero_neg_pos, FilterOperator.N_EQUALS, 0)
     expected = pd.Series([0.0], index=[date(2019, 1, 2)])
-    assert_series_equal(result, expected, obj="zap: remove all values but 0 in TS")
+    assert_series_equal(
+        result,
+        expected,
+        obj="zap: remove all values but 0 in TS")
 
     with pytest.raises(MqValueError):
         filter_(zero_neg_pos, 0, 0)
@@ -454,7 +478,8 @@ def test_smooth_spikes():
     actual = smooth_spikes(s, 0.5)
     assert actual.empty
 
-    sparse_index = pd.to_datetime(['2020-01-01', '2020-01-02', '2020-01-04', '2020-01-07'])
+    sparse_index = pd.to_datetime(
+        ['2020-01-01', '2020-01-02', '2020-01-04', '2020-01-07'])
     s = pd.Series([8, 10.0, 8, 6.4], index=sparse_index)
     actual = smooth_spikes(s, 0.25)
     expected = pd.Series([10.0, 8], index=sparse_index[1:3])
@@ -472,15 +497,18 @@ def test_repeat():
     with pytest.raises(MqError):
         repeat(pd.Series, 367)
 
-    sparse_index = pd.to_datetime(['2020-01-01', '2020-01-02', '2020-01-04', '2020-01-07'])
+    sparse_index = pd.to_datetime(
+        ['2020-01-01', '2020-01-02', '2020-01-04', '2020-01-07'])
     s = pd.Series([1, 2, 3, 4], index=sparse_index)
 
     actual = repeat(s)
-    expected = pd.Series([1, 2, 2, 3, 3, 3, 4], index=pd.date_range(start='2020-01-01', end='2020-01-07', freq='D'))
+    expected = pd.Series([1, 2, 2, 3, 3, 3, 4], index=pd.date_range(
+        start='2020-01-01', end='2020-01-07', freq='D'))
     assert_series_equal(actual, expected)
 
     actual = repeat(s, 2)
-    expected = pd.Series([1, 2, 3, 4], index=pd.date_range(start='2020-01-01', end='2020-01-07', freq='2D'))
+    expected = pd.Series([1, 2, 3, 4], index=pd.date_range(
+        start='2020-01-01', end='2020-01-07', freq='2D'))
     assert_series_equal(actual, expected)
 
 
@@ -498,9 +526,16 @@ def test_and():
     a = pd.Series([0, 0, 0, 0, 1, 1, 1, 1])
     b = pd.Series([0, 0, 1, 1, 0, 0, 1, 1])
     c = pd.Series([0, 1, 0, 1, 0, 1, 0, 1])
-    assert_series_equal(and_(a, b), pd.Series([0] * 6 + [1] * 2), check_dtype=False)
-    assert_series_equal(and_(a, b, c), pd.Series([0] * 7 + [1]), check_dtype=False)
-    assert_series_equal(and_(pd.Series([0, 1]), pd.Series()), pd.Series([0] * 2), check_dtype=False)
+    assert_series_equal(
+        and_(
+            a, b), pd.Series(
+            [0] * 6 + [1] * 2), check_dtype=False)
+    assert_series_equal(
+        and_(
+            a, b, c), pd.Series(
+            [0] * 7 + [1]), check_dtype=False)
+    assert_series_equal(and_(pd.Series([0, 1]), pd.Series()), pd.Series(
+        [0] * 2), check_dtype=False)
 
 
 def test_or():
@@ -517,16 +552,20 @@ def test_or():
     a = pd.Series([0, 0, 0, 0, 1, 1, 1, 1])
     b = pd.Series([0, 0, 1, 1, 0, 0, 1, 1])
     c = pd.Series([0, 1, 0, 1, 0, 1, 0, 1])
-    assert_series_equal(or_(a, b), pd.Series([0] * 2 + [1] * 6), check_dtype=False)
-    assert_series_equal(or_(a, b, c), pd.Series([0] + [1] * 7), check_dtype=False)
-    assert_series_equal(or_(pd.Series([0, 1]), pd.Series()), pd.Series([0, 1]), check_dtype=False)
+    assert_series_equal(or_(a, b), pd.Series(
+        [0] * 2 + [1] * 6), check_dtype=False)
+    assert_series_equal(or_(a, b, c), pd.Series(
+        [0] + [1] * 7), check_dtype=False)
+    assert_series_equal(or_(pd.Series([0, 1]), pd.Series()), pd.Series(
+        [0, 1]), check_dtype=False)
 
 
 def test_not():
     with pytest.raises(MqError):
         not_(pd.Series([2]))
     assert not_(pd.Series()).shape[0] == 0
-    assert_series_equal(not_(pd.Series([0, 1])), pd.Series([1, 0]), check_dtype=False)
+    assert_series_equal(not_(pd.Series([0, 1])), pd.Series(
+        [1, 0]), check_dtype=False)
 
 
 def test_if():
@@ -539,6 +578,7 @@ def test_if():
     truths = pd.Series([2, 2])
 
     assert_series_equal(if_(flags, 2, 3), pd.Series([3, 2]))
-    assert_series_equal(if_(flags, truths, pd.Series([3, 3])), pd.Series([3, 2]))
+    assert_series_equal(
+        if_(flags, truths, pd.Series([3, 3])), pd.Series([3, 2]))
     assert_series_equal(if_(flags, truths, pd.Series([3], index=[100])),
                         pd.Series([np.nan, 2]), check_dtype=False)

@@ -18,14 +18,14 @@ by the Federal Reserve Bank of St. Louis. FRED terms of use
 available at https://research.stlouisfed.org/docs/api/terms_of_use.html
 """
 
+from unittest.mock import Mock
+
 import pandas as pd
 import pytest
 from pandas.util.testing import assert_frame_equal, assert_series_equal
 
-from gs_quant.data import Dataset
 from gs_quant.api.fred.data import FredDataApi
-
-from unittest.mock import Mock
+from gs_quant.data import Dataset
 
 fredAPI = FredDataApi(api_key='')
 fred_data = Dataset('GDP', fredAPI)
@@ -67,7 +67,11 @@ GDP_data = {
 }
 
 
-def _mock_requests_response(status=200, content='', json_data=None, raise_for_status=None):
+def _mock_requests_response(
+        status=200,
+        content='',
+        json_data=None,
+        raise_for_status=None):
     """ Helper function to build mock requests responses."""
     mock_resp = Mock()
     mock_resp.status_code = status
@@ -84,7 +88,10 @@ def _mock_requests_response(status=200, content='', json_data=None, raise_for_st
 
 
 def test_get_data(mocker):
-    mocker.patch('requests.get', return_value=_mock_requests_response(json_data=GDP_data))
+    mocker.patch(
+        'requests.get',
+        return_value=_mock_requests_response(
+            json_data=GDP_data))
     result = fred_data.get_data()
 
     expected_result = pd.DataFrame(GDP_data['observations'])[['date', 'value']]
@@ -99,13 +106,20 @@ def test_get_data(mocker):
 
 def test_failed_get_data(mocker):
     """test case where FRED API is down"""
-    mocker.patch('requests.get', side_effect=ValueError(_mock_requests_response(status=404)))
+    mocker.patch(
+        'requests.get',
+        side_effect=ValueError(
+            _mock_requests_response(
+                status=404)))
     with pytest.raises(ValueError):
         fred_data.get_data()
 
 
 def test_get_data_series(mocker):
-    mocker.patch('requests.get', return_value=_mock_requests_response(json_data=GDP_data))
+    mocker.patch(
+        'requests.get',
+        return_value=_mock_requests_response(
+            json_data=GDP_data))
     result = fred_data.get_data_series(field='GDP')
 
     expected_result = pd.DataFrame(GDP_data['observations'])[['date', 'value']]
@@ -121,6 +135,10 @@ def test_get_data_series(mocker):
 
 def test_failed_get_data_series(mocker):
     """test case where FRED API is down"""
-    mocker.patch('requests.get', side_effect=ValueError(_mock_requests_response(status=404)))
+    mocker.patch(
+        'requests.get',
+        side_effect=ValueError(
+            _mock_requests_response(
+                status=404)))
     with pytest.raises(ValueError):
         fred_data.get_data_series(field='GDP')

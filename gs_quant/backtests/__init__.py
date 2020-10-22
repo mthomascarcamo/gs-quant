@@ -13,6 +13,7 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
+from gs_quant.target.backtests import DeltaHedgeParameters
+
 from .core import *
 from .strategy_systematic import StrategySystematic
-from gs_quant.target.backtests import DeltaHedgeParameters

@@ -30,11 +30,13 @@ class GsPortfolioApi:
 
     @classmethod
     def get_portfolios(cls, limit: int = 100) -> Tuple[Portfolio, ...]:
-        return GsSession.current._get('/portfolios?limit={limit}'.format(limit=limit), cls=Portfolio)['results']
+        return GsSession.current._get(
+            '/portfolios?limit={limit}'.format(limit=limit), cls=Portfolio)['results']
 
     @classmethod
     def get_portfolio(cls, portfolio_id: str) -> Portfolio:
-        return GsSession.current._get('/portfolios/{id}'.format(id=portfolio_id), cls=Portfolio)
+        return GsSession.current._get(
+            '/portfolios/{id}'.format(id=portfolio_id), cls=Portfolio)
 
     @classmethod
     def get_portfolio_by_name(cls, name: str) -> Portfolio:
@@ -44,7 +46,8 @@ class GsPortfolioApi:
         if num_found == 0:
             raise ValueError('Portfolio {} not found'.format(name))
         elif num_found > 1:
-            raise ValueError('More than one portfolio named {} found'.format(name))
+            raise ValueError(
+                'More than one portfolio named {} found'.format(name))
         else:
             return Portfolio.from_dict(ret['results'][0])
 
@@ -54,25 +57,29 @@ class GsPortfolioApi:
 
     @classmethod
     def update_portfolio(cls, portfolio: Portfolio):
-        return GsSession.current._put('/portfolios/{id}'.format(id=portfolio.id), portfolio, cls=Portfolio)
+        return GsSession.current._put(
+            '/portfolios/{id}'.format(id=portfolio.id), portfolio, cls=Portfolio)
 
     @classmethod
     def delete_portfolio(cls, portfolio_id: str) -> dict:
-        return GsSession.current._delete('/portfolios/{id}'.format(id=portfolio_id))
+        return GsSession.current._delete(
+            '/portfolios/{id}'.format(id=portfolio_id))
 
     # manage portfolio positions
 
     @classmethod
     def get_positions(cls, portfolio_id: str, start_date: dt.date = None, end_date: dt.date = None,
                       position_type: str = 'close') -> Tuple[PositionSet, ...]:
-        url = '/portfolios/{id}/positions?type={positionType}'.format(id=portfolio_id, positionType=position_type)
+        url = '/portfolios/{id}/positions?type={positionType}'.format(
+            id=portfolio_id, positionType=position_type)
         if start_date is not None:
             url += '&startDate={sd}'.format(sd=start_date.isoformat())
         if end_date is not None:
             url += '&endDate={sd}'.format(sd=end_date.isoformat())
 
         res = GsSession.current._get(url)
-        return tuple(PositionSet.from_dict(v) for v in res.get('positionSets', ()))
+        return tuple(PositionSet.from_dict(v)
+                     for v in res.get('positionSets', ()))
 
     @classmethod
     def get_positions_for_date(cls, portfolio_id: str, position_date: dt.date,
@@ -83,13 +90,15 @@ class GsPortfolioApi:
         return position_sets[0] if len(position_sets) > 0 else PositionSet()
 
     @classmethod
-    def get_instruments_by_position_type(cls, positions_type: str, positions_id: str) -> Tuple[Instrument, ...]:
+    def get_instruments_by_position_type(
+            cls, positions_type: str, positions_id: str) -> Tuple[Instrument, ...]:
         root = 'deals' if positions_type == 'ETI' else 'books/' + positions_type
         url = '/risk-internal/{}/{}/positions'.format(root, positions_id)
         results = GsSession.current._get(url, timeout=181)
 
         instruments = []
-        for position in results.get('positionSets', ({'positions': ()},))[0]['positions']:
+        for position in results.get('positionSets', ({'positions': ()},))[
+                0]['positions']:
             instrument_values = position['instrument']
             instrument = Instrument.from_dict(instrument_values)
             name = instrument_values.get('name')
@@ -101,36 +110,53 @@ class GsPortfolioApi:
         return tuple(instruments)
 
     @classmethod
-    def get_latest_positions(cls, portfolio_id: str, position_type: str = 'close') -> Union[PositionSet, dict]:
-        url = '/portfolios/{id}/positions/last?type={ptype}'.format(id=portfolio_id, ptype=position_type)
+    def get_latest_positions(cls,
+                             portfolio_id: str,
+                             position_type: str = 'close') -> Union[PositionSet,
+                                                                    dict]:
+        url = '/portfolios/{id}/positions/last?type={ptype}'.format(
+            id=portfolio_id, ptype=position_type)
         results = GsSession.current._get(url)['results']
 
         # Annoyingly, different types are returned depending on position_type
 
         if isinstance(results, dict) and 'positions' in results:
-            results['positions'] = tuple(Position.from_dict(p) for p in results['positions'])
+            results['positions'] = tuple(
+                Position.from_dict(p) for p in results['positions'])
 
         return results
 
     @classmethod
     def get_position_dates(cls, portfolio_id: str) -> Tuple[dt.date, ...]:
-        position_dates = GsSession.current._get('/portfolios/{id}/positions/dates'.format(id=portfolio_id))['results']
-        return tuple(dt.datetime.strptime(d, '%Y-%m-%d').date() for d in position_dates)
+        position_dates = GsSession.current._get(
+            '/portfolios/{id}/positions/dates'.format(id=portfolio_id))['results']
+        return tuple(dt.datetime.strptime(d, '%Y-%m-%d').date()
+                     for d in position_dates)
 
     @classmethod
-    def update_positions(cls, portfolio_id: str, position_sets: Tuple[PositionSet, ...]) -> float:
-        return GsSession.current._put('/portfolios/{id}/positions'.format(id=portfolio_id), position_sets)
+    def update_positions(cls, portfolio_id: str,
+                         position_sets: Tuple[PositionSet, ...]) -> float:
+        return GsSession.current._put(
+            '/portfolios/{id}/positions'.format(id=portfolio_id), position_sets)
 
     # manage portfolio reports
 
     @classmethod
     def get_reports(cls, portfolio_id: str) -> Tuple[Report, ...]:
-        return GsSession.current._get('/portfolios/{id}/reports'.format(id=portfolio_id), cls=Report)['results']
+        return GsSession.current._get(
+            '/portfolios/{id}/reports'.format(id=portfolio_id), cls=Report)['results']
 
     @classmethod
-    def schedule_reports(cls, portfolio_id: str, start_date: dt.date, end_date: dt.date = None) -> dict:
+    def schedule_reports(
+            cls,
+            portfolio_id: str,
+            start_date: dt.date,
+            end_date: dt.date = None) -> dict:
         if end_date is None:
             payload = {'startDate': start_date.isoformat()}
         else:
-            payload = {'startDate': start_date.isoformat(), 'endDate': end_date.isoformat()}
-        return GsSession.current._post('/portfolios/{id}/schedule'.format(id=portfolio_id), payload)
+            payload = {
+                'startDate': start_date.isoformat(),
+                'endDate': end_date.isoformat()}
+        return GsSession.current._post(
+            '/portfolios/{id}/schedule'.format(id=portfolio_id), payload)

@@ -17,11 +17,14 @@
 
 from datetime import date, time
 from numbers import Real
+
 import numpy as np
-from .helper import *
-from ..errors import MqValueError
-from ..datetime.date import DayCountConvention, PaymentFrequency, day_count_fraction
+
+from ..datetime.date import DayCountConvention, PaymentFrequency
 from ..datetime.date import date_range as _date_range
+from ..datetime.date import day_count_fraction
+from ..errors import MqValueError
+from .helper import *
 
 """
 Date and time manipulation for timeseries, including date or time shifting, calendar operations, curve alignment and
@@ -31,16 +34,22 @@ interpolation operations. Includes sampling operations based on daif dates[0]te 
 
 def __interpolate_step(x: pd.Series, dates: pd.Series = None) -> pd.Series:
     if x.empty:
-        raise MqValueError('Cannot perform step interpolation on an empty series')
+        raise MqValueError(
+            'Cannot perform step interpolation on an empty series')
 
-    first_date = pd.Timestamp(dates.index[0]) if isinstance(x.index[0], pd.Timestamp) else dates.index[0]
+    first_date = pd.Timestamp(
+        dates.index[0]) if isinstance(
+        x.index[0],
+        pd.Timestamp) else dates.index[0]
 
     # locate previous valid date or take first value from series
-    prev = x.index[0] if first_date < x.index[0] else x.index[x.index.get_loc(first_date, 'pad')]
+    prev = x.index[0] if first_date < x.index[0] else x.index[x.index.get_loc(
+        first_date, 'pad')]
 
     current = x[prev]
 
-    curve = x.align(dates, 'right', )[0]                  # only need values from dates
+    # only need values from dates
+    curve = x.align(dates, 'right', )[0]
 
     for knot in curve.iteritems():
         if np.isnan(knot[1]):
@@ -51,8 +60,8 @@ def __interpolate_step(x: pd.Series, dates: pd.Series = None) -> pd.Series:
 
 
 @plot_function
-def align(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpolate = Interpolate.INTERSECT) -> \
-        Union[List[pd.Series], List[Real]]:
+def align(x: Union[pd.Series, Real], y: Union[pd.Series, Real],
+          method: Interpolate = Interpolate.INTERSECT) -> Union[List[pd.Series], List[Real]]:
     """
     Align dates of two series or scalars
 
@@ -128,7 +137,10 @@ def align(x: Union[pd.Series, Real], y: Union[pd.Series, Real], method: Interpol
 
 
 @plot_function
-def interpolate(x: pd.Series, dates: Union[List[date], List[time], pd.Series] = None,
+def interpolate(x: pd.Series,
+                dates: Union[List[date],
+                             List[time],
+                             pd.Series] = None,
                 method: Interpolate = Interpolate.INTERSECT) -> pd.Series:
     """
     Interpolate over specified dates or times
@@ -195,7 +207,8 @@ def interpolate(x: pd.Series, dates: Union[List[date], List[time], pd.Series] = 
 
 
 @plot_function
-def value(x: pd.Series, date: Union[date, time], method: Interpolate = Interpolate.STEP) -> pd.Series:
+def value(x: pd.Series, date: Union[date, time],
+          method: Interpolate = Interpolate.STEP) -> pd.Series:
     """
     Value at specified date or time
 
@@ -449,12 +462,25 @@ def day_count_fractions(
     start_dates = date_list[0:-1]
     end_dates = date_list[1:len(date_list)]
 
-    dcfs = map(lambda a, b: day_count_fraction(a, b, convention, frequency), start_dates, end_dates)
-    return pd.Series(data=[np.NaN] + list(dcfs), index=date_list[0:len(date_list)])
+    dcfs = map(
+        lambda a,
+        b: day_count_fraction(
+            a,
+            b,
+            convention,
+            frequency),
+        start_dates,
+        end_dates)
+    return pd.Series(data=[np.NaN] + list(dcfs),
+                     index=date_list[0:len(date_list)])
 
 
 @plot_function
-def date_range(x: pd.Series, start_date: Union[date, int], end_date: Union[date, int],
+def date_range(x: pd.Series,
+               start_date: Union[date,
+                                 int],
+               end_date: Union[date,
+                               int],
                business_days_only: bool = False) -> pd.Series:
     """
     Create a time series from a (sub-)range of dates in an existing time series.

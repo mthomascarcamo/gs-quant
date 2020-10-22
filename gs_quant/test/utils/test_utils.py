@@ -51,24 +51,34 @@ def mock_request(method, path, payload, test_file_name):
         'dataQuerySPX':
             '{"fields": ["adjustedTradePrice"], "format": "MessagePack", "where": {"assetId": ["456123MW5E27U123456"]}}'
     }
-    payload = _remove_unwanted(json.dumps(payload, cls=JSONEncoder) if payload else '{}')
+    payload = _remove_unwanted(
+        json.dumps(
+            payload,
+            cls=JSONEncoder) if payload else '{}')
     if method == 'GET':
         if path == '/data/datasets/TREOD':
-            return load_json_from_resource(test_file_name, 'datasets_treod_response.json')
+            return load_json_from_resource(
+                test_file_name, 'datasets_treod_response.json')
     elif method == 'POST':
         if path == '/assets/data/query':
-            if payload == _remove_unwanted(queries['assetsDataGSNWithRic']) or \
-                    payload == _remove_unwanted(queries['assetsDataGSNWithId']):
-                return load_json_from_resource(test_file_name, 'assets_data_query_response_gsn.json')
+            if payload == _remove_unwanted(
+                    queries['assetsDataGSNWithRic']) or payload == _remove_unwanted(
+                    queries['assetsDataGSNWithId']):
+                return load_json_from_resource(
+                    test_file_name, 'assets_data_query_response_gsn.json')
             elif payload == _remove_unwanted(queries['assetsDataSPXWithRic']) or \
                     payload == _remove_unwanted(queries['assetsDataSPXWithId']):
-                return load_json_from_resource(test_file_name, 'assets_data_query_response_spx.json')
+                return load_json_from_resource(
+                    test_file_name, 'assets_data_query_response_spx.json')
         elif path == '/data/TREOD/query':
             if payload == _remove_unwanted(queries['dataQueryRic']):
-                return load_json_from_resource(test_file_name, 'treod_query_response_gsn.json')
+                return load_json_from_resource(
+                    test_file_name, 'treod_query_response_gsn.json')
             elif payload == _remove_unwanted(queries['dataQuerySPX']):
-                return load_json_from_resource(test_file_name, 'treod_query_response_spx.json')
-    raise Exception(f'Unhandled request. Method: {method}, Path: {path}, payload: {payload} not recognized.')
+                return load_json_from_resource(
+                    test_file_name, 'treod_query_response_spx.json')
+    raise Exception(
+        f'Unhandled request. Method: {method}, Path: {path}, payload: {payload} not recognized.')
 
 
 gs_risk_api_exec = GsRiskApi._exec
@@ -89,9 +99,11 @@ def get_risk_request_id(requests):
         identifier += '-'.join(
             [pos.instrument.name for pos in request.positions])
         identifier += '-'.join([str(risk) for risk in request.measures])
-        identifier += request.pricing_and_market_data_as_of[0].pricing_date.strftime('%Y%b%d')
+        identifier += request.pricing_and_market_data_as_of[0].pricing_date.strftime(
+            '%Y%b%d')
         identifier += request.scenario.scenario.scenario_type if request.scenario is not None else ''
-    return identifier[:232]  # cut down to less than max number of char for filename
+    # cut down to less than max number of char for filename
+    return identifier[:232]
 
 
 def mock_calc_create_files(*args, **kwargs):
@@ -127,7 +139,8 @@ class MockCalc:
     def __enter__(self):
         if self.save_files:
             GsSession.use(Environment.PROD, None, None)
-            self.mocker.patch.object(GsRiskApi, '_exec', side_effect=mock_calc_create_files)
+            self.mocker.patch.object(
+                GsRiskApi, '_exec', side_effect=mock_calc_create_files)
         else:
             from gs_quant.session import OAuth2Session
             OAuth2Session.init = mock.MagicMock(return_value=None)

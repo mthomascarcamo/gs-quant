@@ -16,7 +16,7 @@ under the License.
 
 import pytest
 
-from gs_quant.data import Dataset, DataCoordinate, DataMeasure, DataDimension
+from gs_quant.data import DataCoordinate, DataDimension, DataMeasure, Dataset
 
 
 def test_immutability():
@@ -26,8 +26,14 @@ def test_immutability():
         DataDimension.RELATIVE_STRIKE: 50
     }
 
-    coord1 = DataCoordinate(Dataset.GS.EDRVOL_PERCENT_STANDARD, DataMeasure.IMPLIED_VOLATILITY, dimensions)
-    coord2 = DataCoordinate(Dataset.GS.EDRVOL_PERCENT_STANDARD, DataMeasure.IMPLIED_VOLATILITY, dimensions)
+    coord1 = DataCoordinate(
+        Dataset.GS.EDRVOL_PERCENT_STANDARD,
+        DataMeasure.IMPLIED_VOLATILITY,
+        dimensions)
+    coord2 = DataCoordinate(
+        Dataset.GS.EDRVOL_PERCENT_STANDARD,
+        DataMeasure.IMPLIED_VOLATILITY,
+        dimensions)
 
     assert id(coord1) != id(coord2)
     assert coord1 == coord2
@@ -43,7 +49,10 @@ def test_immutability():
 
     dimensions[DataDimension.TENOR] = '2m'
 
-    coord3 = DataCoordinate(Dataset.GS.EDRVOL_PERCENT_STANDARD, DataMeasure.IMPLIED_VOLATILITY, dimensions)
+    coord3 = DataCoordinate(
+        Dataset.GS.EDRVOL_PERCENT_STANDARD,
+        DataMeasure.IMPLIED_VOLATILITY,
+        dimensions)
 
     assert id(coord1) != id(coord2)
     assert coord1 != coord3

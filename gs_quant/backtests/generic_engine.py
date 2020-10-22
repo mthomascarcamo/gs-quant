@@ -14,23 +14,25 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from copy import deepcopy
 from collections import defaultdict
-import pandas as pd
+from copy import deepcopy
 from typing import Optional
 
-from gs_quant.backtests.backtest_utils import make_list, CalcType
-from gs_quant.instrument import Instrument
-from gs_quant.markets.portfolio import Portfolio
-from gs_quant.markets import PricingContext, HistoricalPricingContext
-from gs_quant.risk import RiskMeasure, Price
+import pandas as pd
+
+from gs_quant.backtests.backtest_utils import CalcType, make_list
 from gs_quant.errors import MqValueError
+from gs_quant.instrument import Instrument
+from gs_quant.markets import HistoricalPricingContext, PricingContext
+from gs_quant.markets.portfolio import Portfolio
+from gs_quant.risk import Price, RiskMeasure
 
 
 class BackTest(object):
     def __init__(self, strategy, states, risks):
         self._portfolio_dict = defaultdict(Portfolio)
-        self._scaling_portfolios = defaultdict(list)  # list of ScalingPortfolio
+        self._scaling_portfolios = defaultdict(
+            list)  # list of ScalingPortfolio
         self._strategy = deepcopy(strategy)
         self._states = states
         self._results = defaultdict()
@@ -90,8 +92,10 @@ class BackTest(object):
 
     def get_aggregated_result(self, risk: Optional[RiskMeasure] = Price):
         if risk not in self.risks:
-            raise MqValueError('{} not in calculated risks for this backtest'.format(risk))
-        return pd.Series({d: i[risk].aggregate() for d, i in self._results.items()})
+            raise MqValueError(
+                '{} not in calculated risks for this backtest'.format(risk))
+        return pd.Series({d: i[risk].aggregate()
+                          for d, i in self._results.items()})
 
 
 class ScalingPortfolio(object):
@@ -109,16 +113,29 @@ class GenericEngine(object):
         return True
 
     @classmethod
-    def run_backtest(cls, strategy, start=None, end=None, frequency='BM', window=None, states=None, risks=Price,
-                     show_progress=True):
-        dates = pd.date_range(start=start, end=end, freq=frequency).date.tolist()
+    def run_backtest(
+            cls,
+            strategy,
+            start=None,
+            end=None,
+            frequency='BM',
+            window=None,
+            states=None,
+            risks=Price,
+            show_progress=True):
+        dates = pd.date_range(
+            start=start,
+            end=end,
+            freq=frequency).date.tolist()
         risks = make_list(risks) + strategy.risks
 
         backtest = BackTest(strategy, dates, risks)
 
         for trigger in strategy.triggers:
             if trigger.calc_type != CalcType.path_dependent:
-                triggered_dates = [date for date in dates if trigger.has_triggered(date, backtest)]
+                triggered_dates = [
+                    date for date in dates if trigger.has_triggered(
+                        date, backtest)]
                 for action in trigger.actions:
                     if action.calc_type != CalcType.path_dependent:
                         action.apply_action(triggered_dates, backtest)
@@ -143,12 +160,14 @@ class GenericEngine(object):
             if date in backtest.scaling_portfolios:
                 for p in backtest.scaling_portfolios[date]:
                     scale_date = p.dates[0]
-                    scaling_factor = backtest.results[scale_date][p.risk][0] / p.results[scale_date][p.risk][0]
+                    scaling_factor = backtest.results[scale_date][p.risk][0] / \
+                        p.results[scale_date][p.risk][0]
                     scaled_trade = p.trade.as_dict()
                     scaled_trade['notional_amount'] *= scaling_factor
                     scaled_trade = Instrument.from_dict(scaled_trade)
                     for day in p.dates:
-                        backtest.add_results(day, p.results[day] * scaling_factor)
+                        backtest.add_results(
+                            day, p.results[day] * scaling_factor)
                         backtest.portfolio_dict[day] += Portfolio(scaled_trade)
 
             # path dependent

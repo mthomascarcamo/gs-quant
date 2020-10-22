@@ -21,6 +21,7 @@ import pandas as pd
 
 from gs_quant.data import DataCoordinate
 from gs_quant.data.coordinate import DateOrDatetime
+
 from .stream import DataSeries
 
 

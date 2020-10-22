@@ -14,10 +14,12 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from dateutil.relativedelta import relativedelta as rdelta
 from functools import reduce
 
+from dateutil.relativedelta import relativedelta as rdelta
+
 from gs_quant.timeseries.helper import _create_enum
+
 from .statistics import *
 
 RebalFreq = _create_enum('RebalFreq', ['Daily', 'Monthly'])
@@ -67,9 +69,11 @@ def basket(
         raise TypeError("Input series must be of Pandas Series type.")
 
     if len(weights) != num_assets or len(weights) != len(costs):
-        raise ValueError("Series, weights and costs must have the same length.")
+        raise ValueError(
+            "Series, weights and costs must have the same length.")
 
-    # For all inputs which are Pandas series, get the intersection of their calendars
+    # For all inputs which are Pandas series, get the intersection of their
+    # calendars
     cal = pd.DatetimeIndex(
         reduce(
             np.intersect1d,
@@ -90,8 +94,15 @@ def basket(
         rebal_dates = cal
     else:
         # Get hypothetical monthly rebalances
-        num_rebals = (cal[-1].year - cal[0].year) * 12 + cal[-1].month - cal[0].month
-        rebal_dates = [cal[0] + i * rdelta(months=1) for i in range(num_rebals + 1)]
+        num_rebals = (cal[-1].year - cal[0].year) * \
+            12 + cal[-1].month - cal[0].month
+        rebal_dates = [
+            cal[0] +
+            i *
+            rdelta(
+                months=1) for i in range(
+                num_rebals +
+                1)]
         # Convert these to actual calendar days
         rebal_dates = [d for d in rebal_dates if d < max(cal)]
         rebal_dates = [min(cal[cal >= date]) for date in rebal_dates]
@@ -122,10 +133,10 @@ def basket(
                 (series.values[i, ] / series.values[prev_rebal, ]) *
                 (output.values[prev_rebal] / output.values[i])
             )
-            output.values[i] -= (
-                np.dot(costs.values[i, ], np.abs(weights.values[i, ] - actual_weights)) *
-                output.values[i]
-            )
+            output.values[i] -= (np.dot(costs.values[i,
+                                                     ],
+                                        np.abs(weights.values[i,
+                                                              ] - actual_weights)) * output.values[i])
 
             # Rebalance
             units.values[i, ] = (

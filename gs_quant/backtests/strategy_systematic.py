@@ -13,10 +13,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
-from dateutil.parser import isoparse
 import logging
 import re
 from typing import Iterable
+
+from dateutil.parser import isoparse
 
 import gs_quant.target.backtests as backtests
 from gs_quant.api.gs.backtests import GsBacktestApi
@@ -87,16 +88,20 @@ class StrategySystematic:
                     notional_percentage = 100
 
                 if not isinstance(instrument, (EqOption, EqVarianceSwap)):
-                    raise MqValueError('The format of the backtest asset is inscorrect.')
+                    raise MqValueError(
+                        'The format of the backtest asset is inscorrect.')
 
                 instrument = self.check_underlier_fields(instrument)
-                self.__underliers.append(BacktestStrategyUnderlier(
-                    instrument=instrument,
-                    notional_percentage=notional_percentage,
-                    hedge=BacktestStrategyUnderlierHedge(risk_details=delta_hedge),
-                    market_model=EQ_MARKET_MODEL))
+                self.__underliers.append(
+                    BacktestStrategyUnderlier(
+                        instrument=instrument,
+                        notional_percentage=notional_percentage,
+                        hedge=BacktestStrategyUnderlierHedge(
+                            risk_details=delta_hedge),
+                        market_model=EQ_MARKET_MODEL))
 
-        backtest_parameters_class: Base = getattr(backtests, self.__backtest_type + 'BacktestParameters')
+        backtest_parameters_class: Base = getattr(
+            backtests, self.__backtest_type + 'BacktestParameters')
         backtest_parameter_args = {
             'trading_parameters': self.__trading_parameters,
             'underliers': self.__underliers,
@@ -104,7 +109,8 @@ class StrategySystematic:
             'scaling_method': scaling_method,
             'index_initial_value': index_initial_value
         }
-        self.__backtest_parameters = backtest_parameters_class.from_dict(backtest_parameter_args)
+        self.__backtest_parameters = backtest_parameters_class.from_dict(
+            backtest_parameter_args)
 
     @staticmethod
     def check_underlier_fields(
@@ -118,7 +124,9 @@ class StrategySystematic:
         elif re.search(ISO_FORMAT, underlier.expiration_date) is not None:
             underlier = underlier.clone()
             underlier.expiration_date = '{}d'.format(
-                (isoparse(underlier.expiration_date).date() - PricingContext.current.pricing_date).days)
+                (isoparse(
+                    underlier.expiration_date).date() -
+                    PricingContext.current.pricing_date).days)
 
         if isinstance(underlier, EqOption):
             underlier.number_of_options = None
@@ -136,7 +144,8 @@ class StrategySystematic:
 
         params_dict = self.__backtest_parameters.as_dict()
         params_dict['measures'] = [m.value for m in measures]
-        backtest_parameters_class: Base = getattr(backtests, self.__backtest_type + 'BacktestParameters')
+        backtest_parameters_class: Base = getattr(
+            backtests, self.__backtest_type + 'BacktestParameters')
         params = backtest_parameters_class.from_dict(params_dict)
 
         backtest = Backtest(name=self.__name,

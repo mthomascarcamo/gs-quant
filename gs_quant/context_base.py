@@ -55,7 +55,9 @@ class ContextMeta(type):
         """
         current = next(iter(cls.path), cls.default)
         if current is None:
-            raise MqUninitialisedError('{} is not initialised'.format(cls.__name__))
+            raise MqUninitialisedError(
+                '{} is not initialised'.format(
+                    cls.__name__))
 
         return current
 
@@ -123,7 +125,9 @@ class ContextBase(metaclass=ContextMeta):
 
             if base not in seen:
                 seen.add(base)
-                stack.extend(b for b in base.__bases__ if issubclass(b, ContextBase))
+                stack.extend(
+                    b for b in base.__bases__ if issubclass(
+                        b, ContextBase))
 
         return cls or self.__class__
 

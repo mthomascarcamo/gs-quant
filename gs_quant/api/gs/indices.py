@@ -38,7 +38,8 @@ class GsIndexApi:
         :return: a response object containing status of create process, reportId and assetId
         """
 
-        response = GsSession.current._post('/indices', payload=inputs, cls=CustomBasketsResponse)
+        response = GsSession.current._post(
+            '/indices', payload=inputs, cls=CustomBasketsResponse)
         self.marquee_id = response.assetId
         return response
 
@@ -54,7 +55,8 @@ class GsIndexApi:
         """
 
         if self.marquee_id is None:
-            raise ValueError('Missing Asset Id of target index at initialization')
+            raise ValueError(
+                'Missing Asset Id of target index at initialization')
 
         asset = GsAssetApi.get_asset(self.marquee_id)
         if asset.type == AssetType.Custom_Basket or asset.type == AssetType.Research_Basket:
@@ -77,7 +79,8 @@ class GsIndexApi:
         """
 
         if self.marquee_id is None:
-            raise ValueError('Missing Asset Id of target index at initialization')
+            raise ValueError(
+                'Missing Asset Id of target index at initialization')
 
         url = "/indices/{id}/rebalance/cancel".format(id=self.marquee_id)
         GsSession.current._post(url, payload=inputs)
@@ -94,8 +97,10 @@ class GsIndexApi:
         """
 
         if self.marquee_id is None:
-            raise ValueError('Missing Asset Id of target index at initialization')
+            raise ValueError(
+                'Missing Asset Id of target index at initialization')
 
         url = "/indices/{id}/edit".format(id=self.marquee_id)
-        response = GsSession.current._post(url, payload=inputs, cls=CustomBasketsResponse)
+        response = GsSession.current._post(
+            url, payload=inputs, cls=CustomBasketsResponse)
         return response

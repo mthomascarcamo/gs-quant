@@ -13,25 +13,32 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 """
+import datetime as dt
+import itertools
 from abc import ABCMeta, abstractmethod
 from concurrent.futures import Future
 from copy import copy
-import itertools
-import datetime as dt
-from typing import Iterable, Optional, Tuple, Union, Any, Callable
+from typing import Any, Callable, Iterable, Optional, Tuple, Union
 
 import pandas as pd
 
-from .measures import RiskMeasure
 from gs_quant.base import RiskKey
 from gs_quant.datetime import point_sort_order
+
+from .measures import RiskMeasure
 
 __column_sort_fns = {
     'label1': point_sort_order,
     'mkt_point': point_sort_order,
     'point': point_sort_order
 }
-__risk_columns = ('date', 'time', 'mkt_type', 'mkt_asset', 'mkt_class', 'mkt_point')
+__risk_columns = (
+    'date',
+    'time',
+    'mkt_type',
+    'mkt_asset',
+    'mkt_class',
+    'mkt_point')
 
 
 class ResultInfo(metaclass=ABCMeta):
@@ -118,11 +125,15 @@ class ScalarWithInfo(ResultInfo, metaclass=ABCMeta):
 
     @staticmethod
     def compose(components: Iterable):
-        dates, values, errors, risk_key, unit = ResultInfo.composition_info(components)
-        return SeriesWithInfo(pd.Series(index=pd.DatetimeIndex(dates).date, data=values),
-                              risk_key=risk_key,
-                              unit=unit,
-                              error=errors)
+        dates, values, errors, risk_key, unit = ResultInfo.composition_info(
+            components)
+        return SeriesWithInfo(
+            pd.Series(
+                index=pd.DatetimeIndex(dates).date,
+                data=values),
+            risk_key=risk_key,
+            unit=unit,
+            error=errors)
 
 
 class FloatWithInfo(ScalarWithInfo, float):
@@ -145,8 +156,13 @@ class FloatWithInfo(ScalarWithInfo, float):
     def __add__(self, other):
         if isinstance(other, FloatWithInfo):
             if self.unit == other.unit:
-                return FloatWithInfo(combine_risk_key(self.risk_key, other.risk_key), self.raw_value + other.raw_value,
-                                     self.unit)
+                return FloatWithInfo(
+                    combine_risk_key(
+                        self.risk_key,
+                        other.risk_key),
+                    self.raw_value +
+                    other.raw_value,
+                    self.unit)
             else:
                 raise ValueError('FloatWithInfo unit mismatch')
         return super(FloatWithInfo, self).__add__(other)
@@ -171,7 +187,7 @@ class StringWithInfo(ScalarWithInfo, str):
 
 class SeriesWithInfo(pd.Series, ResultInfo):
     _internal_names = pd.DataFrame._internal_names + \
-                      ['_ResultInfo__' + i for i in dir(ResultInfo) if isinstance(getattr(ResultInfo, i), property)]
+        ['_ResultInfo__' + i for i in dir(ResultInfo) if isinstance(getattr(ResultInfo, i), property)]
     _internal_names_set = set(_internal_names)
 
     def __init__(
@@ -205,7 +221,7 @@ class SeriesWithInfo(pd.Series, ResultInfo):
 
 class DataFrameWithInfo(pd.DataFrame, ResultInfo):
     _internal_names = pd.DataFrame._internal_names + \
-                      ['_ResultInfo__' + i for i in dir(ResultInfo) if isinstance(getattr(ResultInfo, i), property)]
+        ['_ResultInfo__' + i for i in dir(ResultInfo) if isinstance(getattr(ResultInfo, i), property)]
     _internal_names_set = set(_internal_names)
 
     def __init__(
@@ -221,7 +237,8 @@ class DataFrameWithInfo(pd.DataFrame, ResultInfo):
 
     def __repr__(self):
         if self.error:
-            return pd.DataFrame.__repr__(self) + "\nErrors: " + str(self.errors)
+            return pd.DataFrame.__repr__(
+                self) + "\nErrors: " + str(self.errors)
         return pd.DataFrame.__repr__(self)
 
     @property
@@ -238,14 +255,17 @@ class DataFrameWithInfo(pd.DataFrame, ResultInfo):
 
     @staticmethod
     def compose(components: Iterable):
-        dates, values, errors, risk_key, unit = ResultInfo.composition_info(components)
-        df = pd.concat(v.assign(date=d) for d, v in zip(dates, values)).set_index('date')
+        dates, values, errors, risk_key, unit = ResultInfo.composition_info(
+            components)
+        df = pd.concat(v.assign(date=d)
+                       for d, v in zip(dates, values)).set_index('date')
 
-        return DataFrameWithInfo(df, risk_key=risk_key, unit=unit, error=errors)
+        return DataFrameWithInfo(
+            df, risk_key=risk_key, unit=unit, error=errors)
 
 
-def aggregate_risk(results: Iterable[Union[DataFrameWithInfo, Future]], threshold: Optional[float] = None) \
-        -> pd.DataFrame:
+def aggregate_risk(results: Iterable[Union[DataFrameWithInfo, Future]],
+                   threshold: Optional[float] = None) -> pd.DataFrame:
     """
     Combine the results of multiple InstrumentBase.calc() calls, into a single result
 
@@ -273,9 +293,13 @@ def aggregate_risk(results: Iterable[Union[DataFrameWithInfo, Future]], threshol
     delta_f and vega_f are lists of futures, where the result will be a Dataframe
     delta and vega are Dataframes, representing the merged risk of the individual instruments
     """
-    dfs = [r.result().raw_value if isinstance(r, Future) else r.raw_value for r in results]
-    result = pd.concat(df.reset_index(level=0) if df.index.name == 'date' else df for df in dfs)
-    result = result.groupby([c for c in result.columns if c != 'value'], as_index=False).sum()
+    dfs = [r.result().raw_value if isinstance(r, Future)
+           else r.raw_value for r in results]
+    result = pd.concat(
+        df.reset_index(
+            level=0) if df.index.name == 'date' else df for df in dfs)
+    result = result.groupby(
+        [c for c in result.columns if c != 'value'], as_index=False).sum()
 
     if threshold is not None:
         result = result[result.value.abs() > threshold]
@@ -283,7 +307,12 @@ def aggregate_risk(results: Iterable[Union[DataFrameWithInfo, Future]], threshol
     return sort_risk(result)
 
 
-ResultType = Union[None, dict, tuple, DataFrameWithInfo, FloatWithInfo, SeriesWithInfo]
+ResultType = Union[None,
+                   dict,
+                   tuple,
+                   DataFrameWithInfo,
+                   FloatWithInfo,
+                   SeriesWithInfo]
 
 
 def aggregate_results(results: Iterable[ResultType]) -> ResultType:
@@ -306,18 +335,21 @@ def aggregate_results(results: Iterable[ResultType]) -> ResultType:
 
         if result.unit:
             if unit and unit != result.unit:
-                raise ValueError('Cannot aggregate results with different units')
+                raise ValueError(
+                    'Cannot aggregate results with different units')
 
             unit = unit or result.unit
 
         if risk_key and risk_key != result.risk_key:
-            raise ValueError('Cannot aggregate results with different pricing keys')
+            raise ValueError(
+                'Cannot aggregate results with different pricing keys')
 
         risk_key = risk_key or result.risk_key
 
     inst = next(iter(results))
     if isinstance(inst, dict):
-        return dict((k, aggregate_results([r[k] for r in results])) for k in inst.keys())
+        return dict((k, aggregate_results(
+            [r[k] for r in results])) for k in inst.keys())
     elif isinstance(inst, tuple):
         return tuple(set(itertools.chain.from_iterable(results)))
     elif isinstance(inst, FloatWithInfo):
@@ -325,10 +357,14 @@ def aggregate_results(results: Iterable[ResultType]) -> ResultType:
     elif isinstance(inst, SeriesWithInfo):
         return SeriesWithInfo(sum(results), risk_key=risk_key, unit=unit)
     elif isinstance(inst, DataFrameWithInfo):
-        return DataFrameWithInfo(aggregate_risk(results), risk_key=risk_key, unit=unit)
+        return DataFrameWithInfo(
+            aggregate_risk(results),
+            risk_key=risk_key,
+            unit=unit)
 
 
-def subtract_risk(left: DataFrameWithInfo, right: DataFrameWithInfo) -> pd.DataFrame:
+def subtract_risk(left: DataFrameWithInfo,
+                  right: DataFrameWithInfo) -> pd.DataFrame:
     """Subtract bucketed risk. Dimensions must be identical
 
     :param left: Results to substract from
@@ -359,7 +395,8 @@ def subtract_risk(left: DataFrameWithInfo, right: DataFrameWithInfo) -> pd.DataF
     return aggregate_risk((left, right_negated))
 
 
-def sort_risk(df: pd.DataFrame, by: Tuple[str, ...] = __risk_columns) -> pd.DataFrame:
+def sort_risk(df: pd.DataFrame,
+              by: Tuple[str, ...] = __risk_columns) -> pd.DataFrame:
     """
     Sort bucketed risk
 
@@ -372,7 +409,8 @@ def sort_risk(df: pd.DataFrame, by: Tuple[str, ...] = __risk_columns) -> pd.Data
     fns = [__column_sort_fns.get(c) for c in columns]
 
     def cmp(row) -> tuple:
-        return tuple(fns[i](row[i]) if fns[i] else row[i] for i in indices if i != -1)
+        return tuple(fns[i](row[i]) if fns[i] else row[i]
+                     for i in indices if i != -1)
 
     data = sorted((row for _, row in df.iterrows()), key=cmp)
     fields = [f for f in by if f in columns]
@@ -396,5 +434,10 @@ def combine_risk_key(key_1: RiskKey, key_2: RiskKey) -> RiskKey:
     def get_field_value(field_name: str): getattr(key_1, field_name) \
         if getattr(key_1, field_name) == getattr(key_2, field_name) else None
 
-    return RiskKey(get_field_value("provider"), get_field_value("date"), get_field_value("market"),
-                   get_field_value("params"), get_field_value("scenario"), get_field_value("risk_measure"))
+    return RiskKey(
+        get_field_value("provider"),
+        get_field_value("date"),
+        get_field_value("market"),
+        get_field_value("params"),
+        get_field_value("scenario"),
+        get_field_value("risk_measure"))

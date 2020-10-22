@@ -31,11 +31,16 @@ _logger = logging.getLogger(__name__)
 
 class DataApi(metaclass=ABCMeta):
     @classmethod
-    def query_data(cls, query: Union[DataQuery, FredQuery], dataset_id: str = None) -> Union[list, tuple]:
+    def query_data(cls,
+                   query: Union[DataQuery,
+                                FredQuery],
+                   dataset_id: str = None) -> Union[list,
+                                                    tuple]:
         raise NotImplementedError('Must implement get_data')
 
     @classmethod
-    def last_data(cls, query: DataQuery, dataset_id: str = None) -> Union[list, tuple]:
+    def last_data(cls, query: DataQuery,
+                  dataset_id: str = None) -> Union[list, tuple]:
         raise NotImplementedError('Must implement last_data')
 
     @classmethod
@@ -47,7 +52,8 @@ class DataApi(metaclass=ABCMeta):
         raise NotImplementedError('Must implement time_field')
 
     @classmethod
-    def construct_dataframe_with_types(cls, dataset_id: str, data: Union[Base, list, tuple, pd.Series]) -> pd.DataFrame:
+    def construct_dataframe_with_types(
+            cls, dataset_id: str, data: Union[Base, list, tuple, pd.Series]) -> pd.DataFrame:
         raise NotImplementedError('Must implement time_field')
 
     @staticmethod
@@ -64,7 +70,9 @@ class DataApi(metaclass=ABCMeta):
         start_is_time = isinstance(start, dt.datetime)
 
         if kwargs.get('market_data_coordinates'):
-            real_time = ((start is None or start_is_time) and (end is None or end_is_time))
+            real_time = (
+                (start is None or start_is_time) and (
+                    end is None or end_is_time))
             query = MDAPIDataQuery(
                 start_time=start if real_time else None,
                 end_time=end if real_time else None,
@@ -76,9 +84,14 @@ class DataApi(metaclass=ABCMeta):
             )
         else:
             if start_is_time and end is not None and not end_is_time:
-                raise ValueError('If start is of type datetime, so must end be!')
+                raise ValueError(
+                    'If start is of type datetime, so must end be!')
 
-            if isinstance(start, dt.date) and end is not None and not isinstance(end, dt.date):
+            if isinstance(
+                    start,
+                    dt.date) and end is not None and not isinstance(
+                    end,
+                    dt.date):
                 raise ValueError('If start is of type date, so must end be!')
 
             query = DataQuery(

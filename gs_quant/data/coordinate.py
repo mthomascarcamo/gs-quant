@@ -17,13 +17,13 @@ import json
 from abc import ABCMeta
 from datetime import date, datetime
 from enum import Enum
-from typing import Union, Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple, Union
 
 import pandas as pd
 
 from .core import DataContext, DataFrequency
 from .dataset import Dataset
-from .fields import DataMeasure, DataDimension
+from .fields import DataDimension, DataMeasure
 
 DataDimensions = Dict[Union[DataDimension, str], Union[str, float]]
 DateOrDatetime = Union[date, datetime]
@@ -42,8 +42,8 @@ class BaseDataCoordinate(metaclass=ABCMeta):
         if dimensions is None:
             self.__dimensions = tuple()
         else:
-            self.__dimensions = tuple(
-                sorted({k.value if isinstance(k, Enum) else k: v for k, v in dimensions.items()}.items()))
+            self.__dimensions = tuple(sorted({k.value if isinstance(
+                k, Enum) else k: v for k, v in dimensions.items()}.items()))
 
     @property
     def measure(self) -> DataMeasure:
@@ -122,7 +122,13 @@ class DataCoordinate(BaseDataCoordinate):
         Equality check for two coordinates. Validates if the dataset id, data measure and dimensions are equivalent.
 
         """
-        return (self.dataset_id, self.measure, self.dimensions) == (other.dataset_id, other.measure, other.dimensions)
+        return (
+            self.dataset_id,
+            self.measure,
+            self.dimensions) == (
+            other.dataset_id,
+            other.measure,
+            other.dimensions)
 
     def __hash__(self):
         return hash((self.dataset_id, self.measure, tuple(self.dimensions)))
@@ -132,7 +138,8 @@ class DataCoordinate(BaseDataCoordinate):
 
     def get_range(self,
                   start: Optional[DateOrDatetime] = None,
-                  end: Optional[DateOrDatetime] = None) -> Tuple[Optional[DateOrDatetime], Optional[DateOrDatetime]]:
+                  end: Optional[DateOrDatetime] = None) -> Tuple[Optional[DateOrDatetime],
+                                                                 Optional[DateOrDatetime]]:
         if start is None:
             start = DataContext.current.start_time if self.frequency is DataFrequency.REAL_TIME \
                 else DataContext.current.start_date
@@ -145,7 +152,8 @@ class DataCoordinate(BaseDataCoordinate):
 
     def get_series(self,
                    start: Optional[DateOrDatetime] = None,
-                   end: Optional[DateOrDatetime] = None) -> Union[pd.Series, None]:
+                   end: Optional[DateOrDatetime] = None) -> Union[pd.Series,
+                                                                  None]:
         """Get timeseries of coordinate"""
 
         if not self.dataset_id:
@@ -154,10 +162,11 @@ class DataCoordinate(BaseDataCoordinate):
         dataset = Dataset(self.dataset_id)
         start, end = self.get_range(start, end)
 
-        return dataset.get_data_series(self.measure, start=start, end=end, **self.dimensions)
+        return dataset.get_data_series(
+            self.measure, start=start, end=end, **self.dimensions)
 
-    def last_value(self,
-                   before: Optional[DateOrDatetime] = None) -> Union[float, None]:
+    def last_value(
+            self, before: Optional[DateOrDatetime] = None) -> Union[float, None]:
         """Return the last available value
 
          Returns the last value prior to to the specified date / time. If `before` argument is not provided, will
@@ -170,6 +179,10 @@ class DataCoordinate(BaseDataCoordinate):
         start, end = self.get_range(None, before)
 
         dataset = Dataset(self.dataset_id)
-        measure = self.measure.value if isinstance(self.measure, Enum) else self.measure
+        measure = self.measure.value if isinstance(
+            self.measure, Enum) else self.measure
 
-        return dataset.get_data_last(end, fields=[measure], **self.dimensions).get(measure, default=None)
+        return dataset.get_data_last(end,
+                                     fields=[measure],
+                                     **self.dimensions).get(measure,
+                                                            default=None)

@@ -18,8 +18,9 @@ from typing import Iterable, Optional, Tuple, Union
 
 from gs_quant.base import InstrumentBase, RiskKey
 from gs_quant.datetime.date import date_range
-from gs_quant.risk import RiskMeasure, CarryScenario, MarketDataScenario
+from gs_quant.risk import CarryScenario, MarketDataScenario, RiskMeasure
 from gs_quant.risk.results import HistoricalPricingFuture, PricingFuture
+
 from .core import PricingContext
 from .markets import CloseMarket, close_market_date
 
@@ -68,9 +69,15 @@ class HistoricalPricingContext(PricingContext):
         >>>
         >>> price_series = price_f.result()
         """
-        super().__init__(is_async=is_async, is_batch=is_batch, use_cache=use_cache, visible_to_gs=visible_to_gs,
-                         csa_term=csa_term, market_data_location=market_data_location,
-                         timeout=timeout, show_progress=show_progress)
+        super().__init__(
+            is_async=is_async,
+            is_batch=is_batch,
+            use_cache=use_cache,
+            visible_to_gs=visible_to_gs,
+            csa_term=csa_term,
+            market_data_location=market_data_location,
+            timeout=timeout,
+            show_progress=show_progress)
         if start is not None:
             if dates is not None:
                 raise ValueError('Must supply start or dates, not both')
@@ -78,13 +85,15 @@ class HistoricalPricingContext(PricingContext):
             if end is None:
                 end = dt.date.today()
 
-            self.__date_range = tuple(date_range(start, end, calendars=calendars))
+            self.__date_range = tuple(date_range(
+                start, end, calendars=calendars))
         elif dates is not None:
             self.__date_range = tuple(dates)
         else:
             raise ValueError('Must supply start or dates')
 
-    def calc(self, instrument: InstrumentBase, risk_measure: RiskMeasure) -> PricingFuture:
+    def calc(self, instrument: InstrumentBase,
+             risk_measure: RiskMeasure) -> PricingFuture:
         futures = []
 
         provider = instrument.provider
@@ -93,8 +102,18 @@ class HistoricalPricingContext(PricingContext):
         location = self.market.location
 
         for date in self.__date_range:
-            market = CloseMarket(location=location, date=close_market_date(location, date))
-            risk_key = RiskKey(provider, date, market, parameters, scenario, risk_measure)
+            market = CloseMarket(
+                location=location,
+                date=close_market_date(
+                    location,
+                    date))
+            risk_key = RiskKey(
+                provider,
+                date,
+                market,
+                parameters,
+                scenario,
+                risk_measure)
             futures.append(self._calc(instrument, risk_key))
 
         return HistoricalPricingFuture(futures)
@@ -147,10 +166,19 @@ class BackToTheFuturePricingContext(HistoricalPricingContext):
         >>>
         >>> price_series = price_f.result()
         """
-        super().__init__(start=start, end=end, calendars=calendars, dates=dates,
-                         is_async=is_async, is_batch=is_batch, use_cache=use_cache, visible_to_gs=visible_to_gs,
-                         csa_term=csa_term, market_data_location=market_data_location,
-                         timeout=timeout, show_progress=show_progress)
+        super().__init__(
+            start=start,
+            end=end,
+            calendars=calendars,
+            dates=dates,
+            is_async=is_async,
+            is_batch=is_batch,
+            use_cache=use_cache,
+            visible_to_gs=visible_to_gs,
+            csa_term=csa_term,
+            market_data_location=market_data_location,
+            timeout=timeout,
+            show_progress=show_progress)
         self._roll_to_fwds = roll_to_fwds
         if start is not None:
             if dates is not None:
@@ -159,13 +187,15 @@ class BackToTheFuturePricingContext(HistoricalPricingContext):
             if end is None:
                 end = dt.date.today()
 
-            self.__date_range = tuple(date_range(start, end, calendars=calendars))
+            self.__date_range = tuple(date_range(
+                start, end, calendars=calendars))
         elif dates is not None:
             self.__date_range = tuple(dates)
         else:
             raise ValueError('Must supply start or dates')
 
-    def calc(self, instrument: InstrumentBase, risk_measure: RiskMeasure) -> PricingFuture:
+    def calc(self, instrument: InstrumentBase,
+             risk_measure: RiskMeasure) -> PricingFuture:
         futures = []
 
         provider = instrument.provider
@@ -175,12 +205,29 @@ class BackToTheFuturePricingContext(HistoricalPricingContext):
         base_market = self.market
         for date in self.__date_range:
             if date > self.pricing_date:
-                scenario = MarketDataScenario(CarryScenario(date=date, roll_to_fwds=self._roll_to_fwds))
-                risk_key = RiskKey(provider, date, base_market, parameters, scenario, risk_measure)
+                scenario = MarketDataScenario(CarryScenario(
+                    date=date, roll_to_fwds=self._roll_to_fwds))
+                risk_key = RiskKey(
+                    provider,
+                    date,
+                    base_market,
+                    parameters,
+                    scenario,
+                    risk_measure)
                 futures.append(self._calc(instrument, risk_key))
             else:
-                market = CloseMarket(location=location, date=close_market_date(location, date))
-                risk_key = RiskKey(provider, date, market, parameters, base_scenario, risk_measure)
+                market = CloseMarket(
+                    location=location,
+                    date=close_market_date(
+                        location,
+                        date))
+                risk_key = RiskKey(
+                    provider,
+                    date,
+                    market,
+                    parameters,
+                    base_scenario,
+                    risk_measure)
                 futures.append(self._calc(instrument, risk_key))
 
         return HistoricalPricingFuture(futures)

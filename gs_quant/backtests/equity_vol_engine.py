@@ -14,9 +14,12 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from gs_quant.backtests.strategy_systematic import StrategySystematic, DeltaHedgeParameters, QuantityType, TradeInMethod
-from gs_quant.backtests import triggers as t
 from gs_quant.backtests import actions as a
+from gs_quant.backtests import triggers as t
+from gs_quant.backtests.strategy_systematic import (DeltaHedgeParameters,
+                                                    QuantityType,
+                                                    StrategySystematic,
+                                                    TradeInMethod)
 from gs_quant.instrument import EqOption, EqVarianceSwap
 from gs_quant.risk import EqDelta
 
@@ -31,8 +34,12 @@ class EquityVolEngine(object):
                 if len(trigger.actions) != 1:
                     return False
                 elif isinstance(trigger.actions[0], a.AddTradeAction):
-                    if not all((isinstance(p, EqOption) | isinstance(p, EqVarianceSwap))
-                               for p in trigger.actions[0].priceables):
+                    if not all(
+                        (isinstance(
+                            p,
+                            EqOption) | isinstance(
+                            p,
+                            EqVarianceSwap)) for p in trigger.actions[0].priceables):
                         return False
                 elif isinstance(trigger.actions[0], a.HedgeAction):
                     if not isinstance(trigger.actions[0].risk, EqDelta):

@@ -21,10 +21,12 @@ from typing import Union
 from gs_quant.base import Base
 
 
-def __unpack(results: Union[dict, list], cls: type) -> Union[Base, tuple, dict]:
+def __unpack(results: Union[dict, list],
+             cls: type) -> Union[Base, tuple, dict]:
     if issubclass(cls, Base):
         if isinstance(results, list):
-            return tuple(None if r is None else cls.from_dict(r) for r in results)
+            return tuple(None if r is None else cls.from_dict(r)
+                         for r in results)
         else:
             return None if results is None else cls.from_dict(results)
     else:

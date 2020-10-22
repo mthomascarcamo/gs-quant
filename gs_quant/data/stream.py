@@ -14,9 +14,11 @@ specific language governing permissions and limitations
 under the License.
 """
 
-from typing import Union
 from datetime import datetime
+from typing import Union
+
 import pandas as pd
+
 from gs_quant.data import DataCoordinate
 
 
@@ -31,7 +33,12 @@ class DataSeries:
 class DataEvent:
     """Represents a data update event"""
 
-    def __init__(self, time: datetime, value: Union[None, str, float], coordinate: DataCoordinate = None):
+    def __init__(self,
+                 time: datetime,
+                 value: Union[None,
+                              str,
+                              float],
+                 coordinate: DataCoordinate = None):
         self.time = time
         self.value = value
         self.coordinate = coordinate

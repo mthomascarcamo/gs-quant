@@ -17,7 +17,7 @@ import inspect
 import logging
 from enum import Enum, IntEnum
 from functools import wraps
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
 import pandas as pd
 
@@ -53,7 +53,9 @@ def _to_offset(tenor: str) -> pd.DateOffset:
     return pd.DateOffset(**kwarg)
 
 
-Interpolate = _create_enum('Interpolate', ['intersect', 'step', 'nan', 'zero', 'time'])
+Interpolate = _create_enum(
+    'Interpolate', [
+        'intersect', 'step', 'nan', 'zero', 'time'])
 Returns = _create_enum('Returns', ['simple', 'logarithmic', 'absolute'])
 SeriesType = _create_enum('SeriesType', ['prices', 'returns'])
 CurveType = _create_enum('CurveType', ['prices', 'excess_returns'])
@@ -85,22 +87,29 @@ class Window:
 
     """
 
-    def __init__(self, w: Union[int, str, None] = None, r: Union[int, str, None] = None):
+    def __init__(self, w: Union[int, str, None]
+                 = None, r: Union[int, str, None] = None):
         self.w = w
         self.r = w if r is None else r
 
 
 def _check_window(series_length: int, window: Window):
-    if series_length > 0 and isinstance(window.w, int) and isinstance(window.r, int):
+    if series_length > 0 and isinstance(
+            window.w,
+            int) and isinstance(
+            window.r,
+            int):
         if window.w <= 0:
             raise ValueError('Window value must be greater than zero.')
         if window.r > series_length or window.r < 0:
-            raise ValueError('Ramp value must be less than the length of the series and greater than zero.')
+            raise ValueError(
+                'Ramp value must be less than the length of the series and greater than zero.')
 
 
 def apply_ramp(x: pd.Series, window: Window) -> pd.Series:
     _check_window(len(x), window)
-    if isinstance(window.w, int) and window.w > len(x):  # does not restrict window size when it is a DataOffset
+    if isinstance(window.w, int) and window.w > len(
+            x):  # does not restrict window size when it is a DataOffset
         return pd.Series([])
     if isinstance(window.r, pd.DateOffset):
         return x.loc[x.index[0] + window.r:]
@@ -108,7 +117,12 @@ def apply_ramp(x: pd.Series, window: Window) -> pd.Series:
         return x[window.r:]
 
 
-def normalize_window(x: Union[pd.Series, pd.DataFrame], window: Union[Window, int, str, None],
+def normalize_window(x: Union[pd.Series,
+                              pd.DataFrame],
+                     window: Union[Window,
+                                   int,
+                                   str,
+                                   None],
                      default_window: int = None) -> Window:
     if default_window is None:
         default_window = len(x)
@@ -144,10 +158,12 @@ def plot_session_function(fn):
     return fn
 
 
-def plot_measure(asset_class: Optional[tuple] = None, asset_type: Optional[tuple] = None,
+def plot_measure(asset_class: Optional[tuple] = None,
+                 asset_type: Optional[tuple] = None,
                  dependencies: Optional[List[QueryType]] = []):
     # Indicates that fn should be exported to plottool as a member function / pseudo-measure.
-    # Set category to None for no restrictions, else provide a tuple of allowed values.
+    # Set category to None for no restrictions, else provide a tuple of
+    # allowed values.
     def decorator(fn):
         assert asset_class is None or isinstance(asset_class, tuple)
         assert asset_type is None or isinstance(asset_type, tuple)
@@ -166,7 +182,8 @@ def plot_method(fn):
     # Indicates that fn should be exported to plottool as a method.
     fn.plot_method = True
 
-    # Allows fn to accept and ignore real_time argument even if it is not defined in the signature
+    # Allows fn to accept and ignore real_time argument even if it is not
+    # defined in the signature
     @wraps(fn)
     def ignore_extra_argument(*args, **kwargs):
         for arg in ('real_time', 'interval', 'time_filter'):

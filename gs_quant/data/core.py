@@ -15,6 +15,7 @@ under the License.
 """
 import datetime
 from enum import Enum
+
 from gs_quant.context_base import ContextBaseWithDefault
 
 
@@ -68,7 +69,8 @@ class DataContext(ContextBaseWithDefault):
         elif isinstance(o, datetime.datetime):
             return o
         elif isinstance(o, datetime.date):
-            return datetime.datetime.combine(o, datetime.time(tzinfo=datetime.timezone.utc))
+            return datetime.datetime.combine(
+                o, datetime.time(tzinfo=datetime.timezone.utc))
         elif isinstance(o, str):
             tmp = datetime.datetime.strptime(o, '%Y-%m-%dT%H:%M:%SZ')
             return tmp.replace(tzinfo=datetime.timezone.utc)
@@ -77,7 +79,11 @@ class DataContext(ContextBaseWithDefault):
 
     @property
     def start_date(self):
-        return self._get_date(self.__start, datetime.date.today() - datetime.timedelta(days=30))
+        return self._get_date(
+            self.__start,
+            datetime.date.today() -
+            datetime.timedelta(
+                days=30))
 
     @property
     def end_date(self):
@@ -85,7 +91,11 @@ class DataContext(ContextBaseWithDefault):
 
     @property
     def start_time(self):
-        return self._get_datetime(self.__start, _now() - datetime.timedelta(days=1))
+        return self._get_datetime(
+            self.__start,
+            _now() -
+            datetime.timedelta(
+                days=1))
 
     @property
     def end_time(self):
