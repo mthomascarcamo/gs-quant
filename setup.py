@@ -14,81 +14,109 @@ specific language governing permissions and limitations
 under the License.
 """
 import os
-import setuptools
 import shutil
 import subprocess
 import sys
-import versioneer
 from pathlib import Path
 
-if "sdist" in sys.argv:
-    reference = os.path.dirname(__file__)
-    doc_dir = os.path.join(reference, "docs")
-    p = subprocess.Popen(["make", "html"], cwd=doc_dir, shell=True)
-    p.wait(30)
-    if p.returncode != 0:
-        raise RuntimeError("unable to make docs")
+import setuptools
 
-    generated_dir = Path(os.path.join(doc_dir, "_build", "html", "functions"))
-    generated_dir.mkdir(parents=True, exist_ok=True)
-    target_dir = os.path.join(reference, "gs_quant", "docs")
-    shutil.rmtree(target_dir, ignore_errors=True)
-    shutil.copytree(generated_dir, target_dir)
+import versioneer
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
 
-setuptools.setup(
-    name="gs_quant",
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
-    author="Goldman Sachs",
-    author_email="developer@gs.com",
-    description="Goldman Sachs Quant",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://marquee.gs.com",
-    license="http://www.apache.org/licenses/LICENSE-2.0",
-    packages=setuptools.find_packages(),
-    include_package_data=True,
-    # TODO: remove compatibility packages (configparser, future, six) now that we only support 3.6+
-    install_requires=[
-        "backoff",
-        "aenum",
-        "cachetools",
-        "configparser",
-        "dataclasses;python_version<'3.7'",
-        "funcsigs",
-        "future",
-        "inflection",
-        "lmfit",
-        "msgpack",
-        "more_itertools",
-        "nest-asyncio",
-        "pandas<1.1",
-        "python-dateutil>=2.7.0",
-        "requests",
-        "scipy>=1.2.0",
-        "six",
-        "statsmodels>=0.11.1",
-        "typing;python_version<'3.7'",
-        "websockets",
-        "pydash",
-        "tqdm",
-        "certifi"
-    ],
-    extras_require={
-        "internal": ["gs_quant_internal>=0.7.4", "requests_kerberos"],
-        "notebook": ["jupyter", "matplotlib~=3.1.0", "seaborn"],
-        "test": ["pytest", "pytest-cov", "pytest-mock", "testfixtures", "nbconvert", "nbformat", "jupyter_client"],
-        "develop": ["wheel", "sphinx", "sphinx_rtd_theme", "sphinx_autodoc_typehints", "pytest", "pytest-cov",
-                    "pytest-mock", "testfixtures"]
-    },
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Operating System :: OS Independent",
-        "License :: OSI Approved :: Apache Software License"
-    ],
-)
+def check_venv():
+    venv = (hasattr(sys, "real_prefix") or
+            (hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix))
+    if not venv:
+        print("Setup is not running inside a virtualenv, exiting")
+        sys.exit(0)
+
+def make_docs_on_install():
+    if "sdist" in sys.argv:
+        reference = os.path.dirname(__file__)
+        doc_dir = os.path.join(reference, "docs")
+        p = subprocess.Popen(["make", "html"], cwd=doc_dir, shell=True)
+        p.wait(30)
+        if p.returncode != 0:
+            raise RuntimeError("unable to make docs")
+
+        generated_dir = Path(os.path.join(doc_dir, "_build", "html", "functions"))
+        generated_dir.mkdir(parents=True, exist_ok=True)
+        target_dir = os.path.join(reference, "gs_quant", "docs")
+        shutil.rmtree(target_dir, ignore_errors=True)
+        shutil.copytree(generated_dir, target_dir)
+
+if __name__ == "__main__":
+
+    check_venv()
+    make_docs_on_install()
+
+    with open("README.md", "r") as fh:
+        long_description = fh.read()
+
+    setuptools.setup(
+        name="gs_quant",
+        version=versioneer.get_version(),
+        cmdclass=versioneer.get_cmdclass(),
+        author="Goldman Sachs",
+        author_email="developer@gs.com",
+        description="Goldman Sachs Quant",
+        long_description=long_description,
+        long_description_content_type="text/markdown",
+        url="https://marquee.gs.com",
+        license="http://www.apache.org/licenses/LICENSE-2.0",
+        packages=setuptools.find_packages(),
+        include_package_data=True,
+        # TODO: remove compatibility packages (configparser, future, six) now that we only support 3.6+
+        install_requires=[
+            "backoff",
+            "aenum",
+            "cachetools",
+            "configparser",
+            "dataclasses;python_version<'3.7'",
+            "funcsigs",
+            "future",
+            "inflection",
+            "lmfit",
+            "msgpack",
+            "more_itertools",
+            "nest-asyncio",
+            "pandas<1.1",
+            "python-dateutil>=2.7.0",
+            "requests",
+            "scipy>=1.2.0",
+            "six",
+            "statsmodels>=0.11.1",
+            "typing;python_version<'3.7'",
+            "websockets",
+            "pydash",
+            "tqdm",
+            "certifi"
+        ],
+        tests_require=[
+            "pylint",
+            "pytest",
+            "pytest-cov",
+            "flake8",
+            "mock",
+            "requests-mock",
+            "black",
+            "isort",
+            "autopep8"
+        ],
+        extras_require={
+            "internal": ["gs_quant_internal>=0.7.4", "requests_kerberos"],
+            "notebook": ["jupyter", "matplotlib~=3.1.0", "seaborn"],
+            "test": ["pytest", "pytest-cov", "pytest-mock", "testfixtures", "nbconvert", "nbformat", "jupyter_client"],
+            "develop": ["wheel", "sphinx", "sphinx_rtd_theme", "sphinx_autodoc_typehints", "pytest", "pytest-cov",
+                        "pytest-mock", "testfixtures"]
+        },
+        classifiers=[
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Operating System :: OS Independent",
+            "License :: OSI Approved :: Apache Software License"
+        ],
+    )
+    
